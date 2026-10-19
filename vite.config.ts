@@ -3,7 +3,11 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
+// Where the app is served from. GitHub Pages serves it under /<repo>/, so the deploy workflow sets BASE_PATH.
+const base = process.env.BASE_PATH ?? '/';
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -16,8 +20,8 @@ export default defineConfig({
         name: 'MoodCanvas',
         short_name: 'MoodCanvas',
         description: 'Write how you feel and see it as a picture and a score.',
-        start_url: '/',
-        scope: '/',
+        start_url: base,
+        scope: base,
         display: 'standalone',
         theme_color: '#4338ca',
         background_color: '#f7f6f2',
@@ -29,7 +33,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
-        navigateFallback: '/index.html',
+        navigateFallback: `${base}index.html`,
         // The AI endpoint must always hit the network (and fail cleanly when offline).
         navigateFallbackDenylist: [/^\/api\//],
         importScripts: ['sw-notifications.js'],

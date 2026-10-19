@@ -37,6 +37,17 @@ Copy `.env.example` to `.env` to turn on the optional features.
 
 Locally, Playwright uses your installed Chrome. CI installs Chromium itself.
 
+### Hosting (GitHub Pages)
+
+Every push to `main` that passes CI is published to `https://<user>.github.io/<repo>/` by the `deploy` job
+in `ci.yml`. It builds with `BASE_PATH=/<repo>/`, so all URLs, the manifest and the service worker live
+under that folder.
+- **One-time setup:** in the repository's **Settings → Pages**, set **Source** to **GitHub Actions**.
+- **Smarter analysis** needs the Node server, which Pages can't run, so the hosted app always uses the word
+  list.
+- **Sync:** add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` under **Settings → Secrets and variables →
+  Actions → Variables** to turn it on. Then add the Pages URL as a Supabase redirect URL.
+
 ### Languages
 
 The app speaks English and Spanish. It picks the language from the browser; you can change it in

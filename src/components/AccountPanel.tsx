@@ -30,7 +30,7 @@ export function AccountPanel({ user, sync }: Props) {
     setSending(true);
     const { error } = await client.auth.signInWithOtp({
       email: email.trim(),
-      options: { emailRedirectTo: window.location.origin },
+      options: { emailRedirectTo: window.location.origin + import.meta.env.BASE_URL },
     });
     setSending(false);
     setMessage(error ? t.account.linkFailed(error.message) : t.account.linkSent);

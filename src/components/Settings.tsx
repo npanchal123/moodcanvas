@@ -66,7 +66,7 @@ export default function Settings(props: Props) {
   }
 
   function downloadCalendar() {
-    const ics = buildReminderIcs(reminder.time, window.location.origin, t);
+    const ics = buildReminderIcs(reminder.time, window.location.origin + import.meta.env.BASE_URL, t);
     downloadBlob(new Blob([ics], { type: 'text/calendar' }), 'moodcanvas-reminder.ics');
   }
 

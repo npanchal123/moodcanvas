@@ -111,7 +111,7 @@ function writeLastReminded(day: string) {
 
 async function showSystemNotification(t: Messages): Promise<boolean> {
   if (!('Notification' in window) || Notification.permission !== 'granted') return false;
-  const options = { body: t.reminder.notificationBody, tag: 'moodcanvas-reminder', icon: '/icon-192.png' };
+  const options = { body: t.reminder.notificationBody, tag: 'moodcanvas-reminder', icon: `${import.meta.env.BASE_URL}icon-192.png` };
   try {
     const registration = await navigator.serviceWorker?.getRegistration();
     if (registration) await registration.showNotification(t.reminder.notificationTitle, options);
