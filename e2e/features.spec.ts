@@ -77,6 +77,38 @@ test('older check-ins can be re-read with the current word list', async ({ page 
   await expect(page.getByText('Sadness · 60/100 (your rating)')).toBeVisible();
 });
 
+test.describe('crisis support in India', () => {
+  test.use({ timezoneId: 'Asia/Kolkata' });
+
+  test('worrying words show the local helpline and emergency number', async ({ page }) => {
+    await skipOnboarding(page);
+    await page.getByLabel('How are you feeling?').fill('Some days I want to die');
+    await page.getByRole('button', { name: 'Visualize' }).click();
+    // Shown because of what was written, so it's announced as a status message.
+    const banner = page.getByRole('status', { name: 'It sounds like you’re going through something really hard.' });
+    await expect(banner.getByRole('link', { name: 'Call 14416' })).toHaveAttribute('href', 'tel:14416');
+    await expect(banner.getByRole('link', { name: '112', exact: true })).toHaveAttribute('href', 'tel:112');
+    await banner.getByRole('button', { name: 'Close' }).click();
+    await expect(banner).toBeHidden();
+  });
+});
+
+test('support lines are always one tap away', async ({ page }) => {
+  await skipOnboarding(page);
+  await page.getByRole('button', { name: 'Get support now' }).click();
+  await expect(page.getByRole('heading', { name: 'Talk to someone now' })).toBeFocused();
+  await page.getByText('Support lines in other countries').click();
+  await expect(page.getByRole('link', { name: 'Call 116 123' }).first()).toBeVisible();
+});
+
+test('the privacy page has its own link and skips onboarding', async ({ page }) => {
+  await page.goto('/#privacy');
+  await expect(page.getByRole('heading', { name: 'Privacy', level: 2 })).toBeVisible();
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await page.getByRole('button', { name: 'History' }).click();
+  await expect(page).not.toHaveURL(/#privacy/);
+});
+
 test('works offline once loaded (installable app)', async ({ page, context }) => {
   await skipOnboarding(page);
   await page.evaluate(() => navigator.serviceWorker.ready);

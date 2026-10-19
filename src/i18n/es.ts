@@ -23,13 +23,16 @@ export const es: Messages = {
   app: {
     skipLink: 'Saltar al contenido principal',
     navLabel: 'Principal',
-    views: { today: 'Registrar', history: 'Historial', settings: 'Ajustes' },
+    views: { today: 'Registrar', history: 'Historial', settings: 'Ajustes', privacy: 'Privacidad' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     emptyResult: 'Aquí aparecerá tu flor de emociones.',
     thisWeek: 'Esta semana',
     aiFallback: 'El análisis inteligente no está disponible ahora, así que se usó la lista de palabras integrada.',
     loading: 'Cargando…',
     footer: 'Viz it es una herramienta de reflexión. No es un diagnóstico ni reemplaza la ayuda profesional.',
+    footerLinks: 'Más',
+    privacyLink: 'Privacidad',
+    supportLink: 'Pedir ayuda ahora',
   },
 
   reminder: {
@@ -210,8 +213,91 @@ export const es: Messages = {
 
   crisis: {
     title: 'Parece que estás pasando por algo muy difícil.',
-    body: 'No tienes que enfrentarlo a solas. Si podrías estar en peligro, llama al número de emergencias de tu país. Puedes encontrar líneas de apoyo gratuitas y confidenciales en tu país en',
+    askedTitle: 'Habla con alguien ahora',
+    body: 'No tienes que enfrentarlo a solas. Estas líneas son gratuitas, confidenciales y atienden las 24 horas.',
+    call: (phone: string) => `Llamar al ${phone}`,
+    text: (phone: string) => `Escribir al ${phone}`,
+    emergency: 'Si podrías estar en peligro ahora mismo, llama al',
+    emergencyUnknown: 'Si podrías estar en peligro ahora mismo, llama al número de emergencias de tu país.',
+    emergencyShort: (phone: string) => `emergencias ${phone}`,
+    elsewhere: '¿Estás en otro lugar? Encuentra líneas gratuitas de cualquier país en',
+    findLine: 'Encuentra líneas de apoyo gratuitas y confidenciales en tu país en',
+    otherCountries: 'Líneas de apoyo en otros países',
     dismiss: 'Cerrar',
+  },
+
+  privacy: {
+    title: 'Privacidad',
+    updated: (date: string) => `Última actualización: ${date}`,
+    summary:
+      'En pocas palabras: lo que escribes se queda en tu dispositivo. Viz it no tiene anuncios, ni analíticas, ni rastreo, y nunca vende ni comparte nada sobre ti.',
+    sections: [
+      {
+        heading: 'Qué se guarda en tu dispositivo',
+        body: [
+          'Tus registros (lo que escribiste, los sentimientos y puntuaciones, tus propias calificaciones y etiquetas) y tus ajustes se guardan en este navegador, solo en este dispositivo.',
+          'Se quedan ahí hasta que los borres. Si borras los datos de este sitio en tu navegador, también se borran.',
+        ],
+      },
+      {
+        heading: 'Lo que Viz it no hace',
+        body: [
+          'Sin anuncios, sin analíticas, sin cookies de rastreo y sin scripts de otras empresas. La app no carga nada de otros sitios web.',
+          'Viz it nunca vende, alquila ni comparte tus datos.',
+        ],
+      },
+      {
+        heading: 'Al cargar el sitio',
+        body: [
+          'Este sitio está alojado en GitHub Pages. Como cualquier servicio de alojamiento, GitHub recibe tu dirección IP y datos básicos del navegador cuando cargas la app, y los guarda por seguridad. Viz it nunca los ve.',
+        ],
+        link: {
+          label: 'Declaración de privacidad de GitHub',
+          href: 'https://docs.github.com/es/site-policy/privacy-policies/github-general-privacy-statement',
+        },
+      },
+      {
+        heading: 'Análisis inteligente (opcional, desactivado por defecto)',
+        body: [
+          'Solo si lo activas. Cada vez que pulses Visualizar, solo las palabras del cuadro se envían al servidor de Viz it, que las pasa a Claude, un modelo de IA de Anthropic, para puntuar tus sentimientos. El servidor no las guarda ni las registra.',
+          'Anthropic las trata según su propia política de privacidad.',
+        ],
+        link: { label: 'Política de privacidad de Anthropic', href: 'https://www.anthropic.com/legal/privacy' },
+      },
+      {
+        heading: 'Cuenta y sincronización (opcional)',
+        body: [
+          'Solo si inicias sesión. Tu correo electrónico y los sentimientos, puntuaciones, fechas, etiquetas y calificaciones de tus registros se guardan en Supabase para sincronizarlos entre tus dispositivos. Lo que escribiste solo se incluye si activas “Sincronizar lo que escribo”.',
+          'Cada cuenta solo puede leer sus propios datos. Al eliminar tu cuenta se borra todo lo que contiene.',
+        ],
+        link: { label: 'Política de privacidad de Supabase', href: 'https://supabase.com/privacy' },
+      },
+      {
+        heading: 'Compartir, recordatorios y exportaciones',
+        body: [
+          'Las imágenes para compartir y los archivos exportados se crean en tu dispositivo y solo van adonde tú los envíes. Los recordatorios los muestra tu propio dispositivo, y el recordatorio de calendario es un archivo que agregas tú.',
+        ],
+      },
+      {
+        heading: 'Tus opciones',
+        body: [
+          'En Ajustes puedes exportar tus datos en CSV o JSON, borrarlos todos y eliminar tu cuenta. En Historial puedes borrar registros uno por uno.',
+        ],
+      },
+      {
+        heading: 'No es un servicio médico',
+        body: [
+          'Viz it es una herramienta de reflexión, no un diagnóstico ni un tratamiento. Sus puntuaciones vienen de una lista de palabras o de un modelo de IA y pueden equivocarse. Si lo estás pasando mal, busca a alguien con quien hablar. “Pedir ayuda ahora”, al pie de cada página, muestra líneas de ayuda gratuitas.',
+        ],
+      },
+      {
+        heading: 'Preguntas y cambios',
+        body: [
+          'Pregunta en la página de Viz it en GitHub. No incluyas nada personal, porque es pública. Si esta política cambia, la fecha de arriba también cambia.',
+        ],
+        link: { label: 'Viz it en GitHub', href: 'https://github.com/npanchal123/vizit/issues' },
+      },
+    ],
   },
 
   consent: {
@@ -273,6 +359,7 @@ export const es: Messages = {
     rescoreButton: 'Actualizarlos',
     rescoreDone: (n: number) => (n === 1 ? 'Se actualizó 1 registro.' : `Se actualizaron ${n} registros.`),
     rescoreNone: 'No hacía falta cambiar nada.',
+    privacyLink: 'Cómo trata Viz it tus datos',
   },
 
   account: {

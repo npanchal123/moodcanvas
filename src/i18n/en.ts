@@ -32,13 +32,16 @@ export const en = {
   app: {
     skipLink: 'Skip to main content',
     navLabel: 'Main',
-    views: { today: 'Check in', history: 'History', settings: 'Settings' },
+    views: { today: 'Check in', history: 'History', settings: 'Settings', privacy: 'Privacy' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     emptyResult: 'Your emotion bloom will appear here.',
     thisWeek: 'This week',
     aiFallback: 'Smarter analysis isn’t available right now, so the built-in word list was used.',
     loading: 'Loading…',
     footer: 'Viz it is a reflection tool. It isn’t a diagnosis or a replacement for professional support.',
+    footerLinks: 'More',
+    privacyLink: 'Privacy',
+    supportLink: 'Get support now',
   },
 
   reminder: {
@@ -219,8 +222,91 @@ export const en = {
 
   crisis: {
     title: 'It sounds like you’re going through something really hard.',
-    body: 'You don’t have to handle it alone. If you might be in danger, please call your local emergency number. You can find free, confidential support lines in your country at',
-    dismiss: 'Dismiss',
+    askedTitle: 'Talk to someone now',
+    body: 'You don’t have to handle it alone. These lines are free, confidential and open 24 hours.',
+    call: (phone: string) => `Call ${phone}`,
+    text: (phone: string) => `Text ${phone}`,
+    emergency: 'If you might be in danger right now, call',
+    emergencyUnknown: 'If you might be in danger right now, call your local emergency number.',
+    emergencyShort: (phone: string) => `emergency ${phone}`,
+    elsewhere: 'Somewhere else? Find free helplines in any country at',
+    findLine: 'Find free, confidential helplines in your country at',
+    otherCountries: 'Support lines in other countries',
+    dismiss: 'Close',
+  },
+
+  privacy: {
+    title: 'Privacy',
+    updated: (date: string) => `Last updated ${date}`,
+    summary:
+      'The short version: what you write stays on your device. Viz it has no ads, no analytics and no tracking, and never sells or shares anything about you.',
+    sections: [
+      {
+        heading: 'What’s saved on your device',
+        body: [
+          'Your check-ins (what you wrote, the feelings and scores, your own ratings and tags) and your settings are saved in this browser, on this device only.',
+          'They stay until you delete them. Clearing this site’s data in your browser deletes them too.',
+        ],
+      },
+      {
+        heading: 'What Viz it doesn’t do',
+        body: [
+          'No ads, no analytics, no tracking cookies, and no scripts from other companies. The app doesn’t load anything from other websites.',
+          'Viz it never sells, rents or shares your data.',
+        ],
+      },
+      {
+        heading: 'Loading the site',
+        body: [
+          'This site is hosted on GitHub Pages. Like any web host, GitHub receives your IP address and basic browser details when your browser loads the app, and keeps them for security. Viz it itself never sees them.',
+        ],
+        link: {
+          label: 'GitHub’s privacy statement',
+          href: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement',
+        },
+      },
+      {
+        heading: 'Smarter analysis (optional, off by default)',
+        body: [
+          'Only if you turn it on. Each time you press Visualize, only the words in the box are sent to the Viz it server, which passes them to Claude, an AI model made by Anthropic, to score your feelings. The server doesn’t store or log them.',
+          'Anthropic handles them under its own privacy policy.',
+        ],
+        link: { label: 'Anthropic’s privacy policy', href: 'https://www.anthropic.com/legal/privacy' },
+      },
+      {
+        heading: 'Account and sync (optional)',
+        body: [
+          'Only if you sign in. Your email address and your check-ins’ feelings, scores, dates, tags and ratings are stored with Supabase so they can sync between your devices. What you wrote is included only if you turn on “Sync what I wrote”.',
+          'Each account can only read its own data. Deleting your account deletes everything stored in it.',
+        ],
+        link: { label: 'Supabase’s privacy policy', href: 'https://supabase.com/privacy' },
+      },
+      {
+        heading: 'Sharing, reminders and exports',
+        body: [
+          'Share images and export files are made on your device and go only where you send them. Reminders come from your own device, and the calendar reminder is a file you add yourself.',
+        ],
+      },
+      {
+        heading: 'Your choices',
+        body: [
+          'In Settings you can export your data as CSV or JSON, delete all of it, and delete your account. You can delete single check-ins in History.',
+        ],
+      },
+      {
+        heading: 'Not a medical service',
+        body: [
+          'Viz it is a reflection tool, not a diagnosis or treatment. Its scores come from a word list or an AI model and can be wrong. If you’re struggling, please reach out to someone. “Get support now” at the bottom of every page lists free helplines.',
+        ],
+      },
+      {
+        heading: 'Questions and changes',
+        body: [
+          'Ask on the Viz it GitHub page. Please don’t include anything personal there, because it’s public. If this policy changes, the date at the top changes too.',
+        ],
+        link: { label: 'Viz it on GitHub', href: 'https://github.com/npanchal123/vizit/issues' },
+      },
+    ] as { heading: string; body: string[]; link?: { label: string; href: string } }[],
   },
 
   consent: {
@@ -281,6 +367,7 @@ export const en = {
     rescoreButton: 'Update them',
     rescoreDone: (n: number) => (n === 1 ? 'Updated 1 check-in.' : `Updated ${n} check-ins.`),
     rescoreNone: 'Nothing needed changing.',
+    privacyLink: 'How Viz it handles your data',
   },
 
   account: {

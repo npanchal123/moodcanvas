@@ -22,17 +22,20 @@ import type { EmotionEntry } from './lib/types';
 // History and Settings (and the Recharts bars) load on first use, keeping the first paint small.
 const History = lazy(() => import('./components/History'));
 const Settings = lazy(() => import('./components/Settings'));
+const Privacy = lazy(() => import('./components/Privacy'));
 
-type View = 'today' | 'history' | 'settings';
+type View = 'today' | 'history' | 'settings' | 'privacy';
 const VIEW_IDS: View[] = ['today', 'history', 'settings'];
+// The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
+const PRIVACY_HASH = '#privacy';
 
 const NO_ENTRIES: EmotionEntry[] = [];
 
 export default function App() {
   const { t, locale } = useI18n();
-  const [view, setView] = useState<View>('today');
+  const [view, setView] = useState<View>(() => (location.hash === PRIVACY_HASH ? 'privacy' : 'today'));
   const [currentId, setCurrentId] = useState<string | null>(null);
-  const [crisis, setCrisis] = useState(false);
+  const [crisis, setCrisis] = useState<'detected' | 'asked' | null>(null);
   const [calm, setCalm] = usePersistentFlag('moodcanvas.calmMode', false);
   const [onboarded, setOnboarded] = usePersistentFlag('moodcanvas.onboarded', false);
   const [aiEnabled, setAiEnabled] = usePersistentFlag('moodcanvas.aiAnalysis', false);
@@ -52,6 +55,31 @@ export default function App() {
     document.documentElement.classList.toggle('calm', calm);
   }, [calm]);
 
+  useEffect(() => {
+    function onHashChange() {
+      if (location.hash === PRIVACY_HASH) {
+        setView('privacy');
+        window.scrollTo(0, 0);
+      } else {
+        setView((v) => (v === 'privacy' ? 'today' : v));
+      }
+    }
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  function goTo(id: View) {
+    setView(id);
+    if (location.hash === PRIVACY_HASH) history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  function showSupport() {
+    setCrisis('asked');
+    window.scrollTo(0, 0);
+    // Move focus to the support lines so keyboard and screen reader users land on them.
+    requestAnimationFrame(() => document.getElementById('crisis-heading')?.focus());
+  }
+
   async function handleSubmit(text: string, chips: EmotionLabel[]): Promise<SubmitOutcome> {
     let result: AnalysisResult;
     let notice: string | undefined;
@@ -65,7 +93,7 @@ export default function App() {
     } else {
       result = analyze(text, { chips, language: locale });
     }
-    setCrisis(result.crisis);
+    setCrisis(result.crisis ? 'detected' : null);
     if (result.lowConfidence) return { result, notice };
 
     const id = crypto.randomUUID();
@@ -91,7 +119,7 @@ export default function App() {
 
   function checkInFromReminder() {
     reminderState.dismiss();
-    setView('today');
+    goTo('today');
     setCurrentId(null);
     // Wait for the Check in view to render before moving focus into it.
     requestAnimationFrame(() => document.getElementById(FEELING_INPUT_ID)?.focus());
@@ -118,7 +146,7 @@ export default function App() {
                   <button
                     type="button"
                     aria-current={view === id ? 'page' : undefined}
-                    onClick={() => setView(id)}
+                    onClick={() => goTo(id)}
                     className={`${toggle(view === id)} px-3 text-sm`}
                   >
                     {t.app.views[id]}
@@ -132,7 +160,7 @@ export default function App() {
 
       <main id="main" className="mx-auto max-w-5xl px-4 py-6">
         <h1 className="sr-only">{t.app.pageHeading(t.app.views[view])}</h1>
-        {crisis && <CrisisBanner onDismiss={() => setCrisis(false)} />}
+        {crisis && <CrisisBanner reason={crisis} onDismiss={() => setCrisis(null)} />}
         {reminderState.due && !(view === 'today' && current) && (
           <ReminderBanner onCheckIn={checkInFromReminder} onDismiss={reminderState.dismiss} />
         )}
@@ -177,12 +205,33 @@ export default function App() {
               sync={sync}
             />
           )}
+          {view === 'privacy' && <Privacy />}
         </Suspense>
       </main>
 
-      <footer className="mx-auto max-w-5xl px-4 pb-8 text-sm text-(--muted)">{t.app.footer}</footer>
+      <footer className="mx-auto flex max-w-5xl flex-col gap-2 px-4 pb-8 text-sm text-(--muted)">
+        <p>{t.app.footer}</p>
+        <nav aria-label={t.app.footerLinks}>
+          <ul className="flex flex-wrap gap-x-6">
+            <li>
+              <a href={PRIVACY_HASH} className="inline-flex min-h-11 items-center font-medium text-(--text) underline">
+                {t.app.privacyLink}
+              </a>
+            </li>
+            <li>
+              <button
+                type="button"
+                onClick={showSupport}
+                className="inline-flex min-h-11 items-center font-medium text-(--text) underline"
+              >
+                {t.app.supportLink}
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </footer>
 
-      <Onboarding open={!onboarded} onDone={() => setOnboarded(true)} />
+      <Onboarding open={!onboarded && view !== 'privacy'} onDone={() => setOnboarded(true)} />
     </>
   );
 }

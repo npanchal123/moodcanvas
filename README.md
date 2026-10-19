@@ -189,6 +189,17 @@ appears without an icon, label or pattern.
   - check-ins with no text
   - feelings picked from the list
 
+**Before sharing widely:**
+- **Privacy page:** at `…/#privacy`, linked from the footer of every page and from Settings → Your data
+  (`src/components/Privacy.tsx`; the text is in `src/i18n`). If you change what the app collects, change this
+  page and its `LAST_UPDATED` date too.
+- **Crisis support lines:** when someone writes something worrying, or presses "Get support now" in the
+  footer, the banner shows the helpline and emergency number for their country, as tap-to-call links.
+  - The country is guessed from the device's time zone, then its language settings.
+  - Covered: India, the US, Canada, the UK, Ireland, Australia, Spain and Mexico. Every country is listed
+    under "Support lines in other countries", and findahelpline.com covers the rest.
+  - The numbers in `src/lib/helplines.ts` were verified in October 2026. Re-check them before each release.
+
 **Ideas for later:**
 - Real push notifications
 - An educator or group mode with anonymized totals
@@ -203,9 +214,10 @@ e2e/               Playwright browser and axe accessibility tests
 src/i18n/          en/es messages, I18nProvider, date formatting
 src/lib/           analyzer and lexicons/ (en, es, emoji), aiResult, aiAnalyzer, entries (all writes),
                    db (Dexie v2), sync, syncMerge, account, calendar, reflection, insights, reminders,
-                   install, theme, stats, export, tags
+                   install, theme, stats, export, tags, helplines
 src/components/    EntryForm, ResultPanel, TagEditor, ShareDialog, History, Insights, MoodCalendar,
                    FrequencyChart (+ lazy FrequencyBars), Settings, AccountPanel, DeleteAccountDialog,
-                   AiConsentDialog, ReminderBanner, Onboarding, CrisisBanner, EmotionBloom, IntensityGauge
+                   AiConsentDialog, ReminderBanner, Onboarding, CrisisBanner, Privacy, EmotionBloom,
+                   IntensityGauge
 public/            icons, favicon, service-worker notification handler
 ```

@@ -47,6 +47,15 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
       await page.getByRole('dialog', { name: 'Turn on smarter analysis?' }).waitFor();
       await expectNoA11yViolations(page, 'AI consent dialog');
     });
+
+    test('privacy page and support lines', async ({ page }) => {
+      await skipOnboarding(page);
+      await page.getByRole('link', { name: 'Privacy' }).click();
+      await page.getByRole('heading', { name: 'Privacy', level: 2 }).waitFor();
+      await page.getByRole('button', { name: 'Get support now' }).click();
+      await page.getByText('Support lines in other countries').click();
+      await expectNoA11yViolations(page, 'privacy and support');
+    });
   });
 }
 

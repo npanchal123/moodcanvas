@@ -256,6 +256,9 @@ export default function Settings(props: Props) {
             {t.settings.deleteAll}
           </button>
         </div>
+        <a href="#privacy" className="inline-flex min-h-11 items-center self-start font-medium underline">
+          {t.settings.privacyLink}
+        </a>
 
         {(staleCount > 0 || rescoreStatus) && (
           <div className="flex flex-col gap-2 rounded-xl bg-(--surface-alt) p-4">
