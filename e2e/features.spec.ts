@@ -34,7 +34,7 @@ test('the reminder calendar file downloads', async ({ page }) => {
     page.waitForEvent('download'),
     page.getByRole('button', { name: 'Add a daily reminder to my calendar' }).click(),
   ]);
-  expect(download.suggestedFilename()).toBe('moodcanvas-reminder.ics');
+  expect(download.suggestedFilename()).toBe('vizit-reminder.ics');
 });
 
 test('theme and language switch immediately and persist', async ({ page }) => {

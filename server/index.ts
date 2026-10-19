@@ -146,5 +146,5 @@ createServer((req, res) => {
   if (req.method === 'GET' || req.method === 'HEAD') return serveStatic(req, res);
   res.writeHead(405).end();
 }).listen(PORT, () => {
-  console.log(`MoodCanvas server on http://localhost:${PORT}`);
+  console.log(`Viz it server on http://localhost:${PORT}`);
 });

@@ -109,7 +109,7 @@ export default function App() {
       <header className="border-b border-(--border) bg-(--surface)">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <p className="text-lg font-semibold">
-            <span aria-hidden="true">🌸 </span>MoodCanvas
+            <span aria-hidden="true">🌸 </span>Viz it
           </p>
           <nav aria-label={t.app.navLabel}>
             <ul className="flex gap-2">

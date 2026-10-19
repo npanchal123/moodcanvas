@@ -24,12 +24,12 @@ export const es: Messages = {
     skipLink: 'Saltar al contenido principal',
     navLabel: 'Principal',
     views: { today: 'Registrar', history: 'Historial', settings: 'Ajustes' },
-    pageHeading: (view: string) => `MoodCanvas: ${view}`,
+    pageHeading: (view: string) => `Viz it: ${view}`,
     emptyResult: 'Aquí aparecerá tu flor de emociones.',
     thisWeek: 'Esta semana',
     aiFallback: 'El análisis inteligente no está disponible ahora, así que se usó la lista de palabras integrada.',
     loading: 'Cargando…',
-    footer: 'MoodCanvas es una herramienta de reflexión. No es un diagnóstico ni reemplaza la ayuda profesional.',
+    footer: 'Viz it es una herramienta de reflexión. No es un diagnóstico ni reemplaza la ayuda profesional.',
   },
 
   reminder: {
@@ -38,9 +38,9 @@ export const es: Messages = {
     bannerAction: 'Registrar ahora',
     dismiss: 'Ahora no',
     notificationTitle: 'Hora de registrar',
-    notificationBody: '¿Cómo te sientes? Toca para abrir MoodCanvas.',
-    icsSummary: 'Registro en MoodCanvas',
-    icsDescription: (url: string) => `¿Cómo te sientes? Abre MoodCanvas: ${url}`,
+    notificationBody: '¿Cómo te sientes? Toca para abrir Viz it.',
+    icsSummary: 'Registro en Viz it',
+    icsDescription: (url: string) => `¿Cómo te sientes? Abre Viz it: ${url}`,
   },
 
   entry: {
@@ -219,9 +219,9 @@ export const es: Messages = {
     description: 'El análisis inteligente entiende sentimientos mezclados y sutiles mejor que la lista de palabras integrada.',
     whatChanges: 'Qué cambia:',
     points: [
-      'Cuando pulses Visualizar, las palabras que escribiste en ese cuadro se envían al servidor de MoodCanvas y de ahí a Claude, un modelo de IA de Anthropic, que las lee para puntuar tus sentimientos.',
+      'Cuando pulses Visualizar, las palabras que escribiste en ese cuadro se envían al servidor de Viz it y de ahí a Claude, un modelo de IA de Anthropic, que las lee para puntuar tus sentimientos.',
       'No se envía nada más: ni tu historial, ni etiquetas, ni calificaciones, ni tu cuenta.',
-      'Si no está disponible, MoodCanvas usa la lista de palabras integrada.',
+      'Si no está disponible, Viz it usa la lista de palabras integrada.',
       'Puedes desactivarlo cuando quieras en Ajustes.',
     ],
     privacyBefore: 'Lee la',
@@ -248,14 +248,14 @@ export const es: Messages = {
     reminderTitle: 'Recordarme registrar cada día',
     reminderTime: 'Hora del recordatorio',
     reminderHint:
-      'MoodCanvas solo puede recordarte mientras está abierta, o instalada y en uso. Para un recordatorio que siempre llegue, agrégalo a tu calendario.',
+      'Viz it solo puede recordarte mientras está abierta, o instalada y en uso. Para un recordatorio que siempre llegue, agrégalo a tu calendario.',
     reminderBlocked:
-      'Las notificaciones están bloqueadas para este sitio, así que el recordatorio aparecerá solo dentro de MoodCanvas.',
+      'Las notificaciones están bloqueadas para este sitio, así que el recordatorio aparecerá solo dentro de Viz it.',
     reminderCalendar: 'Agregar un recordatorio diario a mi calendario',
     installHeading: 'Instalar la app',
-    installHint: 'Instala MoodCanvas para abrirla desde tu pantalla de inicio o escritorio. Funciona sin conexión.',
-    installButton: 'Instalar MoodCanvas',
-    installDone: 'MoodCanvas está instalada en este dispositivo.',
+    installHint: 'Instala Viz it para abrirla desde tu pantalla de inicio o escritorio. Funciona sin conexión.',
+    installButton: 'Instalar Viz it',
+    installDone: 'Viz it está instalada en este dispositivo.',
     installIos: 'En iPhone o iPad: toca el botón Compartir en Safari y luego “Agregar a inicio”.',
     installUnavailable:
       'Tu navegador no ofrece instalarla ahora mismo. Busca “Instalar” o “Agregar a pantalla de inicio” en su menú.',
@@ -277,7 +277,7 @@ export const es: Messages = {
 
   account: {
     notConfigured:
-      'La sincronización no está configurada en esta copia de MoodCanvas, así que todo se queda en este dispositivo. (Para desarrolladores: agrega los datos de Supabase a .env. Consulta el README.)',
+      'La sincronización no está configurada en esta copia de Viz it, así que todo se queda en este dispositivo. (Para desarrolladores: agrega los datos de Supabase a .env. Consulta el README.)',
     intro: 'Inicia sesión para respaldar tus registros y verlos en tus otros dispositivos. No necesitas contraseña.',
     emailLabel: 'Correo electrónico',
     sendLink: 'Enviarme un enlace para entrar',

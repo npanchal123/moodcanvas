@@ -5,7 +5,7 @@ import type { EmotionLabel } from './emotions';
 export const AI_ANALYZER_VERSION = 'ai-claude-opus-5-5-1';
 
 /**
- * Sends only the text the user typed to MoodCanvas's own server, which asks Claude.
+ * Sends only the text the user typed to the Viz it server, which asks Claude.
  * Throws if the server can't help, so the caller can fall back to the word list.
  */
 export async function analyzeWithAI(text: string, chips: EmotionLabel[]): Promise<AnalysisResult> {

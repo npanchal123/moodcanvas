@@ -58,7 +58,7 @@ function icsStamp(d: Date): string {
 
 /**
  * A daily repeating calendar event with an alert. Calendars deliver it even when
- * MoodCanvas is closed, which a web page can't do on its own without push servers.
+ * Viz it is closed, which a web page can't do on its own without push servers.
  * Uses floating local time, so it stays at the same clock time when travelling.
  */
 export function buildReminderIcs(time: string, appUrl: string, t: Messages, now = new Date()): string {
@@ -67,7 +67,7 @@ export function buildReminderIcs(time: string, appUrl: string, t: Messages, now 
   return [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//MoodCanvas//Daily reminder//EN',
+    'PRODID:-//Viz it//Daily reminder//EN',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     'UID:daily-check-in@moodcanvas',

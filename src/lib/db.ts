@@ -12,7 +12,11 @@ interface MetaRow {
   value: unknown;
 }
 
-/** Local-first store in IndexedDB. Sync (lib/sync.ts) layers on top of it. */
+/**
+ * Local-first store in IndexedDB. Sync (lib/sync.ts) layers on top of it.
+ * The app was called MoodCanvas before Viz it. The database and the `moodcanvas.*` localStorage keys keep that
+ * name on purpose: renaming them would hide existing users' check-ins and settings.
+ */
 export const db = new Dexie('moodcanvas') as Dexie & {
   entries: EntityTable<EmotionEntry, 'id'>;
   deletions: EntityTable<Deletion, 'id'>;

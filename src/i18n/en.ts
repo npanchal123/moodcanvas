@@ -33,12 +33,12 @@ export const en = {
     skipLink: 'Skip to main content',
     navLabel: 'Main',
     views: { today: 'Check in', history: 'History', settings: 'Settings' },
-    pageHeading: (view: string) => `MoodCanvas: ${view}`,
+    pageHeading: (view: string) => `Viz it: ${view}`,
     emptyResult: 'Your emotion bloom will appear here.',
     thisWeek: 'This week',
     aiFallback: 'Smarter analysis isn’t available right now, so the built-in word list was used.',
     loading: 'Loading…',
-    footer: 'MoodCanvas is a reflection tool. It isn’t a diagnosis or a replacement for professional support.',
+    footer: 'Viz it is a reflection tool. It isn’t a diagnosis or a replacement for professional support.',
   },
 
   reminder: {
@@ -47,9 +47,9 @@ export const en = {
     bannerAction: 'Check in now',
     dismiss: 'Not now',
     notificationTitle: 'Time to check in',
-    notificationBody: 'How are you feeling? Tap to open MoodCanvas.',
-    icsSummary: 'Check in with MoodCanvas',
-    icsDescription: (url: string) => `How are you feeling? Open MoodCanvas: ${url}`,
+    notificationBody: 'How are you feeling? Tap to open Viz it.',
+    icsSummary: 'Check in with Viz it',
+    icsDescription: (url: string) => `How are you feeling? Open Viz it: ${url}`,
   },
 
   entry: {
@@ -228,9 +228,9 @@ export const en = {
     description: 'Smarter analysis understands mixed and subtle feelings better than the built-in word list.',
     whatChanges: 'What changes:',
     points: [
-      'When you press Visualize, the words you typed in that box are sent to MoodCanvas’s server and on to Claude, an AI model made by Anthropic, which reads them to score your feelings.',
+      'When you press Visualize, the words you typed in that box are sent to the Viz it server and on to Claude, an AI model made by Anthropic, which reads them to score your feelings.',
       'Nothing else is sent: not your history, tags, ratings or account.',
-      'If it isn’t available, MoodCanvas quietly uses the built-in word list instead.',
+      'If it isn’t available, Viz it quietly uses the built-in word list instead.',
       'You can turn it off at any time in Settings.',
     ],
     privacyBefore: 'Read',
@@ -257,13 +257,13 @@ export const en = {
     reminderTitle: 'Remind me to check in every day',
     reminderTime: 'Reminder time',
     reminderHint:
-      'MoodCanvas can only remind you while it’s open, or installed and running. For a reminder that always arrives, add it to your calendar.',
-    reminderBlocked: 'Notifications are blocked for this site, so the reminder will appear inside MoodCanvas only.',
+      'Viz it can only remind you while it’s open, or installed and running. For a reminder that always arrives, add it to your calendar.',
+    reminderBlocked: 'Notifications are blocked for this site, so the reminder will appear inside Viz it only.',
     reminderCalendar: 'Add a daily reminder to my calendar',
     installHeading: 'Install the app',
-    installHint: 'Install MoodCanvas to open it from your home screen or desktop. It works offline.',
-    installButton: 'Install MoodCanvas',
-    installDone: 'MoodCanvas is installed on this device.',
+    installHint: 'Install Viz it to open it from your home screen or desktop. It works offline.',
+    installButton: 'Install Viz it',
+    installDone: 'Viz it is installed on this device.',
     installIos: 'On iPhone or iPad: tap the Share button in Safari, then “Add to Home Screen”.',
     installUnavailable:
       'Your browser isn’t offering to install right now. Look for “Install” or “Add to Home Screen” in its menu.',
@@ -285,7 +285,7 @@ export const en = {
 
   account: {
     notConfigured:
-      'Sync isn’t set up for this copy of MoodCanvas, so everything stays on this device. (For developers: add your Supabase details to .env. See the README.)',
+      'Sync isn’t set up for this copy of Viz it, so everything stays on this device. (For developers: add your Supabase details to .env. See the README.)',
     intro: 'Sign in to back up your check-ins and see them on your other devices. No password needed.',
     emailLabel: 'Email',
     sendLink: 'Email me a sign-in link',

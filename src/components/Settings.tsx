@@ -46,7 +46,7 @@ export default function Settings(props: Props) {
   function exportFile(kind: 'csv' | 'json') {
     const content = kind === 'csv' ? entriesToCsv(entries, includeText) : entriesToJson(entries, includeText);
     const type = kind === 'csv' ? 'text/csv' : 'application/json';
-    downloadBlob(new Blob([content], { type }), `moodcanvas-export.${kind}`);
+    downloadBlob(new Blob([content], { type }), `vizit-export.${kind}`);
   }
 
   async function handleRescore() {
@@ -67,7 +67,7 @@ export default function Settings(props: Props) {
 
   function downloadCalendar() {
     const ics = buildReminderIcs(reminder.time, window.location.origin + import.meta.env.BASE_URL, t);
-    downloadBlob(new Blob([ics], { type: 'text/calendar' }), 'moodcanvas-reminder.ics');
+    downloadBlob(new Blob([ics], { type: 'text/calendar' }), 'vizit-reminder.ics');
   }
 
   return (

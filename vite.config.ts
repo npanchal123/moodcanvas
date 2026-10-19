@@ -17,8 +17,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'sw-notifications.js'],
       manifest: {
-        name: 'MoodCanvas',
-        short_name: 'MoodCanvas',
+        name: 'Viz it',
+        short_name: 'Viz it',
         description: 'Write how you feel and see it as a picture and a score.',
         start_url: base,
         scope: base,

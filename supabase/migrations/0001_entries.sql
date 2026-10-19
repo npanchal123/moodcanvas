@@ -1,4 +1,4 @@
--- MoodCanvas sync table. Run in the Supabase SQL editor, or with `supabase db push`.
+-- Viz it sync table. Run in the Supabase SQL editor, or with `supabase db push`.
 -- Each user can only ever see and change their own rows (row-level security below).
 
 create table if not exists public.entries (

@@ -1,5 +1,5 @@
 // Imported into the generated service worker (see vite.config.ts → workbox.importScripts).
-// Tapping a reminder notification focuses an open MoodCanvas window, or opens a new one.
+// Tapping a reminder notification focuses an open Viz it window, or opens a new one.
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(

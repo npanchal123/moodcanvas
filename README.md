@@ -1,6 +1,8 @@
-# MoodCanvas
+# Viz it
 
-Write how you feel in your own words. MoodCanvas turns it into an "emotion bloom" picture and an intensity
+**Try it:** https://npanchal123.github.io/vizit/
+
+Write how you feel in your own words. Viz it turns it into an "emotion bloom" picture and an intensity
 score from 0 to 100, and helps you spot patterns over time.
 
 The app is local-first: by default everything stays in the browser's IndexedDB. Two features are optional,
@@ -71,13 +73,13 @@ iPhone/iPad.
 
 ### Reminders
 
-A web page can't wake itself up when it's closed unless you run a push server. MoodCanvas offers two kinds of
+A web page can't wake itself up when it's closed unless you run a push server. Viz it offers two kinds of
 reminder instead:
 1. **While the app is open or installed:** at your chosen time, if you haven't checked in today, you get a
    gentle banner. If the tab is in the background and notifications are allowed, you get a system
    notification instead. Notification permission is only requested when you turn reminders on.
 2. **Always:** "Add a daily reminder to my calendar" downloads an `.ics` file with a daily repeating event
-   and an alert. Your calendar app delivers it even when MoodCanvas is closed.
+   and an alert. Your calendar app delivers it even when Viz it is closed.
 
 Real push notifications (Web Push with VAPID keys and a scheduled sender) would be a later addition.
 

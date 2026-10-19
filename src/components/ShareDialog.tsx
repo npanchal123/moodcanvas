@@ -87,7 +87,7 @@ export function ShareDialog({ entry, open, onOpenChange }: Props) {
             {include.text && entry.text && (
               <blockquote className="mt-2 break-words italic">“{entry.text}”</blockquote>
             )}
-            <p className="mt-2 text-xs text-(--muted)">MoodCanvas</p>
+            <p className="mt-2 text-xs text-(--muted)">Viz it</p>
           </div>
 
           <fieldset className="flex flex-col gap-1">
