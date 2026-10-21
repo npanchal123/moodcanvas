@@ -21,6 +21,7 @@ export const es: Messages = {
   bands: { mild: 'Leve', moderate: 'Moderada', strong: 'Fuerte' },
 
   app: {
+    tagline: 'Visualiza · Imagina · Crea',
     skipLink: 'Saltar al contenido principal',
     navLabel: 'Principal',
     views: { today: 'Visualizar', practice: 'Biblioteca', history: 'Diario', settings: 'Ajustes', privacy: 'Privacidad' },

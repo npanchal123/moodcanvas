@@ -30,6 +30,7 @@ export const en = {
   bands: { mild: 'Mild', moderate: 'Moderate', strong: 'Strong' },
 
   app: {
+    tagline: 'Visualize · Imagine · Create',
     skipLink: 'Skip to main content',
     navLabel: 'Main',
     views: { today: 'Visualize', practice: 'Library', history: 'Journal', settings: 'Settings', privacy: 'Privacy' },

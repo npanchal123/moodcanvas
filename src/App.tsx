@@ -205,11 +205,14 @@ export default function App() {
                 goTo('today');
                 window.scrollTo(0, 0);
               }}
-              className="inline-flex items-center gap-2 rounded font-bold tracking-tight no-underline"
+              className="wordmark inline-flex items-center gap-2.5 rounded no-underline"
             >
-              <img src={`${HOME_URL}logo-mark.png`} alt="" width={49} height={44} className="h-11 w-auto" />
-              <span>
-                Viz<span className="text-(--brand)">It</span>
+              <img src={`${HOME_URL}logo-mark.png`} alt="" width={56} height={50} className="h-12.5 w-auto" />
+              <span className="flex flex-col">
+                <span className="text-[1.75rem] leading-none font-extrabold">
+                  viz <span className="wordmark-it">it</span>
+                </span>
+                <span className="tagline mt-1 text-xs font-semibold text-(--muted)">{t.app.tagline}</span>
               </span>
             </a>
           </p>

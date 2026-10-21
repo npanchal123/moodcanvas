@@ -55,10 +55,10 @@ test('places and goals can be picked without writing anything', async ({ page })
 test('the site name leads back to the front page', async ({ page }) => {
   await skipOnboarding(page);
   await create(page, 'Take me to the beach');
-  await page.getByRole('link', { name: 'VizIt' }).click();
+  await page.getByRole('link', { name: /^viz it/ }).click();
   await expect(page.getByLabel(FEELING_LABEL)).toBeVisible();
   await page.getByRole('button', { name: 'Journal' }).click();
-  await page.getByRole('link', { name: 'VizIt' }).click();
+  await page.getByRole('link', { name: /^viz it/ }).click();
   await expect(page.getByRole('button', { name: 'Visualize' })).toHaveAttribute('aria-current', 'page');
 });
 

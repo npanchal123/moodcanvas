@@ -24,6 +24,7 @@ export const hi: Messages = {
   bands: { mild: 'हल्का', moderate: 'मध्यम', strong: 'तेज़' },
 
   app: {
+    tagline: 'देखें · कल्पना करें · रचें',
     skipLink: 'मुख्य हिस्से पर जाएँ',
     navLabel: 'मुख्य',
     views: { today: 'विज़ुअलाइज़', practice: 'लाइब्रेरी', history: 'डायरी', settings: 'सेटिंग्स', privacy: 'गोपनीयता' },

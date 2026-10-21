@@ -14,7 +14,11 @@
   --border: #d6d5cd;
   --track: #ecebe5;
   --accent: #4338ca;
-  --brand: #0f766e; /* the teal "It" of the logo */
+  /* The logo's wordmark: navy "viz", teal-to-blue "it". */
+  --brand: #0f766e;
+  --brand-ink: #1b2a4a;
+  --brand-from: #2a9d8f;
+  --brand-to: #2b7fb0;
   --accent-hover: #3730a3;
   --on-accent: #ffffff;
   --focus: #2563eb;
@@ -33,6 +37,9 @@
     --track: #2c2f37;
     --accent: #a5b4fc;
     --brand: #5eead4;
+    --brand-ink: #ecedf0;
+    --brand-from: #5eead4;
+    --brand-to: #7dd3fc;
     --accent-hover: #c7d2fe;
     --on-accent: #111216;
     --focus: #93c5fd;
@@ -51,6 +58,9 @@
   --track: #2c2f37;
   --accent: #a5b4fc;
   --brand: #5eead4;
+  --brand-ink: #ecedf0;
+  --brand-from: #5eead4;
+  --brand-to: #7dd3fc;
   --accent-hover: #c7d2fe;
   --on-accent: #111216;
   --focus: #93c5fd;
@@ -69,6 +79,9 @@
   --track: #d4d4d4;
   --accent: #1e1b9b;
   --brand: #004d40;
+  --brand-ink: #000000;
+  --brand-from: #004d40;
+  --brand-to: #004d40;
   --accent-hover: #0f0d66;
   --on-accent: #ffffff;
   --focus: #c2410c;
@@ -133,4 +146,30 @@ body {
 .calm *::after {
   animation: none !important;
   transition: none !important;
+}
+
+/* The wordmark in the header, drawn like the logo artwork. */
+.wordmark {
+  font-family: "Nunito", system-ui, sans-serif;
+  color: var(--brand-ink);
+}
+.wordmark-it {
+  background: linear-gradient(180deg, var(--brand-from), var(--brand-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@media (forced-colors: active) {
+  .wordmark-it {
+    background: none;
+    color: CanvasText;
+  }
+}
+.tagline {
+  letter-spacing: 0.12em;
+}
+/* Spacing letters apart breaks up Devanagari, whose letters join; Nunito has no Devanagari either. */
+:lang(hi) .tagline {
+  letter-spacing: normal;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
