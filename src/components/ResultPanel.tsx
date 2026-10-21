@@ -4,22 +4,25 @@ import { formatDateTime, useI18n } from '../i18n';
 import { AI_ANALYZER_VERSION } from '../lib/aiAnalyzer';
 import { EMOTION_META, emotionColor } from '../lib/emotions';
 import { updateEntry } from '../lib/entries';
-import { describeEntry, displayEmotions, effectiveIntensity } from '../lib/summary';
+import { beforeFrom, describeEntry, displayEmotions, effectiveIntensity } from '../lib/summary';
 import { useColorScheme } from '../lib/theme';
-import type { EmotionEntry } from '../lib/types';
+import type { EmotionEntry, PracticeBefore } from '../lib/types';
+import { PRACTICE_CONTENT, PRACTICE_META, practiceFor, type PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { IntensityGauge } from './IntensityGauge';
 import { ShareDialog } from './ShareDialog';
 import { TagEditor } from './TagEditor';
-import { btnGhost, btnSecondary, card } from './ui';
+import { btnGhost, btnPrimary, btnSecondary, card } from './ui';
 
 interface Props {
   entry: EmotionEntry;
   animate: boolean;
   onNew: () => void;
+  /** Absent when a practice shouldn't be suggested (e.g. the crisis banner is showing). */
+  onPractice?: (id: PracticeId, before: PracticeBefore) => void;
 }
 
-export function ResultPanel({ entry, animate, onNew }: Props) {
+export function ResultPanel({ entry, animate, onNew, onPractice }: Props) {
   const { t, locale } = useI18n();
   const scheme = useColorScheme();
   const headingRef = useRef<HTMLHeadingElement>(null);
@@ -30,6 +33,8 @@ export function ResultPanel({ entry, animate, onNew }: Props) {
 
   const emotions = displayEmotions(entry);
   const [primary, ...others] = emotions;
+  const suggested = practiceFor(primary.label);
+  const suggestedTitle = PRACTICE_CONTENT[locale].practices[suggested].title;
 
   // Move focus to the result so keyboard and screen-reader users land on it.
   useEffect(() => {
@@ -65,6 +70,19 @@ export function ResultPanel({ entry, animate, onNew }: Props) {
           <span className="font-medium">{t.result.alsoPresent}</span>
           {others.map((e) => `${t.emotions[e.label].name} (${e.intensity})`).join(', ')}
         </p>
+      )}
+
+      {onPractice && (
+        <div className="rounded-xl border-2 border-(--accent) p-4">
+          <h3 className="font-semibold">
+            <span aria-hidden="true">{PRACTICE_META[suggested].icon} </span>
+            {t.practice.resultTitle}
+          </h3>
+          <p className="mt-1">{t.practice.resultBody(t.emotions[primary.label].adjective, suggestedTitle)}</p>
+          <button type="button" onClick={() => onPractice(suggested, beforeFrom(entry))} className={`${btnPrimary} mt-3`}>
+            {t.practice.resultButton(suggestedTitle)}
+          </button>
+        </div>
       )}
 
       <div className="rounded-xl bg-(--surface-alt) p-4">

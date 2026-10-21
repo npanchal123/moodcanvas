@@ -109,6 +109,55 @@ test('the privacy page has its own link and skips onboarding', async ({ page }) 
   await expect(page).not.toHaveURL(/#privacy/);
 });
 
+test('a check-in leads into a matched practice, with a before/after comparison', async ({ page }) => {
+  await page.clock.install(); // Lets the test skip through the 3 minutes.
+  await skipOnboarding(page);
+  await checkIn(page, 'Really anxious and stressed about my exam');
+  await page.getByRole('button', { name: 'Start Safe Place' }).click();
+
+  await expect(page.getByRole('heading', { name: 'Safe Place' })).toBeFocused();
+  await page.getByRole('button', { name: '3 min' }).click();
+  await page.getByLabel('Voice guide').uncheck();
+  await page.getByLabel('Background sound').uncheck();
+  await page.getByRole('button', { name: 'Begin' }).click();
+
+  await expect(page.getByText(/This practice helps you build a calm, safe place/)).toBeVisible();
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Resume' }).click();
+  await page.clock.runFor('04:00');
+
+  await expect(page.getByRole('heading', { name: 'Well done' })).toBeFocused();
+  await expect(page.getByText(/Before, your anxiety was \d+ out of 100/)).toBeVisible();
+  await page.getByRole('slider').press('Home');
+  await page.getByRole('button', { name: 'Save' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Fear / Anxiety:' })).toContainText('→ 0');
+
+  await page.getByRole('button', { name: 'History' }).click();
+  await expect(page.getByRole('region', { name: 'Practice log' })).toContainText('Safe Place · 3 min');
+});
+
+test('beginners can learn the basics and try a first practice', async ({ page }) => {
+  await skipOnboarding(page);
+  await page.getByRole('button', { name: 'Practice', exact: true }).click();
+  await expect(page.getByText('What is visualization?')).toBeVisible();
+  await page.getByText('What if I can’t see pictures?').click();
+  await expect(page.getByText(/That’s very common/)).toBeVisible();
+  await page.getByRole('button', { name: /Try your first visualization/ }).click();
+  await expect(page.getByRole('heading', { name: 'Your first visualization' })).toBeVisible();
+  // It has one length, so there's no length choice.
+  await expect(page.getByText('How long?')).toBeHidden();
+  await page.getByRole('button', { name: 'Back' }).click();
+  await expect(page.getByRole('heading', { name: 'All practices' })).toBeVisible();
+});
+
+test('no practice is suggested when the crisis banner shows', async ({ page }) => {
+  await skipOnboarding(page);
+  await page.getByLabel('How are you feeling?').fill('I feel so sad and I want to die');
+  await page.getByRole('button', { name: 'Visualize' }).click();
+  await page.locator('#result-heading').waitFor();
+  await expect(page.getByText('Try a guided visualization')).toBeHidden();
+});
+
 test('works offline once loaded (installable app)', async ({ page, context }) => {
   await skipOnboarding(page);
   await page.evaluate(() => navigator.serviceWorker.ready);

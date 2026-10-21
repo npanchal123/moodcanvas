@@ -1,5 +1,10 @@
 import type { Messages } from '../i18n/en';
-import type { EmotionEntry, EmotionScore } from './types';
+import type { EmotionEntry, EmotionScore, PracticeBefore } from './types';
+
+/** How someone felt at this check-in, as the "before" of a practice started from it. */
+export function beforeFrom(entry: EmotionEntry): PracticeBefore {
+  return { entryId: entry.id, emotion: displayEmotions(entry)[0].label, intensity: effectiveIntensity(entry) };
+}
 
 /** The user's own rating wins over the analyzer's score for the primary emotion. */
 export function effectiveIntensity(entry: EmotionEntry): number {

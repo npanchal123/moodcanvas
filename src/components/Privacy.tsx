@@ -2,7 +2,7 @@ import { useI18n } from '../i18n';
 import { card } from './ui';
 
 /** Bump this whenever the policy text changes. */
-const LAST_UPDATED = new Date(2026, 9, 19);
+const LAST_UPDATED = new Date(2026, 9, 21);
 
 /** Default export so App can load it lazily. Reachable at #privacy so it can be linked to. */
 export default function Privacy() {

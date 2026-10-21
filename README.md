@@ -2,8 +2,62 @@
 
 **Try it:** https://npanchal123.github.io/vizit/
 
-Write how you feel in your own words. Viz it turns it into an "emotion bloom" picture and an intensity
-score from 0 to 100, and helps you spot patterns over time.
+Viz it teaches guided visualization: a kind of meditation where you use your imagination to change how
+you feel. Write how you feel in your own words, and Viz it shows it as an "emotion bloom" picture with an
+intensity score from 0 to 100. It then suggests a short guided practice for that feeling, and afterwards shows
+how much the feeling changed.
+
+## Guided visualization
+
+- **Practice tab:**
+  - Five short lessons for complete beginners: what visualization is, what to do if you can't "see" pictures,
+    how to start, wandering minds, and staying safe.
+  - "Your first visualization," a 3-minute exercise imagining a lemon.
+  - The full library.
+- **Practices matched to feelings** (`src/practices/`):
+
+  | Feeling | Practice |
+  |---|---|
+  | Fear / anxiety | 🏝️ Safe Place |
+  | Sadness | 🕯️ Warm Light |
+  | Anger, disgust | 🍃 Cooling Stream |
+  | Joy | 🌼 Savoring |
+  | Calm | 🌳 Grounding Tree |
+  | Surprise / overwhelm | ☁️ Clear Sky |
+
+  Each comes in 3, 5 and 10 minute versions. Longer versions add steps, and the silences between steps stretch
+  so the session lasts the chosen length (`src/lib/session.ts`).
+- **The player** (`src/components/PracticeSession.tsx`):
+  - a voice guide with captions
+  - a breathing orb (4 s in, 6 s out)
+  - a soft generated ocean sound
+  - pause and end buttons
+  - keeps the screen awake during a session
+- **Before and after:** a practice started from a check-in asks how strong that feeling is afterwards. History
+  shows the practice log with each change, such as "Fear / Anxiety: 75 → 40".
+- **Safety:** no practice is suggested when the crisis banner is showing. Every practice says you can stop at
+  any time.
+- **Writing new scripts:** keep step ids, tiers and pauses the same in `en.ts` and `es.ts`. A unit test checks
+  this, and that each version leaves at least a third of its time quiet.
+
+### Natural-voice audio (ElevenLabs)
+
+Until recordings exist, practices use the device's built-in voice. To make natural-voice MP3s:
+
+1. Create an ElevenLabs account. The **Starter** plan covers the whole library in one month: about 18,000
+   characters for both languages. The free plan has too few characters and no commercial use.
+2. Put `ELEVENLABS_API_KEY` in `.env`, then run `npm run audio -- --voices` and pick a calm, warm voice.
+   Put its id in `.env` as `ELEVENLABS_VOICE_ID`.
+3. Run `npm run audio -- --dry-run` to see what will be generated, then `npm run audio`. Add `--locale en`
+   to do one language at a time.
+4. Commit `public/audio/`. The app switches to the recordings automatically, and only for steps whose words
+   match a recording exactly.
+
+How the audio files work:
+- Each file name includes a hash of its step's words. After you edit a script, `npm run audio` regenerates
+  only the steps that changed and deletes the old files.
+- The key never leaves your computer.
+- Recordings are cached the first time they play, so a practice works offline after one use.
 
 The app is local-first: by default everything stays in the browser's IndexedDB. Two features are optional,
 and each one is off until you set it up:
@@ -21,6 +75,7 @@ npm run lint       # ESLint, including jsx-a11y
 npm run build      # type-check and production build
 npm run test:e2e   # after a build: browser tests and axe accessibility checks
 npm start          # production: serves dist/ and /api from one Node process (needs Node 22.18 or newer)
+npm run audio      # optional: natural-voice audio for practices (see below)
 ```
 
 Copy `.env.example` to `.env` to turn on the optional features.

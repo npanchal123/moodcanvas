@@ -4,7 +4,8 @@ import { deleteEntry } from '../lib/entries';
 import { weeklyReflection } from '../lib/reflection';
 import { entriesWithin, frequency, streak } from '../lib/stats';
 import { displayEmotions, effectiveIntensity } from '../lib/summary';
-import type { EmotionEntry } from '../lib/types';
+import type { EmotionEntry, PracticeLog } from '../lib/types';
+import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, type PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { FrequencyChart } from './FrequencyChart';
 import { Insights } from './Insights';
@@ -15,11 +16,19 @@ const RANGES = [7, 30] as const;
 
 interface Props {
   entries: EmotionEntry[];
+  logs: PracticeLog[];
   animate: boolean;
 }
 
+const LOG_LIMIT = 20;
+const DAY_MS = 86_400_000;
+
+function isPracticeId(id: string): id is PracticeId {
+  return (PRACTICE_IDS as readonly string[]).includes(id);
+}
+
 /** Default export so App can load it lazily. */
-export default function History({ entries, animate }: Props) {
+export default function History({ entries, logs, animate }: Props) {
   const { t, locale } = useI18n();
   const [days, setDays] = useState<(typeof RANGES)[number]>(7);
   const [tag, setTag] = useState('');
@@ -33,6 +42,10 @@ export default function History({ entries, animate }: Props) {
   const rows = useMemo(() => frequency(shown, days), [shown, days]);
   const inRange = useMemo(() => entriesWithin(shown, days).length, [shown, days]);
   const streakDays = useMemo(() => streak(entries), [entries]);
+  const practicesInRange = useMemo(
+    () => logs.filter((l) => Date.parse(l.startedAt) >= Date.now() - days * DAY_MS).length,
+    [logs, days],
+  );
   const reflection = useMemo(() => weeklyReflection(entries, t, locale), [entries, t, locale]);
 
   async function handleDelete(entry: EmotionEntry) {
@@ -109,10 +122,14 @@ export default function History({ entries, animate }: Props) {
             ))}
           </div>
         </div>
-        <dl className="grid grid-cols-2 gap-3">
+        <dl className="grid grid-cols-3 gap-3">
           <div className="rounded-xl bg-(--surface-alt) p-3">
             <dt className="text-sm text-(--muted)">{t.history.checkInsStat}</dt>
             <dd className="text-2xl font-semibold tabular-nums">{inRange}</dd>
+          </div>
+          <div className="rounded-xl bg-(--surface-alt) p-3">
+            <dt className="text-sm text-(--muted)">{t.history.practicesStat}</dt>
+            <dd className="text-2xl font-semibold tabular-nums">{practicesInRange}</dd>
           </div>
           <div className="rounded-xl bg-(--surface-alt) p-3">
             <dt className="text-sm text-(--muted)">{t.history.streakStat}</dt>
@@ -120,6 +137,37 @@ export default function History({ entries, animate }: Props) {
           </div>
         </dl>
         <FrequencyChart rows={rows} days={days} animate={animate} />
+      </section>
+
+      <section aria-labelledby="practice-log-heading" className={card}>
+        <h2 id="practice-log-heading" className="mb-3 text-xl font-semibold">
+          {t.history.practiceLogHeading}
+        </h2>
+        {logs.length === 0 ? (
+          <p className="text-(--muted)">{t.history.practiceLogEmpty}</p>
+        ) : (
+          <ul className="flex flex-col divide-y divide-(--border)">
+            {logs.slice(0, LOG_LIMIT).filter((l) => isPracticeId(l.practiceId)).map((l) => {
+              const id = l.practiceId as PracticeId;
+              return (
+                <li key={l.id} className="py-3">
+                  <p className="font-medium">
+                    <span aria-hidden="true">{PRACTICE_META[id].icon} </span>
+                    {t.history.practiceItem(PRACTICE_CONTENT[locale].practices[id].title, l.minutes)}
+                    {!l.completed && <span className="font-normal text-(--muted)"> · {t.history.endedEarly}</span>}
+                  </p>
+                  <p className="text-sm text-(--muted)">
+                    <time dateTime={l.startedAt}>{formatDateTime(l.startedAt, locale)}</time>
+                    {l.before && l.after != null && (
+                      <> · {t.practice.change(t.emotions[l.before.emotion].name, l.before.intensity, l.after)}</>
+                    )}
+                    {l.felt && <> · {t.practice.felt[l.felt]}</>}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </section>
 
       <section aria-labelledby="entries-heading" className={card}>

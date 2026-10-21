@@ -48,6 +48,25 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
       await expectNoA11yViolations(page, 'AI consent dialog');
     });
 
+    test('practice tab, session and after-check', async ({ page }) => {
+      await page.clock.install();
+      await skipOnboarding(page);
+      await page.getByRole('button', { name: 'Practice', exact: true }).click();
+      await page.getByRole('heading', { name: 'All practices' }).waitFor();
+      await expectNoA11yViolations(page, 'practice tab');
+      await page.getByRole('button', { name: 'Start Clear Sky' }).click();
+      await page.getByRole('button', { name: 'Begin' }).waitFor();
+      await expectNoA11yViolations(page, 'practice start');
+      await page.getByLabel('Voice guide').uncheck();
+      await page.getByLabel('Background sound').uncheck();
+      await page.getByRole('button', { name: 'Begin' }).click();
+      await page.getByRole('button', { name: 'Pause' }).waitFor();
+      await expectNoA11yViolations(page, 'practice playing');
+      await page.getByRole('button', { name: 'End' }).click();
+      await page.getByRole('button', { name: 'Better' }).waitFor();
+      await expectNoA11yViolations(page, 'practice after');
+    });
+
     test('privacy page and support lines', async ({ page }) => {
       await skipOnboarding(page);
       await page.getByRole('link', { name: 'Privacy' }).click();

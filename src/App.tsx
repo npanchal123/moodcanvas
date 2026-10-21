@@ -17,25 +17,30 @@ import { addEntry } from './lib/entries';
 import { usePersistentFlag, usePersistentState, usePrefersReducedMotion } from './lib/hooks';
 import { DEFAULT_REMINDER, isReminderSettings, useReminder } from './lib/reminders';
 import { frequency } from './lib/stats';
-import type { EmotionEntry } from './lib/types';
+import type { EmotionEntry, PracticeBefore, PracticeLog } from './lib/types';
+import type { PracticeId } from './practices';
 
 // History and Settings (and the Recharts bars) load on first use, keeping the first paint small.
 const History = lazy(() => import('./components/History'));
 const Settings = lazy(() => import('./components/Settings'));
 const Privacy = lazy(() => import('./components/Privacy'));
+const PracticeLibrary = lazy(() => import('./components/PracticeLibrary'));
+const PracticeSession = lazy(() => import('./components/PracticeSession'));
 
-type View = 'today' | 'history' | 'settings' | 'privacy';
-const VIEW_IDS: View[] = ['today', 'history', 'settings'];
+type View = 'today' | 'practice' | 'history' | 'settings' | 'privacy';
+const VIEW_IDS: View[] = ['today', 'practice', 'history', 'settings'];
 // The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
 const PRIVACY_HASH = '#privacy';
 
 const NO_ENTRIES: EmotionEntry[] = [];
+const NO_LOGS: PracticeLog[] = [];
 
 export default function App() {
   const { t, locale } = useI18n();
   const [view, setView] = useState<View>(() => (location.hash === PRIVACY_HASH ? 'privacy' : 'today'));
   const [currentId, setCurrentId] = useState<string | null>(null);
   const [crisis, setCrisis] = useState<'detected' | 'asked' | null>(null);
+  const [practice, setPractice] = useState<{ id: PracticeId; before?: PracticeBefore } | null>(null);
   const [calm, setCalm] = usePersistentFlag('moodcanvas.calmMode', false);
   const [onboarded, setOnboarded] = usePersistentFlag('moodcanvas.onboarded', false);
   const [aiEnabled, setAiEnabled] = usePersistentFlag('moodcanvas.aiAnalysis', false);
@@ -48,6 +53,7 @@ export default function App() {
 
   const entries = useLiveQuery(() => db.entries.orderBy('createdAt').reverse().toArray(), []) ?? NO_ENTRIES;
   const current = useLiveQuery(() => (currentId ? db.entries.get(currentId) : undefined), [currentId]);
+  const logs = useLiveQuery(() => db.practices.orderBy('startedAt').reverse().toArray(), []) ?? NO_LOGS;
   const weekRows = useMemo(() => frequency(entries, 7), [entries]);
   const reminderState = useReminder(reminder, entries, t);
 
@@ -70,7 +76,14 @@ export default function App() {
 
   function goTo(id: View) {
     setView(id);
+    setPractice(null);
     if (location.hash === PRIVACY_HASH) history.replaceState(null, '', location.pathname + location.search);
+  }
+
+  function openPractice(id: PracticeId, before?: PracticeBefore) {
+    goTo('practice');
+    setPractice({ id, before });
+    window.scrollTo(0, 0);
   }
 
   function showSupport() {
@@ -117,12 +130,16 @@ export default function App() {
     document.getElementById(FEELING_INPUT_ID)?.focus();
   }
 
-  function checkInFromReminder() {
-    reminderState.dismiss();
+  function freshCheckIn() {
     goTo('today');
     setCurrentId(null);
     // Wait for the Check in view to render before moving focus into it.
     requestAnimationFrame(() => document.getElementById(FEELING_INPUT_ID)?.focus());
+  }
+
+  function checkInFromReminder() {
+    reminderState.dismiss();
+    freshCheckIn();
   }
 
   return (
@@ -140,14 +157,14 @@ export default function App() {
             <span aria-hidden="true">🌸 </span>Viz it
           </p>
           <nav aria-label={t.app.navLabel}>
-            <ul className="flex gap-2">
+            <ul className="flex gap-1.5 sm:gap-2">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
                   <button
                     type="button"
                     aria-current={view === id ? 'page' : undefined}
                     onClick={() => goTo(id)}
-                    className={`${toggle(view === id)} px-3 text-sm`}
+                    className={`${toggle(view === id)} whitespace-nowrap px-2.5 text-sm sm:px-3`}
                   >
                     {t.app.views[id]}
                   </button>
@@ -170,7 +187,13 @@ export default function App() {
             <div className="grid gap-6 lg:grid-cols-2">
               <EntryForm onSubmit={handleSubmit} aiEnabled={aiEnabled} />
               {current ? (
-                <ResultPanel key={current.id} entry={current} animate={animate} onNew={startNew} />
+                <ResultPanel
+                  key={current.id}
+                  entry={current}
+                  animate={animate}
+                  onNew={startNew}
+                  onPractice={crisis === 'detected' ? undefined : openPractice}
+                />
               ) : (
                 <div
                   className={`${card} flex min-h-64 items-center justify-center border-dashed text-center text-(--muted)`}
@@ -191,7 +214,20 @@ export default function App() {
         )}
 
         <Suspense fallback={<p className="text-(--muted)">{t.app.loading}</p>}>
-          {view === 'history' && <History entries={entries} animate={animate} />}
+          {view === 'practice' &&
+            (practice ? (
+              <PracticeSession
+                key={practice.id}
+                practiceId={practice.id}
+                before={practice.before}
+                animate={animate}
+                onBack={() => setPractice(null)}
+                onCheckIn={freshCheckIn}
+              />
+            ) : (
+              <PracticeLibrary entries={entries} logs={logs} onOpen={openPractice} />
+            ))}
+          {view === 'history' && <History entries={entries} logs={logs} animate={animate} />}
           {view === 'settings' && (
             <Settings
               entries={entries}

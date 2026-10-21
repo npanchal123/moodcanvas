@@ -122,6 +122,8 @@ export async function deleteAccount(alsoLocal: boolean): Promise<void> {
   await supabase.auth.signOut({ scope: 'local' });
   if (alsoLocal) {
     await forgetLocalData();
+    // The practice log never left the device, so it only needs clearing here.
+    await db.practices.clear();
   } else {
     await db.deletions.clear();
     await deleteMeta('syncedUserId', 'pulledThrough', 'lastSyncAt');

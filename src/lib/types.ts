@@ -29,3 +29,27 @@ export interface EmotionEntry {
   /** 1 when this device has changes the server hasn't seen yet. */
   dirty: 0 | 1;
 }
+
+/** How someone felt before a practice, taken from the check-in it was started from. */
+export interface PracticeBefore {
+  entryId: string;
+  emotion: EmotionLabel;
+  /** 0–100 */
+  intensity: number;
+}
+
+/** One guided practice. Kept on this device only (not synced yet). */
+export interface PracticeLog {
+  id: string;
+  practiceId: string;
+  minutes: number;
+  /** ISO timestamp */
+  startedAt: string;
+  /** False when ended early. */
+  completed: boolean;
+  before?: PracticeBefore;
+  /** 0–100: how strong the same feeling was afterwards. Only set when there was a "before". */
+  after?: number;
+  /** Self-report when there was no check-in to compare with. */
+  felt?: 'better' | 'same' | 'worse';
+}

@@ -32,7 +32,7 @@ export const en = {
   app: {
     skipLink: 'Skip to main content',
     navLabel: 'Main',
-    views: { today: 'Check in', history: 'History', settings: 'Settings', privacy: 'Privacy' },
+    views: { today: 'Check in', practice: 'Practice', history: 'History', settings: 'Settings', privacy: 'Privacy' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     emptyResult: 'Your emotion bloom will appear here.',
     thisWeek: 'This week',
@@ -80,6 +80,66 @@ export const en = {
     adjusted: (n: number) => `Updated to ${n} out of 100.`,
     share: 'Share or save image…',
     newCheckIn: 'New check-in',
+  },
+
+  practice: {
+    // Practice tab
+    startHereTitle: 'New to visualization?',
+    startHereBody:
+      'Visualization is a kind of meditation where you use your imagination: picturing calm places, warm light or open sky to change how you feel. Read the basics, then try a short first practice.',
+    basicsHeading: 'The basics',
+    firstButton: 'Try your first visualization (3 min)',
+    suggestedHeading: 'Suggested for you',
+    suggestedBody: (adjective: string) => `Your last check-in today was ${adjective}. This practice is a good match.`,
+    libraryHeading: 'All practices',
+    helpsWith: (names: string) => `Good for: ${names}`,
+    forBeginners: 'Good for: getting started',
+    open: 'Start',
+    openLabel: (title: string) => `Start ${title}`,
+    // Shown under a check-in result
+    resultTitle: 'Try a guided visualization',
+    resultBody: (adjective: string, title: string) => `Feeling ${adjective}? “${title}” can help, in as little as 3 minutes.`,
+    resultButton: (title: string) => `Start ${title}`,
+    // Before starting
+    lengthLabel: 'How long?',
+    minutes: (n: number) => `${n} min`,
+    voiceLabel: 'Voice guide',
+    soundLabel: 'Background sound',
+    noVoice: 'This browser can’t speak aloud, so follow the words on screen.',
+    tip: 'Headphones help. Find a spot where you won’t be interrupted, and you can stop at any time.',
+    begin: 'Begin',
+    back: 'Back',
+    // During
+    preparing: 'Getting ready…',
+    remaining: (clock: string) => `${clock} left`,
+    progressLabel: 'Progress',
+    breatheIn: 'Breathe in',
+    breatheOut: 'Breathe out',
+    pause: 'Pause',
+    resume: 'Resume',
+    end: 'End',
+    paused: 'Paused',
+    voiceDevice: 'Voice: your device’s built-in voice',
+    voiceRecorded: 'Voice: natural voice recording',
+    voiceSilent: 'Voice off: follow the words on screen',
+    canStop: 'You can open your eyes or stop at any time.',
+    // After
+    doneTitle: 'Well done',
+    endedTitle: 'Practice ended',
+    beforeWas: (noun: string, n: number) => `Before, your ${noun} was ${n} out of 100.`,
+    howStrongNow: (noun: string) => `How strong is your ${noun} now? (0 = gone, 10 = overwhelming)`,
+    howNow: 'How do you feel now, compared to before?',
+    felt: { better: 'Better', same: 'About the same', worse: 'Worse' },
+    save: 'Save',
+    change: (name: string, before: number, after: number) => `${name}: ${before} → ${after}`,
+    lighter: (n: number) => `That’s ${n} points lighter. Nice work.`,
+    same: 'About the same. That’s okay: practice builds over time.',
+    stronger: 'It feels stronger right now. Thanks for being honest. A different practice, a short walk or talking to someone might help more today.',
+    feltBetter: 'Glad it helped.',
+    feltSame: 'That’s okay. Like any skill, visualization gets easier with practice.',
+    feltWorse: 'Thanks for being honest. Not every practice suits every moment. You could try a different one, or take a break.',
+    again: 'Back to practices',
+    checkIn: 'New check-in',
   },
 
   bloom: {
@@ -156,6 +216,11 @@ export const en = {
     days: (n: number) => `${n} days`,
     checkInsStat: 'Check-ins',
     streakStat: 'Day streak',
+    practicesStat: 'Practices',
+    practiceLogHeading: 'Practice log',
+    practiceLogEmpty: 'Your guided visualizations will show up here.',
+    practiceItem: (title: string, minutes: number) => `${title} · ${minutes} min`,
+    endedEarly: 'ended early',
     listHeading: 'Check-ins',
     empty: 'Nothing here yet. Your check-ins will show up here.',
     yourRating: ' (your rating)',
@@ -209,6 +274,11 @@ export const en = {
         example: '',
       },
       {
+        title: 'Then practice',
+        body: 'Viz it suggests a short guided visualization for how you feel, like a calm safe place when you’re anxious. A voice guides you, and afterwards you can see how the feeling changed. New to it? The Practice tab teaches the basics.',
+        example: '',
+      },
+      {
         title: 'Your data stays with you',
         body: 'Everything is saved on this device. Nothing is sent anywhere unless you turn on smarter analysis or sign in to sync, and you can export or delete it at any time.',
         example: '',
@@ -244,7 +314,7 @@ export const en = {
       {
         heading: 'What’s saved on your device',
         body: [
-          'Your check-ins (what you wrote, the feelings and scores, your own ratings and tags) and your settings are saved in this browser, on this device only.',
+          'Your check-ins (what you wrote, the feelings and scores, your own ratings and tags), your practice log and your settings are saved in this browser, on this device only.',
           'They stay until you delete them. Clearing this site’s data in your browser deletes them too.',
         ],
       },
@@ -282,9 +352,10 @@ export const en = {
         link: { label: 'Supabase’s privacy policy', href: 'https://supabase.com/privacy' },
       },
       {
-        heading: 'Sharing, reminders and exports',
+        heading: 'Sharing, reminders, exports and practices',
         body: [
           'Share images and export files are made on your device and go only where you send them. Reminders come from your own device, and the calendar reminder is a file you add yourself.',
+          'Guided practices play recordings from this site, or your device’s own voice. Nothing you say or do during a practice is recorded or sent anywhere.',
         ],
       },
       {

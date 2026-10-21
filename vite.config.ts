@@ -37,6 +37,20 @@ export default defineConfig({
         // The AI endpoint must always hit the network (and fail cleanly when offline).
         navigateFallbackDenylist: [/^\/api\//],
         importScripts: ['sw-notifications.js'],
+        // Practice audio is too big to download up front. Each recording is saved the first time it plays,
+        // so a practice works offline after you've done it once. The list of recordings is checked online first.
+        runtimeCaching: [
+          {
+            urlPattern: /\/audio\/.+\.mp3$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'practice-audio', expiration: { maxEntries: 500 } },
+          },
+          {
+            urlPattern: /\/audio\/manifest\.json$/,
+            handler: 'NetworkFirst',
+            options: { cacheName: 'practice-audio-manifest', networkTimeoutSeconds: 3 },
+          },
+        ],
       },
     }),
   ],
