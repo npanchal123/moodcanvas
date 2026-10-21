@@ -205,9 +205,12 @@ export default function App() {
                 goTo('today');
                 window.scrollTo(0, 0);
               }}
-              className="rounded no-underline"
+              className="inline-flex items-center gap-2 rounded font-bold tracking-tight no-underline"
             >
-              <span aria-hidden="true">🌸 </span>Viz it
+              <img src={`${HOME_URL}favicon.svg`} alt="" width={32} height={32} className="h-8 w-8" />
+              <span>
+                Viz<span className="text-(--accent)">It</span>
+              </span>
             </a>
           </p>
           <nav aria-label={t.app.navLabel}>
