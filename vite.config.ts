@@ -19,7 +19,7 @@ export default defineConfig({
       manifest: {
         name: 'Viz it',
         short_name: 'Viz it',
-        description: 'Write how you feel and see it as a picture and a score.',
+        description: 'Write what you feel and where you want to be, and get a guided visualization made for you.',
         start_url: base,
         scope: base,
         display: 'standalone',

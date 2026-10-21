@@ -1,13 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="vg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#6366F1"/><stop offset="1" stop-color="#06B6D4"/>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#312E81"/><stop offset=".45" stop-color="#7C3AED"/><stop offset=".75" stop-color="#F0ABFC"/>
     </linearGradient>
+    <radialGradient id="sun" cx=".5" cy=".4" r=".6">
+      <stop offset="0" stop-color="#FFFBEB"/><stop offset="1" stop-color="#FBBF24"/>
+    </radialGradient>
+    <clipPath id="tile"><rect width="64" height="64" rx="16"/></clipPath>
   </defs>
-  <rect width="64" height="64" rx="16" fill="url(#vg)"/>
-  <rect x="14" y="36" width="8" height="14" rx="2.5" fill="#fff" opacity=".55"/>
-  <rect x="28" y="28" width="8" height="22" rx="2.5" fill="#fff" opacity=".75"/>
-  <rect x="42" y="18" width="8" height="32" rx="2.5" fill="#fff"/>
-  <polyline points="18,28 32,20 46,11" fill="none" stroke="#FDE047" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="18" cy="28" r="3" fill="#FDE047"/><circle cx="32" cy="20" r="3" fill="#FDE047"/><circle cx="46" cy="11" r="3.5" fill="#FDE047"/>
+  <g clip-path="url(#tile)">
+  <rect width="64" height="64" fill="url(#sky)"/>
+  <g transform="translate(32 32) scale(1) translate(-32 -32)">
+  <circle cx="32" cy="27" r="14" fill="#FDE68A" opacity=".22"/>
+  <circle cx="32" cy="27" r="8.5" fill="url(#sun)"/>
+  <path d="M-20 38 Q8 22 30 31 Q46 37 84 22 V84 H-20Z" fill="#8B5CF6"/>
+  <path d="M-20 34 Q14 32 32 37 Q50 42 84 32 V84 H-20Z" fill="#1E1B4B"/>
+  <g fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round">
+    <path d="M15 44.5 Q32 58 49 44.5"/>
+    <path d="M23.5 49.5 L21.5 54.5 M32 51.2 V56.5 M40.5 49.5 L42.5 54.5"/>
+  </g>
+  <circle cx="14" cy="14" r="1.2" fill="#fff" opacity=".8"/>
+  <circle cx="50" cy="12" r="1" fill="#fff" opacity=".7"/>
+  <circle cx="47" cy="20" r=".8" fill="#fff" opacity=".6"/>
+  </g></g>
 </svg>
