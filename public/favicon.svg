@@ -1,26 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <defs>
-    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#312E81"/><stop offset=".45" stop-color="#7C3AED"/><stop offset=".75" stop-color="#F0ABFC"/>
-    </linearGradient>
-    <radialGradient id="sun" cx=".5" cy=".4" r=".6">
-      <stop offset="0" stop-color="#FFFBEB"/><stop offset="1" stop-color="#FBBF24"/>
-    </radialGradient>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset="1" stop-color="#1E3A8A"/></linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDBA74"/><stop offset="1" stop-color="#FDE68A"/></linearGradient>
+    <clipPath id="mind"><circle cx="33" cy="27" r="13"/></clipPath>
     <clipPath id="tile"><rect width="64" height="64" rx="16"/></clipPath>
   </defs>
   <g clip-path="url(#tile)">
-  <rect width="64" height="64" fill="url(#sky)"/>
+  <rect width="64" height="64" fill="url(#bg)"/>
   <g transform="translate(32 32) scale(1) translate(-32 -32)">
-  <circle cx="32" cy="27" r="14" fill="#FDE68A" opacity=".22"/>
-  <circle cx="32" cy="27" r="8.5" fill="url(#sun)"/>
-  <path d="M-20 38 Q8 22 30 31 Q46 37 84 22 V84 H-20Z" fill="#8B5CF6"/>
-  <path d="M-20 34 Q14 32 32 37 Q50 42 84 32 V84 H-20Z" fill="#1E1B4B"/>
-  <g fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round">
-    <path d="M15 44.5 Q32 58 49 44.5"/>
-    <path d="M23.5 49.5 L21.5 54.5 M32 51.2 V56.5 M40.5 49.5 L42.5 54.5"/>
+  <path d="M20 84 V50 C12 46 9 37 11 28 C13 16 23 8 35 8 C47 8 55 17 55 28 L59 36 C60 38 58 39.5 56 39.5 L55 39.5 V45 C55 48 52 50 49 50 L44 50 V84 Z" fill="#F0F9FF"/>
+  <g clip-path="url(#mind)">
+    <rect x="18" y="12" width="30" height="30" fill="url(#sky)"/>
+    <circle cx="33" cy="28" r="5" fill="#F97316"/>
+    <path d="M18 33 Q26 27 33 31 Q40 35 48 29 V42 H18Z" fill="#10B981"/>
+    <path d="M18 37 Q28 33 36 36 Q42 38 48 35 V42 H18Z" fill="#047857"/>
   </g>
-  <circle cx="14" cy="14" r="1.2" fill="#fff" opacity=".8"/>
-  <circle cx="50" cy="12" r="1" fill="#fff" opacity=".7"/>
-  <circle cx="47" cy="20" r=".8" fill="#fff" opacity=".6"/>
   </g></g>
 </svg>
