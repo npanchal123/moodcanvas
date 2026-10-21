@@ -1,17 +1,27 @@
 import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'react';
 import { usePersistentState } from '../lib/hooks';
+import { ar } from './ar';
+import { bn } from './bn';
 import { en, type Messages } from './en';
 import { es } from './es';
+import { fr } from './fr';
 import { hi } from './hi';
+import { pt } from './pt';
+import { ru } from './ru';
+import { zh } from './zh';
 
-export const LOCALES = { en, hi, es } satisfies Record<string, Messages>;
+export const LOCALES = { en, hi, es, zh, ar, fr, bn, pt, ru } satisfies Record<string, Messages>;
 export type Locale = keyof typeof LOCALES;
 export type { Messages };
 
+/** The first of the browser's preferred languages that Viz it speaks. */
 function detectLocale(): Locale {
-  const language = navigator.language.toLowerCase();
-  if (language.startsWith('hi')) return 'hi';
-  return language.startsWith('es') ? 'es' : 'en';
+  const preferred = navigator.languages?.length ? navigator.languages : [navigator.language];
+  for (const language of preferred) {
+    const code = language.toLowerCase().split('-')[0];
+    if (isLocale(code)) return code;
+  }
+  return 'en';
 }
 
 function isLocale(value: unknown): value is Locale {
@@ -32,6 +42,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = LOCALES[stored].htmlLang;
+    document.documentElement.dir = LOCALES[stored].dir;
   }, [stored]);
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

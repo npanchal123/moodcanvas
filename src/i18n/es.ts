@@ -6,6 +6,7 @@ const registros = (n: number) => (n === 1 ? '1 registro' : `${n} registros`);
 /** Spanish (neutral Latin American). Machine-drafted: have a native speaker review before release. */
 export const es: Messages = {
   htmlLang: 'es',
+  dir: 'ltr',
   languageName: 'Español',
 
   emotions: {
@@ -378,7 +379,7 @@ export const es: Messages = {
     themes: { system: 'Igual que mi dispositivo', light: 'Claro', dark: 'Oscuro', contrast: 'Alto contraste' },
     languageLabel: 'Idioma',
     languageHint:
-      'La lista de palabras integrada entiende inglés, hindi (incluido el hinglish) y español. El análisis inteligente entiende la mayoría de los idiomas.',
+      'La lista de palabras integrada entiende todos estos idiomas, incluido el hinglish. El análisis inteligente entiende también la mayoría de los demás.',
     calmTitle: 'Modo calma',
     calmHint: 'Desactiva las animaciones. También se activa solo si tu dispositivo pide reducir el movimiento.',
     aiHeading: 'Análisis inteligente',

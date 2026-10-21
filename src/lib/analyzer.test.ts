@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { analyze } from './analyzer';
+import { analyze, type AnalyzerLanguage } from './analyzer';
 
 describe('analyze', () => {
   it('maps the plan example to anxiety first, some joy second', () => {
@@ -125,5 +125,40 @@ describe('analyze (Hindi and Hinglish)', () => {
     expect(analyze('ख़ुद को ख़त्म करने का मन करता है').crisis).toBe(true);
     expect(analyze('ab jeena nahi chahti').crisis).toBe(true);
     expect(analyze('exam ki itni tension hai ki mar jaunga lol').crisis).toBe(false);
+  });
+});
+
+describe('analyze (French, Portuguese, Russian, Chinese, Arabic, Bengali)', () => {
+  const top = (text: string, language: AnalyzerLanguage) => analyze(text, { language }).emotions[0]?.label;
+
+  it('reads each language, with its own word forms', () => {
+    expect(top('Je suis très inquiète pour mon examen', 'fr')).toBe('fear');
+    expect(top('Estou muito ansiosa com a prova', 'pt')).toBe('fear');
+    expect(top('Мне очень грустно сегодня', 'ru')).toBe('sadness');
+    expect(top('我今天很开心', 'zh')).toBe('joy');
+    expect(top('أنا حزينة جدا اليوم', 'ar')).toBe('sadness');
+    expect(top('আজ খুব খুশি লাগছে', 'bn')).toBe('joy');
+  });
+
+  it('understands "not" in each language', () => {
+    expect(top('je ne suis pas heureux', 'fr')).toBe('sadness');
+    expect(top('não estou feliz', 'pt')).toBe('sadness');
+    expect(top('мне не радостно', 'ru')).toBe('sadness');
+    expect(top('我不开心', 'zh')).toBe('sadness');
+    expect(top('لست سعيدا', 'ar')).toBe('sadness');
+    expect(top('আমি খুশি না', 'bn')).toBe('sadness');
+  });
+
+  it('reads Arabic words with "and"/"the" joined on, and Chinese words inside a sentence', () => {
+    expect(top('أشعر بالقلق والخوف', 'ar')).toBe('fear');
+    expect(top('和朋友吵架后心情很低落', 'zh')).toBe('sadness');
+    // "麻烦" (trouble) isn't "烦" (annoyed).
+    expect(analyze('有点麻烦', { language: 'zh' }).emotions).toEqual([]);
+  });
+
+  it('detects crisis language in each, whatever the UI language', () => {
+    for (const text of ['je veux mourir', 'quero morrer', 'не хочу жить', '我不想活了', 'أريد أن أموت', 'আমি মরে যেতে চাই']) {
+      expect(analyze(text, { language: 'en' }).crisis, text).toBe(true);
+    }
   });
 });

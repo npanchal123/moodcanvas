@@ -168,8 +168,13 @@ body {
 .tagline {
   letter-spacing: 0.12em;
 }
-/* Spacing letters apart breaks up Devanagari, whose letters join; Nunito has no Devanagari either. */
-:lang(hi) .tagline {
+/* Spacing letters apart breaks up scripts whose letters join (Devanagari, Bengali, Arabic), and Nunito only has
+   Latin letters. */
+:lang(hi) .tagline,
+:lang(bn) .tagline,
+:lang(ar) .tagline,
+:lang(zh) .tagline,
+:lang(ru) .tagline {
   letter-spacing: normal;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }

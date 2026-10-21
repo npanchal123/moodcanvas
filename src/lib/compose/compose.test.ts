@@ -59,6 +59,56 @@ describe('compose: understanding what people ask for', () => {
     expect(c).toMatchObject({ scene: 'beach', topic: 'family', goal: 'kindness', place: 'una playa tranquila' });
     expect(spoken(c)).toContain('Me contaste que sientes tristeza por tu familia');
   });
+
+  it('understands French, keeping the article and turning "ma" into "votre"', () => {
+    const c = make('Mon examen de demain me stresse. Emmène-moi au jardin de ma grand-mère', 'fr', { feeling: 'fear' });
+    expect(c).toMatchObject({ scene: 'garden', topic: 'exam', goal: 'calm', place: 'le jardin de votre grand-mère' });
+    expect(c.script.title).toBe('Le jardin de votre grand-mère');
+    expect(spoken(c)).toContain('Vous m’avez dit ressentir de l’anxiété concernant l’examen');
+    // "en montagne" has no article to sit in a sentence, so the scene's own words are used.
+    expect(make('Emmène-moi en montagne', 'fr')).toMatchObject({ scene: 'mountain', place: null });
+  });
+
+  it('understands Portuguese', () => {
+    const c = make('Estou triste com a minha família, me leve para uma praia tranquila', 'pt', { feeling: 'sadness' });
+    expect(c).toMatchObject({ scene: 'beach', topic: 'family', goal: 'kindness', place: 'uma praia tranquila' });
+    expect(spoken(c)).toContain('Você me contou que está sentindo tristeza quando pensa sobre a sua família');
+    expect(make('quero ir na casa da minha avó', 'pt').place).toBe('a casa da sua avó');
+  });
+
+  it('understands Russian, keeping the motion form of the place', () => {
+    const c = make('Волнуюсь из-за экзамена. Отведи меня к моей бабушке в сад', 'ru', { feeling: 'fear' });
+    expect(c).toMatchObject({ topic: 'exam', goal: 'calm', place: 'к вашей бабушке в сад', scene: 'garden' });
+    expect(c.script.title).toBe('Путешествие к вашей бабушке в сад');
+    expect(spoken(c)).toContain('Вы рассказали, что чувствуете тревогу, когда думаете об экзамене');
+    expect(spoken(c)).toContain('вы переноситесь к вашей бабушке в сад');
+    // "садитесь" isn't a garden.
+    expect(make('садитесь поудобнее', 'ru').scene).not.toBe('garden');
+  });
+
+  it('understands Chinese, which has no spaces', () => {
+    const c = make('明天要考试，我很焦虑。带我去奶奶的花园', 'zh', { feeling: 'fear' });
+    expect(c).toMatchObject({ scene: 'garden', topic: 'exam', goal: 'calm', place: '奶奶的花园' });
+    expect(c.script.title).toBe('奶奶的花园');
+    expect(spoken(c)).toContain('你说你因为考试感到焦虑');
+    expect(make('我睡不着，一直在想工作', 'zh')).toMatchObject({ goal: 'sleep', topic: 'work' });
+  });
+
+  it('understands Arabic, with "the" and "and" joined onto words', () => {
+    const c = make('أنا قلق من الامتحان، خذني إلى حديقة جدتي', 'ar', { feeling: 'fear' });
+    expect(c).toMatchObject({ scene: 'garden', topic: 'exam', goal: 'calm', place: 'حديقة جدتك' });
+    expect(spoken(c)).toContain('القلق بشأن الامتحان شعور مفهوم تمامًا');
+    expect(make('لا أستطيع النوم وأريد البحر', 'ar')).toMatchObject({ goal: 'sleep', scene: 'beach' });
+  });
+
+  it('understands Bengali', () => {
+    const c = make('কালকের পরীক্ষা নিয়ে খুব দুশ্চিন্তা হচ্ছে। আমাকে আমার দিদিমার বাগানে নিয়ে চলো', 'bn', { feeling: 'fear' });
+    expect(c).toMatchObject({ scene: 'garden', topic: 'exam', goal: 'calm', place: 'আপনার দিদিমার বাগানে' });
+    expect(spoken(c)).toContain('আপনি বলেছেন, পরীক্ষা নিয়ে আপনি উদ্বিগ্ন বোধ করছেন');
+    // "বসে" (sitting) isn't "বস" (boss), and "বন্ধু" (friend) isn't "বন" (forest).
+    expect(make('বন্ধুর সঙ্গে বসে আছি', 'bn')).toMatchObject({ topic: 'friends' });
+    expect(make('বন্ধুর সঙ্গে বসে আছি', 'bn').scene).not.toBe('forest');
+  });
 });
 
 describe('compose: every combination is complete and fits its length', () => {

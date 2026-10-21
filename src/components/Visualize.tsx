@@ -84,7 +84,7 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
                   <button
                     type="button"
                     onClick={() => set({ text: example })}
-                    className="min-h-11 rounded-xl bg-(--surface-alt) px-3 py-2 text-left text-sm hover:bg-(--track)"
+                    className="min-h-11 rounded-xl bg-(--surface-alt) px-3 py-2 text-start text-sm hover:bg-(--track)"
                   >
                     “{example}”
                   </button>
@@ -182,7 +182,10 @@ export function CreatedIntro({ text, result, composed }: { text: string; result:
       {text.trim() && (
         <figure>
           <figcaption className="text-sm font-medium text-(--muted)">{t.create.madeFrom}</figcaption>
-          <blockquote className="mt-1 line-clamp-3 italic">“{text.trim()}”</blockquote>
+          <blockquote className="mt-1 line-clamp-3 italic">
+            {/* <q> gives each language its own quotation marks: “…”, «…», „…“. */}
+            <q>{text.trim()}</q>
+          </blockquote>
         </figure>
       )}
       <div>

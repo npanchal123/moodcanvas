@@ -1,14 +1,20 @@
 import type { Locale } from '../i18n';
 import type { EmotionLabel } from '../lib/emotions';
+import { ar } from './ar';
+import { bn } from './bn';
 import { en } from './en';
 import { es } from './es';
+import { fr } from './fr';
 import { hi } from './hi';
+import { pt } from './pt';
+import { ru } from './ru';
+import { zh } from './zh';
 import { PRACTICE_IDS, type Minutes, type PracticeContent, type PracticeId, type PracticeScript } from './types';
 
 export { LENGTHS, PRACTICE_IDS } from './types';
 export type { Lesson, Minutes, PracticeId, PracticeScript, Segment } from './types';
 
-export const PRACTICE_CONTENT: Record<Locale, PracticeContent> = { en, hi, es };
+export const PRACTICE_CONTENT: Record<Locale, PracticeContent> = { en, hi, es, zh, ar, fr, bn, pt, ru };
 
 interface PracticeMeta {
   icon: string;

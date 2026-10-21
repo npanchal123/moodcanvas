@@ -1,14 +1,22 @@
 import { EMOTIONS, type EmotionLabel } from './emotions';
 import { EMOJI_LEXICON } from './lexicons/emoji';
+import { arabic } from './lexicons/ar';
+import { bengali } from './lexicons/bn';
 import { english } from './lexicons/en';
 import { spanish } from './lexicons/es';
+import { french } from './lexicons/fr';
 import { hindi } from './lexicons/hi';
+import { portuguese } from './lexicons/pt';
+import { russian } from './lexicons/ru';
+import { chinese } from './lexicons/zh';
 import type { LanguagePack, Weights } from './lexicons/types';
 import type { EmotionScore } from './types';
 
-export const ANALYZER_VERSION = 'lexicon-1.2';
+export const ANALYZER_VERSION = 'lexicon-1.3';
 
-export const LANGUAGE_PACKS = { en: english, hi: hindi, es: spanish } satisfies Record<string, LanguagePack>;
+export const LANGUAGE_PACKS = {
+  en: english, hi: hindi, es: spanish, zh: chinese, ar: arabic, fr: french, bn: bengali, pt: portuguese, ru: russian,
+} satisfies Record<string, LanguagePack>;
 export type AnalyzerLanguage = keyof typeof LANGUAGE_PACKS;
 
 const POSITIVE: EmotionLabel[] = ['joy', 'calm'];
@@ -106,7 +114,7 @@ function readWith(languagePack: LanguagePack, text: string): PackReading {
   for (const [pattern, replacement] of languagePack.phrases) clean = clean.replace(pattern, replacement);
   // Letters plus combining marks, so Devanagari words keep their vowel signs.
   // Zero-width (non-)joiners can sit inside Devanagari words; normalize() removes them afterwards.
-  const tokens = (clean.match(/(?:[\p{L}\p{M}']|‌|‍)+/gu) ?? [])
+  const tokens = (languagePack.tokenize?.(clean) ?? clean.match(/(?:[\p{L}\p{M}']|‌|‍)+/gu) ?? [])
     .map((t) => t.replace(/^'+|'+$/g, ''))
     .filter(Boolean);
   const words = tokens.map(pack.norm);

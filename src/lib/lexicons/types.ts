@@ -27,4 +27,6 @@ export interface LanguagePack {
   variants?: (word: string) => string[];
   /** Extra clean-up after folding, applied to the text and to every word in this pack (e.g. dropping nukta). */
   normalize?: (text: string) => string;
+  /** Splits text into words, for languages written without spaces (Chinese). Default: runs of letters. */
+  tokenize?: (text: string) => string[];
 }

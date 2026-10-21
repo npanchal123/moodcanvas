@@ -2,15 +2,21 @@ import type { Locale } from '../../i18n';
 import type { Messages } from '../../i18n/en';
 import type { PracticeScript, Segment } from '../../practices';
 import type { EmotionLabel } from '../emotions';
+import { ar } from './ar';
+import { bn } from './bn';
 import { en } from './en';
 import { es } from './es';
+import { fr } from './fr';
 import { hi } from './hi';
+import { pt } from './pt';
+import { ru } from './ru';
+import { zh } from './zh';
 import { GOAL_IDS, SCENE_IDS, TOPIC_IDS, type ComposeContent, type GoalId, type Line, type SceneId, type TopicId } from './types';
 
 export { GOAL_IDS, SCENE_IDS } from './types';
 export type { GoalId, SceneId, TopicId } from './types';
 
-export const COMPOSE_CONTENT: Record<Locale, ComposeContent> = { en, hi, es };
+export const COMPOSE_CONTENT: Record<Locale, ComposeContent> = { en, hi, es, zh, ar, fr, bn, pt, ru };
 
 export const SCENE_LOOK: Record<SceneId | 'anywhere', { icon: string; hues: [string, string] }> = {
   beach: { icon: '🏖️', hues: ['#a5f3fc', '#0e7490'] },
@@ -44,7 +50,10 @@ export const TOPIC_TAGS: Partial<Record<TopicId, string>> = {
   exercise: 'exercise', relationship: 'relationship',
 };
 
-/** Lowercase, Latin accents off, Hindi nukta and chandrabindu unified: how both text and keywords are compared. */
+/**
+ * How both text and keywords are compared: lowercase, Latin accents off, Hindi nukta and chandrabindu unified,
+ * Arabic vowel marks off and alef/ya/ta marbuta spellings unified, Russian ё read as е.
+ */
 function normalize(text: string): string {
   return text
     .toLowerCase()
@@ -53,16 +62,45 @@ function normalize(text: string): string {
     .normalize('NFC')
     .replace(/़/g, '')
     .replace(/ँ/g, 'ं')
-    .replace(/[‌‍]/g, '');
+    .replace(/[‌‍]/g, '')
+    .replace(/[ً-ْٰـ]/g, '')
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ى/g, 'ي')
+    .replace(/ة/g, 'ه')
+    .replace(/ё/g, 'е');
 }
 
-/** Where a keyword first appears, or -1. Latin keywords must be whole words; Devanagari ones may be a word's start. */
+/**
+ * Where a keyword first appears, or -1. Latin and Cyrillic keywords must be whole words (the Russian lists spell
+ * out each form, since "сад" must not match "садитесь"). Devanagari and Bengali ones may be a word's start
+ * ("পাহাড়ে"). Chinese has no spaces, and Arabic joins "the", "and" and "to" onto the word ("والبحر"), so those
+ * match anywhere.
+ */
 function position(text: string, keyword: string): number {
-  const k = normalize(keyword);
-  const latin = /\p{Script=Latin}/u.test(k);
-  const pattern = new RegExp(`(?:^|[^\\p{L}\\p{M}])${k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}${latin ? '(?![\\p{L}\\p{M}])' : ''}`, 'u');
-  const match = pattern.exec(text);
-  return match ? match.index : -1;
+  const { k, anywhere, whole } = prepared(keyword);
+  for (let at = text.indexOf(k); at >= 0; at = text.indexOf(k, at + 1)) {
+    const starts = anywhere || at === 0 || !WORD_CHAR.test(text[at - 1]);
+    const ends = !whole || at + k.length === text.length || !WORD_CHAR.test(text[at + k.length]);
+    if (starts && ends) return at;
+  }
+  return -1;
+}
+
+const WORD_CHAR = /[\p{L}\p{M}]/u;
+// Worked out once per keyword (there are well over a thousand). A regex per keyword was too slow to build.
+const preparedKeywords = new Map<string, { k: string; anywhere: boolean; whole: boolean }>();
+function prepared(keyword: string) {
+  let p = preparedKeywords.get(keyword);
+  if (!p) {
+    const k = normalize(keyword);
+    p = {
+      k,
+      anywhere: /[\p{Script=Han}\p{Script=Arabic}]/u.test(k),
+      whole: /[\p{Script=Latin}\p{Script=Cyrillic}]/u.test(k),
+    };
+    preparedKeywords.set(keyword, p);
+  }
+  return p;
 }
 
 /** The id whose keywords (in any language) appear earliest in the text. */
@@ -169,7 +207,9 @@ export function compose(request: ComposeRequest, t: Messages): Composed {
 
   // A personal place ("your grandma's garden in Shimla") makes the best title; a bare word ("पहाड़ों",
   // "the mountains") reads better as the scene's own title.
-  const personal = place != null && (!sceneContent || place.split(/\s+/).length > 2);
+  // Chinese has no spaces: about two characters make a word.
+  const words = (p: string) => p.split(/\s+/).length + (p.match(/\p{Script=Han}/gu)?.length ?? 0) / 2;
+  const personal = place != null && (!sceneContent || words(place) > 2);
   return {
     script: {
       title: personal && place ? content.title(place) : sceneContent!.title,

@@ -5,9 +5,13 @@ export function segmentsFor(script: PracticeScript, minutes: Minutes): Segment[]
   return script.segments.filter((s) => s.tier <= minutes);
 }
 
-/** Calm guided speech runs at roughly 2 words a second. Used when real audio lengths aren't known. */
+/**
+ * Calm guided speech runs at roughly 2 words a second. Used when real audio lengths aren't known. Chinese has no
+ * spaces, so its characters are counted instead, about two to a word.
+ */
 export function estimateSpeechSeconds(text: string, rate = 1): number {
-  const words = text.trim().split(/\s+/).length;
+  const han = text.match(/\p{Script=Han}/gu)?.length ?? 0;
+  const words = text.replace(/\p{Script=Han}/gu, ' ').split(/\s+/).filter(Boolean).length + han / 2;
   return words / (2.1 * rate) + 0.6;
 }
 

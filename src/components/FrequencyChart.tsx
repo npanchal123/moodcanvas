@@ -26,7 +26,7 @@ export function FrequencyChart({ rows, days, animate }: Props) {
       </div>
       <details>
         <summary className="cursor-pointer text-sm font-medium">{t.chart.showTable}</summary>
-        <table className="mt-2 w-full text-left text-sm">
+        <table className="mt-2 w-full text-start text-sm">
           <thead>
             <tr className="border-b border-(--border)">
               <th scope="col" className="py-1 pr-2">

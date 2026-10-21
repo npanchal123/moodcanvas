@@ -15,6 +15,8 @@ const checkIns = (n: number) => (n === 1 ? '1 check-in' : `${n} check-ins`);
  */
 export const en = {
   htmlLang: 'en',
+  /** Text direction: 'rtl' for Arabic. */
+  dir: 'ltr' as 'ltr' | 'rtl',
   languageName: 'English',
 
   emotions: {
@@ -73,7 +75,7 @@ export const en = {
     heroBody:
       'Tell me what’s on your mind and how you’d like to imagine it. Viz it writes a guided visualization just for you, instantly, and a calm voice walks you through it.',
     label: 'What’s on your mind, and what would you like to imagine?',
-    hintLocal: 'Write freely, in English, Hindi or Hinglish. What you write stays on this device.',
+    hintLocal: 'Write freely, in your own language. What you write stays on this device.',
     hintAi: 'Write freely. Smarter analysis is on, so this text is also sent to Claude to read your feelings.',
     placeholder: 'e.g. I’m anxious about my exam tomorrow. Take me to a quiet beach.',
     examplesLabel: 'Need an idea? Try one:',
@@ -390,7 +392,7 @@ export const en = {
     themes: { system: 'Match my device', light: 'Light', dark: 'Dark', contrast: 'High contrast' },
     languageLabel: 'Language',
     languageHint:
-      'The built-in word list understands English, Hindi (including Hinglish) and Spanish. Smarter analysis understands most languages.',
+      'The built-in word list understands all of these languages, including Hinglish. Smarter analysis understands most others too.',
     calmTitle: 'Calm mode',
     calmHint: 'Turns off animation. It’s also on automatically if your device asks for reduced motion.',
     aiHeading: 'Smarter analysis',

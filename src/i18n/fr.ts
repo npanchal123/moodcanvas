@@ -1,0 +1,461 @@
+import type { Messages } from './en';
+
+const fois = (n: number) => `${n} fois`;
+const ressentis = (n: number) => (n === 1 ? '1 ressenti' : `${n} ressentis`);
+
+/**
+ * French, addressing the reader as "vous". Feelings are shown as nouns ("anxiété") rather than adjectives,
+ * which would change with the reader's gender. Machine-drafted: have a native speaker review before release.
+ */
+export const fr: Messages = {
+  htmlLang: 'fr',
+  dir: 'ltr',
+  languageName: 'Français',
+
+  emotions: {
+    joy: { name: 'Joie', adjective: 'joie', noun: 'joie' },
+    calm: { name: 'Calme', adjective: 'calme', noun: 'calme' },
+    sadness: { name: 'Tristesse', adjective: 'tristesse', noun: 'tristesse' },
+    anger: { name: 'Colère', adjective: 'colère', noun: 'colère' },
+    fear: { name: 'Peur / Anxiété', adjective: 'anxiété', noun: 'anxiété' },
+    surprise: { name: 'Surprise', adjective: 'surprise', noun: 'surprise' },
+    disgust: { name: 'Dégoût', adjective: 'dégoût', noun: 'dégoût' },
+  },
+
+  bands: { mild: 'Léger', moderate: 'Modéré', strong: 'Fort' },
+
+  app: {
+    tagline: 'Visualiser · Imaginer · Créer',
+    skipLink: 'Aller au contenu principal',
+    navLabel: 'Principal',
+    views: { today: 'Visualiser', practice: 'Bibliothèque', history: 'Journal', settings: 'Réglages', privacy: 'Confidentialité' },
+    pageHeading: (view: string) => `Viz it : ${view}`,
+    aiFallback: 'L’analyse avancée n’est pas disponible pour le moment, la liste de mots intégrée a donc été utilisée.',
+    loading: 'Chargement…',
+    footer: 'Viz it est un outil de réflexion. Ce n’est ni un diagnostic ni un remplacement d’un accompagnement professionnel.',
+    footerLinks: 'Plus',
+    privacyLink: 'Confidentialité',
+    supportLink: 'Trouver de l’aide maintenant',
+  },
+
+  reminder: {
+    bannerTitle: 'C’est l’heure de votre point du jour',
+    bannerBody: 'Comment vous sentez-vous en ce moment ? Quelques mots suffisent.',
+    bannerAction: 'Faire le point',
+    dismiss: 'Pas maintenant',
+    notificationTitle: 'L’heure de faire le point',
+    notificationBody: 'Comment vous sentez-vous ? Touchez pour ouvrir Viz it.',
+    icsSummary: 'Faire le point avec Viz it',
+    icsDescription: (url: string) => `Comment vous sentez-vous ? Ouvrez Viz it : ${url}`,
+  },
+  result: {
+    mostly: (adjective: string) => `Surtout : ${adjective}`,
+    feeling: (adjective: string) => `Ressenti : ${adjective}`,
+    outOf100: (n: number) => `${n} sur 100`,
+    withSome: (noun: string) => `, avec un peu de ${noun}`,
+    noEmotion: 'Aucune émotion détectée',
+    byAi: 'lu par l’analyse avancée',
+    alsoPresent: 'Aussi présent : ',
+    adjustTitle: 'Ça ne vous ressemble pas ? Notez-le vous-même',
+    adjustHint: '1, c’est à peine présent ; 10, c’est envahissant. Votre note remplace la nôtre.',
+    adjusted: (n: number) => `Mis à jour : ${n} sur 100.`,
+    share: 'Partager ou enregistrer l’image…',
+    newCheckIn: 'Nouveau point',
+  },
+
+  create: {
+    heroTitle: 'Visualisez ce que vous voulez ressentir',
+    heroBody:
+      'Dites-moi ce qui vous préoccupe et comment vous aimeriez l’imaginer. Viz it écrit une visualisation guidée rien que pour vous, instantanément, et une voix calme vous accompagne.',
+    label: 'Qu’avez-vous en tête, et qu’aimeriez-vous imaginer ?',
+    hintLocal: 'Écrivez librement, dans votre langue. Ce que vous écrivez reste sur cet appareil.',
+    hintAi: 'Écrivez librement. L’analyse avancée est activée : ce texte est aussi envoyé à Claude pour lire vos émotions.',
+    placeholder: 'ex. : Mon examen de demain me stresse. Emmène-moi sur une plage tranquille.',
+    examplesLabel: 'Besoin d’une idée ? Essayez :',
+    examples: [
+      'Mon examen de demain me stresse. Emmène-moi sur une plage tranquille.',
+      'J’ai le moral à zéro après une dispute avec mon ami. J’ai besoin de chaleur et de sécurité.',
+      'Je n’arrive pas à dormir, je n’arrête pas de penser au travail.',
+      'J’ai un entretien aujourd’hui. Je veux avoir confiance en moi, quelque part à la montagne.',
+    ],
+    sceneLegend: 'Où aimeriez-vous aller ? (facultatif)',
+    goalLegend: 'Qu’est-ce qui vous aiderait le plus ? (facultatif)',
+    create: 'Créer ma visualisation',
+    creating: 'Création…',
+    needMore: 'Dites-moi un peu comment vous vous sentez, ou choisissez un lieu ou ce qui vous aiderait.',
+    madeFrom: 'Créée à partir de vos mots',
+    understood: 'Ce que j’ai compris',
+    feeling: (name: string, n: number) => `Ressenti : ${name} (${n}/100)`,
+    place: (place: string) => `Lieu : ${place}`,
+    goal: (goal: string) => `Objectif : ${goal}`,
+    about: (topic: string) => `Sujet : ${topic}`,
+    readScript: 'Lire le texte',
+    newHereTitle: 'Nouveau dans la visualisation ?',
+    newHereBody:
+      'Il s’agit simplement d’imaginer avec vos sens pendant qu’une voix calme vous guide. Aucune expérience n’est nécessaire, et vous n’avez même pas besoin de « voir » des images.',
+    firstTry: 'Essayer une première visualisation de 3 minutes',
+    learn: 'Découvrir les bases',
+  },
+
+  practice: {
+    startHereTitle: 'Nouveau dans la visualisation ?',
+    startHereBody:
+      'La visualisation est une forme de méditation qui utilise l’imagination : se représenter un lieu calme, une lumière chaude ou un ciel ouvert pour changer ce que l’on ressent. Lisez les bases, puis essayez une courte première pratique.',
+    basicsHeading: 'Les bases',
+    firstButton: 'Essayer votre première visualisation (3 min)',
+    suggestedHeading: 'Suggéré pour vous',
+    suggestedBody: (adjective: string) => `Votre dernier ressenti aujourd’hui : ${adjective}. Cette pratique vous convient bien.`,
+    libraryHeading: 'Toutes les pratiques',
+    helpsWith: (names: string) => `Utile pour : ${names}`,
+    forBeginners: 'Utile pour : bien commencer',
+    open: 'Commencer',
+    openLabel: (title: string) => `Commencer ${title}`,
+    lengthLabel: 'Quelle durée ?',
+    minutes: (n: number) => `${n} min`,
+    voiceLabel: 'Guide vocal',
+    soundLabel: 'Son d’ambiance',
+    noVoice: 'Ce navigateur ne peut pas parler à voix haute : suivez le texte à l’écran.',
+    tip: 'Un casque aide. Trouvez un endroit où personne ne vous dérangera. Vous pouvez arrêter à tout moment.',
+    begin: 'Commencer',
+    back: 'Retour',
+    preparing: 'Préparation…',
+    remaining: (clock: string) => `Encore ${clock}`,
+    progressLabel: 'Progression',
+    breatheIn: 'Inspirez',
+    breatheOut: 'Expirez',
+    pause: 'Pause',
+    resume: 'Reprendre',
+    end: 'Terminer',
+    paused: 'En pause',
+    voiceDevice: 'Voix : la voix intégrée de votre appareil',
+    voiceRecorded: 'Voix : enregistrement naturel',
+    voiceSilent: 'Voix désactivée : suivez le texte à l’écran',
+    voiceMissing:
+      'Cet appareil n’a pas encore de voix pour cette langue : suivez le texte à l’écran. Vous pouvez en ajouter une dans les réglages de synthèse vocale de votre appareil.',
+    canStop: 'Vous pouvez ouvrir les yeux ou arrêter à tout moment.',
+    doneTitle: 'Bravo',
+    endedTitle: 'Pratique terminée',
+    beforeWas: (noun: string, n: number) => `Avant, votre ${noun} était à ${n} sur 100.`,
+    howStrongNow: (noun: string) => `Quelle est l’intensité de votre ${noun} maintenant ? (0 = plus du tout, 10 = au maximum)`,
+    howNow: 'Comment vous sentez-vous maintenant, par rapport à avant ?',
+    felt: { better: 'Mieux', same: 'Pareil', worse: 'Moins bien' },
+    save: 'Enregistrer',
+    change: (name: string, before: number, after: number) => `${name} : ${before} → ${after}`,
+    lighter: (n: number) => `C’est ${n} points de moins. Beau travail.`,
+    same: 'À peu près pareil. Ce n’est pas grave : la pratique porte ses fruits avec le temps.',
+    stronger:
+      'C’est plus fort en ce moment. Merci de votre honnêteté. Une autre pratique, une courte marche ou parler à quelqu’un pourrait aider davantage aujourd’hui.',
+    feltBetter: 'Tant mieux si ça vous a aidé.',
+    feltSame: 'Ce n’est pas grave. Comme toute compétence, la visualisation devient plus facile avec la pratique.',
+    feltWorse: 'Merci de votre honnêteté. Toutes les pratiques ne conviennent pas à tous les moments. Essayez-en une autre, ou faites une pause.',
+    again: 'Retour aux pratiques',
+    checkIn: 'Nouveau point',
+  },
+
+  bloom: {
+    title: (name: string) => `Fleur : ${name}`,
+    one: (name: string, n: number) => `${name} à ${n} sur 100.`,
+    two: (name: string, n: number, name2: string, n2: number) => `${name} à ${n} sur 100, avec ${name2} à ${n2}.`,
+  },
+  tags: {
+    suggested: {
+      work: 'travail',
+      school: 'études',
+      sleep: 'sommeil',
+      family: 'famille',
+      friends: 'amis',
+      health: 'santé',
+      exercise: 'sport',
+      money: 'argent',
+      weather: 'météo',
+      relationship: 'couple',
+    } as Record<string, string>,
+  },
+  chart: {
+    summary: (days: number, parts: string[]) =>
+      parts.length ? `Ces ${days} derniers jours : ${parts.join(', ')}.` : `Aucun point ces ${days} derniers jours.`,
+    part: (name: string, count: number, avg: number) => `${name} ${fois(count)} (moyenne ${avg})`,
+    showTable: 'Afficher en tableau',
+    colEmotion: 'Émotion',
+    colTimes: 'Fois',
+    colAverage: 'Intensité moyenne',
+  },
+
+  history: {
+    weekHeading: 'Votre semaine',
+    filterLabel: 'Afficher les points étiquetés',
+    filterAny: 'Toutes les étiquettes, ou aucune',
+    calendarHeading: 'Calendrier d’humeur',
+    insightsHeading: 'Tendances à remarquer',
+    insightsNote: 'Ce sont des tendances dans ce que vous avez noté, pas des causes. Elles deviennent plus nettes au fil des points.',
+    insightsEmpty: 'Étiquetez encore quelques points et des tendances apparaîtront ici.',
+    patternsHeading: 'Vos tendances',
+    rangeLabel: 'Période',
+    days: (n: number) => `${n} jours`,
+    checkInsStat: 'Points',
+    streakStat: 'Jours d’affilée',
+    practicesStat: 'Pratiques',
+    practiceLogHeading: 'Journal des pratiques',
+    practiceLogEmpty: 'Vos visualisations apparaîtront ici.',
+    practiceItem: (title: string, minutes: number) => `${title} · ${minutes} min`,
+    endedEarly: 'arrêtée avant la fin',
+    listHeading: 'Points',
+    empty: 'Rien pour l’instant. Vos points apparaîtront ici.',
+    yourRating: ' (votre note)',
+    tagsLabel: 'Étiquettes :',
+    delete: 'Supprimer',
+    deleteLabel: (when: string) => `Supprimer le point du ${when}`,
+    deleteConfirm: (when: string) => `Supprimer le point du ${when} ?`,
+  },
+
+  calendar: {
+    caption: (weeks: number) =>
+      `Calendrier d’humeur des ${weeks} dernières semaines. Chaque jour montre l’émotion la plus notée.`,
+    noCheckIns: (date: string) => `${date} : aucun point`,
+    day: (date: string, name: string, band: string, avg: number, count: number) =>
+      `${date} : surtout ${name}, ${band.toLowerCase()} (${avg}), ${ressentis(count)}`,
+    legendNote: 'Plus pâle = plus léger, plus foncé = plus fort',
+  },
+
+  reflection: {
+    empty: 'Aucun point ces 7 derniers jours. Un petit point aujourd’hui, c’est un bon début.',
+    count: (n: number) => `Vous avez fait le point ${fois(n)} cette semaine.`,
+    top: (name: string, n: number) => `L’émotion la plus fréquente : ${name} (${fois(n)}).`,
+    lighter: 'Dans l’ensemble, cette semaine a semblé un peu plus légère que la précédente.',
+    heavier: 'Dans l’ensemble, cette semaine a semblé un peu plus lourde que la précédente. Prenez soin de vous.',
+    same: 'Dans l’ensemble, cette semaine ressemblait à la précédente.',
+    strongest: (noun: string, weekday: string, n: number) => `Votre émotion la plus forte : ${noun}, ${weekday} (${n}/100).`,
+    tag: (tag: string, n: number, adjective: string) =>
+      `« ${tag} » est revenu ${fois(n)}, et l’émotion la plus présente était : ${adjective}.`,
+  },
+
+  insights: {
+    lighter: (tag: string) => `Vos points étiquetés « ${tag} » sont souvent plus légers que les autres.`,
+    heavier: (tag: string) => `Les points étiquetés « ${tag} » sont souvent plus lourds que les autres.`,
+    emotion: (tag: string, name: string, pct: number) =>
+      `Quand vous étiquetez « ${tag} », l’émotion la plus fréquente est ${name} (${pct} % du temps).`,
+    basedOn: (n: number) => `D’après ${ressentis(n)} des 30 derniers jours.`,
+  },
+
+  onboarding: {
+    step: (n: number, total: number) => `Étape ${n} sur ${total}`,
+    steps: [
+      {
+        title: 'Dites ce que vous ressentez, et où vous aimeriez aller',
+        body: 'Avec vos propres mots. Citez un lieu si vous voulez, ou ce qui vous aiderait. Il n’y a pas de mauvaise réponse.',
+        example: '« Mon examen de demain me stresse. Emmène-moi sur une plage tranquille. »',
+      },
+      {
+        title: 'Recevez une visualisation faite pour vous',
+        body: 'Viz it écrit en un instant une visualisation guidée à partir de vos mots : votre ressenti, votre lieu, votre besoin. Choisissez 3, 5 ou 10 minutes.',
+        example: '',
+      },
+      {
+        title: 'Fermez les yeux et suivez la voix',
+        body: 'Une voix calme vous guide, et un cercle de respiration donne le rythme. Ensuite, voyez combien le ressenti a changé. Débutant ? Commencez par les bases dans la Bibliothèque.',
+        example: '',
+      },
+      {
+        title: 'Vos données restent chez vous',
+        body: 'Tout est enregistré sur cet appareil. Rien n’est envoyé, sauf si vous activez l’analyse avancée ou vous connectez pour synchroniser. Vous pouvez tout exporter ou supprimer à tout moment.',
+        example: '',
+      },
+    ],
+    skip: 'Passer',
+    back: 'Retour',
+    next: 'Suivant',
+    done: 'C’est parti',
+  },
+
+  crisis: {
+    title: 'On dirait que vous traversez quelque chose de vraiment difficile.',
+    askedTitle: 'Parler à quelqu’un maintenant',
+    body: 'Vous n’avez pas à affronter cela sans aide. Ces lignes sont gratuites, confidentielles et ouvertes 24 h/24.',
+    call: (phone: string) => `Appeler le ${phone}`,
+    text: (phone: string) => `Écrire au ${phone}`,
+    emergency: 'Si vous êtes peut-être en danger maintenant, appelez le',
+    emergencyUnknown: 'Si vous êtes peut-être en danger maintenant, appelez le numéro d’urgence local.',
+    emergencyShort: (phone: string) => `urgences ${phone}`,
+    elsewhere: 'Ailleurs ? Trouvez des lignes d’écoute gratuites dans tous les pays sur',
+    findLine: 'Trouvez des lignes d’écoute gratuites et confidentielles dans votre pays sur',
+    otherCountries: 'Lignes d’écoute dans d’autres pays',
+    dismiss: 'Fermer',
+  },
+
+  privacy: {
+    title: 'Confidentialité',
+    updated: (date: string) => `Dernière mise à jour : ${date}`,
+    summary:
+      'En bref : ce que vous écrivez reste sur votre appareil. Viz it n’a ni publicité, ni statistiques, ni pistage, et ne vend ni ne partage jamais rien sur vous.',
+    sections: [
+      {
+        heading: 'Ce qui est enregistré sur votre appareil',
+        body: [
+          'Vos points (ce que vous avez écrit, les émotions et scores, vos notes et étiquettes), votre journal de pratiques et vos réglages sont enregistrés dans ce navigateur, sur cet appareil uniquement.',
+          'Ils restent jusqu’à ce que vous les supprimiez. Effacer les données de ce site dans votre navigateur les supprime aussi.',
+        ],
+      },
+      {
+        heading: 'Ce que Viz it ne fait pas',
+        body: [
+          'Pas de publicité, pas de statistiques, pas de cookies de pistage, et aucun script d’autres entreprises. L’application ne charge rien depuis d’autres sites.',
+          'Viz it ne vend, ne loue et ne partage jamais vos données.',
+        ],
+      },
+      {
+        heading: 'Chargement du site',
+        body: [
+          'Ce site est hébergé sur GitHub Pages. Comme tout hébergeur, GitHub reçoit votre adresse IP et des informations de base sur votre navigateur quand celui-ci charge l’application, et les conserve pour la sécurité. Viz it lui-même ne les voit jamais.',
+        ],
+        link: {
+          label: 'Déclaration de confidentialité de GitHub',
+          href: 'https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement',
+        },
+      },
+      {
+        heading: 'Analyse avancée (facultative, désactivée par défaut)',
+        body: [
+          'Seulement si vous l’activez. Chaque fois que vous appuyez sur Visualiser, seuls les mots de la zone de texte sont envoyés au serveur de Viz it, qui les transmet à Claude, un modèle d’IA créé par Anthropic, pour évaluer vos émotions. Le serveur ne les conserve pas et ne les journalise pas.',
+          'Anthropic les traite selon sa propre politique de confidentialité.',
+        ],
+        link: { label: 'Politique de confidentialité d’Anthropic', href: 'https://www.anthropic.com/legal/privacy' },
+      },
+      {
+        heading: 'Compte et synchronisation (facultatif)',
+        body: [
+          'Seulement si vous vous connectez. Votre adresse e-mail et les émotions, scores, dates, étiquettes et notes de vos points sont stockés chez Supabase pour être synchronisés entre vos appareils. Ce que vous avez écrit n’est inclus que si vous activez « Synchroniser ce que j’ai écrit ».',
+          'Chaque compte ne peut lire que ses propres données. Supprimer votre compte supprime tout ce qu’il contient.',
+        ],
+        link: { label: 'Politique de confidentialité de Supabase', href: 'https://supabase.com/privacy' },
+      },
+      {
+        heading: 'Partage, rappels, exports et pratiques',
+        body: [
+          'Les images partagées et les fichiers exportés sont créés sur votre appareil et ne vont que là où vous les envoyez. Les rappels viennent de votre propre appareil, et le rappel de calendrier est un fichier que vous ajoutez vous-même.',
+          'Les pratiques guidées lisent des enregistrements de ce site, ou utilisent la voix de votre appareil. Rien de ce que vous dites ou faites pendant une pratique n’est enregistré ni envoyé.',
+        ],
+      },
+      {
+        heading: 'Vos choix',
+        body: [
+          'Dans Réglages, vous pouvez exporter vos données en CSV ou JSON, tout supprimer, et supprimer votre compte. Vous pouvez supprimer un point à la fois dans le Journal.',
+        ],
+      },
+      {
+        heading: 'Pas un service médical',
+        body: [
+          'Viz it est un outil de réflexion, pas un diagnostic ni un traitement. Ses scores viennent d’une liste de mots ou d’un modèle d’IA et peuvent se tromper. Si vous allez mal, parlez-en à quelqu’un. « Trouver de l’aide maintenant », en bas de chaque page, liste des lignes d’écoute gratuites.',
+        ],
+      },
+      {
+        heading: 'Questions et changements',
+        body: [
+          'Posez vos questions sur la page GitHub de Viz it. N’y mettez rien de personnel, car elle est publique. Si cette politique change, la date en haut change aussi.',
+        ],
+        link: { label: 'Viz it sur GitHub', href: 'https://github.com/npanchal123/vizit/issues' },
+      },
+    ],
+  },
+
+  consent: {
+    title: 'Activer l’analyse avancée ?',
+    description: 'L’analyse avancée comprend mieux les émotions mêlées et subtiles que la liste de mots intégrée.',
+    whatChanges: 'Ce qui change :',
+    points: [
+      'Quand vous appuyez sur Visualiser, les mots tapés dans la zone de texte sont envoyés au serveur de Viz it puis à Claude, un modèle d’IA créé par Anthropic, qui les lit pour évaluer vos émotions.',
+      'Rien d’autre n’est envoyé : ni votre historique, ni vos étiquettes, notes ou compte.',
+      'Si elle n’est pas disponible, Viz it utilise discrètement la liste de mots intégrée.',
+      'Vous pouvez la désactiver à tout moment dans Réglages.',
+    ],
+    privacyBefore: 'Lisez la',
+    privacyLink: 'politique de confidentialité d’Anthropic',
+    privacyAfter: 'pour savoir comment ils les traitent.',
+    decline: 'Pas maintenant',
+    accept: 'Activer',
+  },
+
+  settings: {
+    displayHeading: 'Affichage et langue',
+    themeLabel: 'Thème',
+    themes: { system: 'Comme mon appareil', light: 'Clair', dark: 'Sombre', contrast: 'Contraste élevé' },
+    languageLabel: 'Langue',
+    languageHint:
+      'La liste de mots intégrée comprend toutes ces langues, y compris le hinglish. L’analyse avancée comprend aussi la plupart des autres.',
+    calmTitle: 'Mode calme',
+    calmHint: 'Désactive les animations. Il s’active aussi automatiquement si votre appareil demande moins de mouvement.',
+    aiHeading: 'Analyse avancée',
+    aiTitle: 'Utiliser l’IA pour lire mes points',
+    aiHint:
+      'Meilleure pour les émotions mêlées et subtiles. N’envoie que les mots que vous tapez à Claude (d’Anthropic). Désactivée par défaut.',
+    remindersHeading: 'Rappels',
+    reminderTitle: 'Me rappeler de faire le point chaque jour',
+    reminderTime: 'Heure du rappel',
+    reminderHint:
+      'Viz it ne peut vous le rappeler que lorsqu’il est ouvert, ou installé et en cours d’exécution. Pour un rappel qui arrive toujours, ajoutez-le à votre calendrier.',
+    reminderBlocked: 'Les notifications sont bloquées pour ce site : le rappel apparaîtra seulement dans Viz it.',
+    reminderCalendar: 'Ajouter un rappel quotidien à mon calendrier',
+    installHeading: 'Installer l’application',
+    installHint: 'Installez Viz it pour l’ouvrir depuis votre écran d’accueil ou votre bureau. Elle fonctionne hors ligne.',
+    installButton: 'Installer Viz it',
+    installDone: 'Viz it est installé sur cet appareil.',
+    installIos: 'Sur iPhone ou iPad : touchez le bouton Partager dans Safari, puis « Sur l’écran d’accueil ».',
+    installUnavailable:
+      'Votre navigateur ne propose pas l’installation pour le moment. Cherchez « Installer » ou « Ajouter à l’écran d’accueil » dans son menu.',
+    accountHeading: 'Compte et synchronisation',
+    dataHeading: 'Vos données',
+    includeText: 'Inclure ce que j’ai écrit dans les exports',
+    exportCsv: 'Exporter en CSV',
+    exportJson: 'Exporter en JSON',
+    deleteAll: 'Supprimer toutes les données',
+    deleteAllConfirm: (synced: boolean) =>
+      `Supprimer tous vos points ?${synced ? ' Ils seront aussi supprimés de votre compte et de vos autres appareils synchronisés.' : ''} C’est irréversible.`,
+    rescoreTitle: 'Mettre à jour les anciens points',
+    rescoreHint: (n: number) =>
+      `${n === 1 ? '1 point a été lu' : `${n} points ont été lus`} par une ancienne version de la liste de mots intégrée. La mise à jour relit ce que vous avez écrit avec la version actuelle. Vos notes et étiquettes restent inchangées.`,
+    rescoreButton: 'Les mettre à jour',
+    rescoreDone: (n: number) => (n === 1 ? '1 point mis à jour.' : `${n} points mis à jour.`),
+    rescoreNone: 'Rien à changer.',
+    privacyLink: 'Comment Viz it traite vos données',
+  },
+
+  account: {
+    notConfigured:
+      'La synchronisation n’est pas configurée pour cette copie de Viz it : tout reste sur cet appareil. (Pour les développeurs : ajoutez vos informations Supabase dans .env. Voir le README.)',
+    intro: 'Connectez-vous pour sauvegarder vos points et les retrouver sur vos autres appareils. Pas besoin de mot de passe.',
+    emailLabel: 'E-mail',
+    sendLink: 'M’envoyer un lien de connexion',
+    sending: 'Envoi…',
+    linkSent: 'Un lien de connexion vous attend dans votre boîte de réception.',
+    linkFailed: (message: string) => `Impossible d’envoyer le lien : ${message}`,
+    signedInAs: 'Compte :',
+    status: {
+      idle: 'À jour',
+      syncing: 'Synchronisation…',
+      offline: 'Hors ligne. Les changements seront synchronisés au retour de la connexion.',
+      error: 'Échec de la synchronisation',
+    },
+    lastSynced: (when: string) => ` · dernière synchronisation ${when}`,
+    syncNow: 'Synchroniser maintenant',
+    syncTextTitle: 'Synchroniser ce que j’ai écrit',
+    syncTextHint:
+      'Désactivé : seuls les émotions, scores, dates et étiquettes sont sauvegardés, et vos mots restent sur cet appareil. Activé : vos mots sont aussi stockés dans votre compte.',
+    signOut: 'Se déconnecter',
+    signOutRemove: 'Se déconnecter et retirer de cet appareil',
+    signOutRemoveConfirm:
+      'Retirer vos points de cet appareil ? Ils restent en sécurité dans votre compte et sur vos autres appareils synchronisés.',
+    mergeConfirm:
+      'Cet appareil contient des points d’un autre compte. Les ajouter au compte auquel vous venez de vous connecter ? Choisissez Annuler pour plutôt les retirer de cet appareil.',
+    deleteAccount: 'Supprimer mon compte…',
+  },
+
+  deleteAccount: {
+    title: 'Supprimer votre compte ?',
+    body: 'Cela supprime définitivement votre compte et tous les points qu’il contient, sur chaque appareil synchronisé. C’est irréversible.',
+    alsoLocal: 'Supprimer aussi mes points de cet appareil',
+    keepNote: 'Sinon, vos points restent uniquement sur cet appareil.',
+    confirm: 'Supprimer mon compte',
+    deleting: 'Suppression…',
+    cancel: 'Annuler',
+    failed: (message: string) => `Impossible de supprimer votre compte : ${message}`,
+  },
+};

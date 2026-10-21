@@ -217,7 +217,7 @@ export default function App() {
             </a>
           </p>
           <nav aria-label={t.app.navLabel}>
-            <ul className="flex gap-1.5 sm:gap-2">
+            <ul className="flex flex-wrap gap-1.5 sm:gap-2">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
                   <button

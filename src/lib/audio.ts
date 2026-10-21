@@ -97,7 +97,9 @@ async function recordedNarrator(locale: Locale, practiceId: string, segments: Se
 
 /** The device's voices for a language. Browsers load the list late, so wait briefly for it. */
 async function voicesFor(lang: string): Promise<SpeechSynthesisVoice[]> {
-  const matching = () => speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith(lang));
+  // Voice tags vary in case and separator ("zh-CN", "zh_cn").
+  const tag = (s: string) => s.toLowerCase().replace('_', '-');
+  const matching = () => speechSynthesis.getVoices().filter((v) => tag(v.lang).startsWith(tag(lang)));
   if (speechSynthesis.getVoices().length === 0) {
     await new Promise<void>((resolve) => {
       speechSynthesis.addEventListener('voiceschanged', () => resolve(), { once: true });
@@ -122,7 +124,7 @@ function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthe
       new Promise((resolve) => {
         interrupted = false;
         // One utterance per sentence: some browsers cut long utterances off part-way.
-        const sentences = segments[index].text.match(/[^.!?…।]+[.!?…।]*\s*/g) ?? [segments[index].text];
+        const sentences = segments[index].text.match(/[^.!?…।。！？؟]+[.!?…।。！？؟]*\s*/g) ?? [segments[index].text];
         sentences.forEach((sentence, i) => {
           const utterance = new SpeechSynthesisUtterance(sentence.trim());
           utterance.lang = lang;

@@ -9,6 +9,7 @@ const checkIns = (n: number) => `${n} चेक-इन`;
  */
 export const hi: Messages = {
   htmlLang: 'hi',
+  dir: 'ltr',
   languageName: 'हिन्दी',
 
   emotions: {
@@ -380,7 +381,7 @@ export const hi: Messages = {
     themes: { system: 'डिवाइस जैसी', light: 'लाइट', dark: 'डार्क', contrast: 'हाई कॉन्ट्रास्ट' },
     languageLabel: 'भाषा',
     languageHint:
-      'ऐप की अपनी शब्द-सूची हिन्दी, Hinglish, English और Spanish समझती है। स्मार्ट विश्लेषण ज़्यादातर भाषाएँ समझता है।',
+      'ऐप की अपनी शब्द-सूची ये सभी भाषाएँ समझती है, Hinglish भी। स्मार्ट विश्लेषण ज़्यादातर दूसरी भाषाएँ भी समझता है।',
     calmTitle: 'शांत मोड',
     calmHint: 'एनिमेशन बंद कर देता है। अगर आपका डिवाइस कम मोशन माँगता है, तो यह अपने-आप चालू रहता है।',
     aiHeading: 'स्मार्ट विश्लेषण',

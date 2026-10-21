@@ -208,6 +208,18 @@ test('Hindi: a Hinglish request becomes a visualization spoken in Hindi', async 
   await expect(page.getByRole('heading', { name: 'अभ्यास खत्म' })).toBeVisible();
 });
 
+test('Arabic reads right to left and composes in Arabic', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('moodcanvas.locale', '"ar"'));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'تخطٍّ' }).click();
+  await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+  await page.getByLabel('ما الذي في بالك، وما الذي تودّ تخيّله؟').fill('أنا قلق من الامتحان، خذني إلى حديقة جدتي');
+  await page.getByRole('button', { name: 'إنشاء تخيّلي' }).click();
+  await expect(page.getByText('المكان: حديقة جدتك')).toBeVisible();
+  await page.getByText('قراءة النص').click();
+  await expect(page.getByText('القلق بشأن الامتحان شعور مفهوم تمامًا', { exact: false })).toBeVisible();
+});
+
 test('works offline once loaded (installable app)', async ({ page, context }) => {
   await skipOnboarding(page);
   await page.evaluate(() => navigator.serviceWorker.ready);

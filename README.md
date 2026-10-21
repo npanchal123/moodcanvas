@@ -33,9 +33,9 @@ The composer is in `src/lib/compose/`. It runs instantly and offline on the devi
   - The feeling picks the goal: anxious → calm down, sad → comfort, angry → let go.
   - The goal picks the scene: calm down → beach, let go → river, sleep → starry night.
 - **Lengths:** lines are tiered like the library practices, so every visualization plays at 3, 5 or 10 minutes.
-- **Tests:** `compose.test.ts` checks real requests in all three languages. It also checks that every
+- **Tests:** `compose.test.ts` checks real requests in every language. It also checks that every
   combination of scene, goal, language and length is complete and leaves at least a third of its time quiet.
-- **Adding a scene or goal:** add its lines to `en.ts`, `hi.ts` and `es.ts` in `src/lib/compose/`. Write lines
+- **Adding a scene or goal:** add its lines to every language file in `src/lib/compose/`. Write lines
   that work alongside any other scene or goal, and use only the `{place}`, `{topic}` and `{carrier}` tokens.
 - **Journal tags:** the check-in is saved with a tag for its topic, so Journal insights keep working.
 
@@ -150,8 +150,9 @@ under that folder.
 
 ### Languages
 
-The app speaks English, Hindi (हिन्दी) and Spanish. It picks the language from the browser; you can change it
-in **Settings → Display and language**.
+The app speaks nine languages: English, Hindi (हिन्दी), Spanish, Chinese (中文, Simplified), Arabic (العربية),
+French, Bengali (বাংলা), Portuguese (Brazilian) and Russian. It picks the first one the browser prefers; you can
+change it in **Settings → Display and language**.
 - **Interface text** lives in `src/i18n/en.ts`. Every other language must match its shape exactly, so a
   missing string is a type error. Practice scripts and lessons are in `src/practices/`.
 - **The word-list analyzer** has one language pack per language in `src/lib/lexicons/`. Each check-in is read
@@ -164,12 +165,23 @@ in **Settings → Display and language**.
   - Feminine endings map to the base word (अकेली → अकेला).
   - "Not" can come after the word ("खुश नहीं", "khush nahi").
   - Accent stripping applies only to Latin letters, so Devanagari vowel signs are kept.
+- **Other packs:**
+  - Chinese has no spaces, so its pack splits text by taking the longest dictionary word at each point
+    ("我不开心" → 我 / 不 / 开心).
+  - Arabic drops vowel marks, unifies alef, ya and ta marbuta spellings, and strips "and", "the" and endings
+    joined onto words ("والقلق" → قلق).
+  - Russian keys are stems, tried with up to four letters dropped ("грустная" → груст).
+  - Bengali, like Hindi, reads "not" after the word ("খুশি না").
+- **Gender:** French, Portuguese and Russian address the reader politely (vous, você, вы) and avoid words that
+  change with the reader's gender. Arabic practices are spoken as "let's…" for the same reason; some Arabic
+  interface text still uses the masculine "you", as most Arabic apps do.
+- **Arabic** is shown right to left (`dir="rtl"`), so layouts use start/end rather than left/right.
 - **Crisis phrases** are checked in every language, whatever the interface language is, including Hindi and
   Hinglish.
 - **Adding a language:** copy `es.ts` in `src/i18n/`, `src/lib/lexicons/` and `src/practices/`, translate it,
   and register it in `LOCALES`, `LANGUAGE_PACKS` and `PRACTICE_CONTENT`.
-- **Review needed:** the Hindi and Spanish were drafted by AI. Have native speakers review them before
-  release.
+- **Review needed:** every language except English was drafted by AI. Have native speakers review them before
+  release, especially the Arabic, Bengali and Chinese.
 
 ### Installing and offline use
 
@@ -297,7 +309,8 @@ appears without an icon, label or pattern.
   - feelings picked from the list
 
 **Phase 4: visualization first (October 2026):**
-- The front page is now the visualization maker. Guided visualizations come in English, Hindi and Spanish.
+- The front page is now the visualization maker. Guided visualizations come in English, Hindi and Spanish,
+  and from late October 2026 also in Chinese, Arabic, French, Bengali, Portuguese and Russian.
 - The Library holds the ready-made practices, and the Journal (formerly History) the patterns and the practice
   log.
 - Removed with the old check-in screen:
@@ -321,7 +334,8 @@ appears without an icon, label or pattern.
 **Ideas for later:**
 - Real push notifications
 - An educator or group mode with anonymized totals
-- More languages
+- More languages (Indonesian, Urdu, Japanese, German, and Indian languages such as Marathi, Tamil and Telugu)
+- Loading only the chosen language, to make the first visit smaller
 
 ## Structure
 
