@@ -2,14 +2,46 @@
 
 **Try it:** https://npanchal123.github.io/vizit/
 
-Viz it teaches guided visualization: a kind of meditation where you use your imagination to change how
-you feel. Write how you feel in your own words, and Viz it shows it as an "emotion bloom" picture with an
-intensity score from 0 to 100. It then suggests a short guided practice for that feeling, and afterwards shows
-how much the feeling changed.
+Viz it makes guided visualization easy. Visualization is a kind of meditation where you use your imagination
+to change how you feel.
+1. Write what's on your mind and what you'd like to imagine, for example: "I'm anxious about my exam tomorrow.
+   Take me to my grandma's garden in Shimla."
+2. Viz it instantly writes a guided visualization made from those words.
+3. A calm voice walks you through it.
+4. Afterwards, Viz it shows how much the feeling changed.
 
-## Guided visualization
+## Visualizations made from your words (the front page)
 
-- **Practice tab:**
+The composer is in `src/lib/compose/`. It runs instantly and offline on the device, with no AI and no cost.
+- **What it reads from the text:**
+  - **Feeling:** from the word-list analyzer, for example anxious, sad or angry.
+  - **Place:** in the person's own words, from phrases like "take me to …", "I want to be at …", "… ले चलो" or
+    "llévame a …". It's spoken back with "my" turned into "your".
+  - **Goal:** calm down, let go, comfort, sleep, confidence, energy, savor joy or focus.
+  - **Topic:** exam, work, relationship, family, friends, health, money, future or exercise.
+  - Keywords from every language are checked, so Hinglish works with the English interface. The script is
+    always written in the interface language.
+- **The person can also pick a place and a goal** from the buttons. Their choice wins over what was read.
+- **How the script is built:**
+  1. A line that reflects back what they said ("You told me you're feeling anxious about the exam…")
+  2. Settling in and breathing
+  3. Arriving at the place: one of 9 scenes, or any place they named
+  4. The goal's technique, personalized with their topic ("If a thought about the exam drifts in, let a wave
+     carry it away")
+  5. A closing that returns them to the room
+- **Defaults** when nothing is said:
+  - The feeling picks the goal: anxious → calm down, sad → comfort, angry → let go.
+  - The goal picks the scene: calm down → beach, let go → river, sleep → starry night.
+- **Lengths:** lines are tiered like the library practices, so every visualization plays at 3, 5 or 10 minutes.
+- **Tests:** `compose.test.ts` checks real requests in all three languages. It also checks that every
+  combination of scene, goal, language and length is complete and leaves at least a third of its time quiet.
+- **Adding a scene or goal:** add its lines to `en.ts`, `hi.ts` and `es.ts` in `src/lib/compose/`. Write lines
+  that work alongside any other scene or goal, and use only the `{place}`, `{topic}` and `{carrier}` tokens.
+- **Journal tags:** the check-in is saved with a tag for its topic, so Journal insights keep working.
+
+## Guided visualization library
+
+- **Library tab:**
   - Five short lessons for complete beginners: what visualization is, what to do if you can't "see" pictures,
     how to start, wandering minds, and staying safe.
   - "Your first visualization," a 3-minute exercise imagining a lemon.
@@ -33,10 +65,10 @@ how much the feeling changed.
   - a soft generated ocean sound
   - pause and end buttons
   - keeps the screen awake during a session
-- **Before and after:** a practice started from a check-in asks how strong that feeling is afterwards. History
-  shows the practice log with each change, such as "Fear / Anxiety: 75 → 40".
-- **Safety:** no practice is suggested when the crisis banner is showing. Every practice says you can stop at
-  any time.
+- **Before and after:** when the person's words showed a feeling, the practice asks how strong that feeling is
+  afterwards. The Journal shows the practice log with each change, such as "Fear / Anxiety: 75 → 40".
+- **Safety:** when someone writes something worrying, the app shows support lines instead of creating a
+  visualization. Every practice says you can stop at any time.
 - **Writing new scripts:** keep step ids, tiers and pauses the same in `en.ts`, `hi.ts` and `es.ts`. A unit
   test checks this, and that each version leaves at least a third of its time quiet.
 
@@ -264,6 +296,17 @@ appears without an icon, label or pattern.
   - check-ins with no text
   - feelings picked from the list
 
+**Phase 4: visualization first (October 2026):**
+- The front page is now the visualization maker. Guided visualizations come in English, Hindi and Spanish.
+- The Library holds the ready-made practices, and the Journal (formerly History) the patterns and the practice
+  log.
+- Removed with the old check-in screen:
+  - the quick-pick emotion buttons
+  - the "Feels off?" rating
+  - the tag editor (tags now come from the topic)
+  - share cards
+  - the weekly chart on the front page (it's still in the Journal)
+
 **Before sharing widely:**
 - **Privacy page:** at `…/#privacy`, linked from the footer of every page and from Settings → Your data
   (`src/components/Privacy.tsx`; the text is in `src/i18n`). If you change what the app collects, change this
@@ -286,13 +329,15 @@ appears without an icon, label or pattern.
 server/            Node server: /api/analyze (Claude) and production static hosting
 supabase/          database migration and the delete-account Edge Function
 e2e/               Playwright browser and axe accessibility tests
-src/i18n/          en/es messages, I18nProvider, date formatting
-src/lib/           analyzer and lexicons/ (en, es, emoji), aiResult, aiAnalyzer, entries (all writes),
-                   db (Dexie v2), sync, syncMerge, account, calendar, reflection, insights, reminders,
-                   install, theme, stats, export, tags, helplines
-src/components/    EntryForm, ResultPanel, TagEditor, ShareDialog, History, Insights, MoodCalendar,
-                   FrequencyChart (+ lazy FrequencyBars), Settings, AccountPanel, DeleteAccountDialog,
-                   AiConsentDialog, ReminderBanner, Onboarding, CrisisBanner, Privacy, EmotionBloom,
-                   IntensityGauge
+src/i18n/          en/hi/es messages, I18nProvider, date formatting
+src/practices/     the library: scripts and beginner lessons in en/hi/es
+src/lib/compose/   the visualization composer: scenes, goals and topics in en/hi/es
+src/lib/           analyzer and lexicons/ (en, hi, es, emoji), aiResult, aiAnalyzer, entries (all writes),
+                   db (Dexie v3), session (timing), audio (voices and sound), sync, syncMerge, account,
+                   calendar, reflection, insights, reminders, install, theme, stats, export, tags, helplines
+src/components/    Visualize (front page), PracticeSession (player), PracticeLibrary, History (Journal),
+                   Insights, MoodCalendar, FrequencyChart (+ lazy FrequencyBars), Settings, AccountPanel,
+                   DeleteAccountDialog, AiConsentDialog, ReminderBanner, Onboarding, CrisisBanner, Privacy,
+                   EmotionBloom
 public/            icons, favicon, service-worker notification handler
 ```

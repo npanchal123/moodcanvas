@@ -23,10 +23,8 @@ export const es: Messages = {
   app: {
     skipLink: 'Saltar al contenido principal',
     navLabel: 'Principal',
-    views: { today: 'Registrar', practice: 'Practicar', history: 'Historial', settings: 'Ajustes', privacy: 'Privacidad' },
+    views: { today: 'Visualizar', practice: 'Biblioteca', history: 'Diario', settings: 'Ajustes', privacy: 'Privacidad' },
     pageHeading: (view: string) => `Viz it: ${view}`,
-    emptyResult: 'Aquí aparecerá tu flor de emociones.',
-    thisWeek: 'Esta semana',
     aiFallback: 'El análisis inteligente no está disponible ahora, así que se usó la lista de palabras integrada.',
     loading: 'Cargando…',
     footer: 'Viz it es una herramienta de reflexión. No es un diagnóstico ni reemplaza la ayuda profesional.',
@@ -45,20 +43,6 @@ export const es: Messages = {
     icsSummary: 'Registro en Viz it',
     icsDescription: (url: string) => `¿Cómo te sientes? Abre Viz it: ${url}`,
   },
-
-  entry: {
-    label: '¿Cómo te sientes?',
-    hintLocal: 'Escríbelo con tus propias palabras. Lo que escribas se queda en este dispositivo.',
-    hintAi:
-      'Escríbelo con tus propias palabras. El análisis inteligente está activado, así que este texto se envía a Claude cuando pulses Visualizar.',
-    placeholder: 'Hoy me siento… porque…',
-    count: (n: number, max: number) => `${n}/${max} caracteres`,
-    chipsLegend: 'O elige lo que encaje (opcional)',
-    needsChip: 'No pude entenderlo con esas palabras. Elige uno o más sentimientos que encajen y vuelve a intentarlo.',
-    submit: 'Visualizar',
-    submitting: 'Visualizando…',
-  },
-
   result: {
     mostly: (adjective: string) => `Sobre todo ${adjective}`,
     feeling: (adjective: string) => `Te sientes ${adjective}`,
@@ -74,6 +58,40 @@ export const es: Messages = {
     newCheckIn: 'Nuevo registro',
   },
 
+  create: {
+    heroTitle: 'Visualiza cómo quieres sentirte',
+    heroBody:
+      'Cuéntame qué tienes en mente y cómo te gustaría imaginarlo. Viz it escribe al instante una visualización guiada solo para ti, y una voz tranquila te acompaña.',
+    label: '¿Qué tienes en mente, y qué te gustaría imaginar?',
+    hintLocal: 'Escribe libremente. Lo que escribes se queda en este dispositivo.',
+    hintAi: 'Escribe libremente. El análisis inteligente está activado, así que este texto también se envía a Claude para leer tus sentimientos.',
+    placeholder: 'p. ej. Estoy nervioso por el examen de mañana. Llévame a una playa tranquila.',
+    examplesLabel: '¿Necesitas una idea? Prueba una:',
+    examples: [
+      'Estoy nervioso por el examen de mañana. Llévame a una playa tranquila.',
+      'Me siento mal después de discutir con mi amiga. Quiero sentirme a salvo y en calma.',
+      'No puedo dormir, no dejo de pensar en el trabajo.',
+      'Hoy tengo una entrevista y quiero sentir confianza. Llévame a la montaña.',
+    ],
+    sceneLegend: '¿Adónde te gustaría ir? (opcional)',
+    goalLegend: '¿Qué te ayudaría más? (opcional)',
+    create: 'Crear mi visualización',
+    creating: 'Creando…',
+    needMore: 'Cuéntame un poco cómo te sientes, o elige un lugar o lo que te ayudaría.',
+    madeFrom: 'Hecha con tus palabras',
+    understood: 'Lo que entendí',
+    feeling: (name: string, n: number) => `Sentimiento: ${name} (${n}/100)`,
+    place: (place: string) => `Lugar: ${place}`,
+    goal: (goal: string) => `Enfoque: ${goal}`,
+    about: (topic: string) => `Sobre: ${topic}`,
+    readScript: 'Leer el guion',
+    newHereTitle: '¿Es tu primera vez con la visualización?',
+    newHereBody:
+      'Es simplemente imaginar con tus sentidos mientras una voz tranquila te guía. No necesitas experiencia, y ni siquiera hace falta “ver” imágenes.',
+    firstTry: 'Prueba una primera visualización de 3 minutos',
+    learn: 'Aprende lo básico',
+  },
+
   practice: {
     startHereTitle: '¿Es tu primera vez con la visualización?',
     startHereBody:
@@ -87,10 +105,6 @@ export const es: Messages = {
     forBeginners: 'Útil para: empezar',
     open: 'Empezar',
     openLabel: (title: string) => `Empezar ${title}`,
-    resultTitle: 'Prueba una visualización guiada',
-    resultBody: (adjective: string, title: string) =>
-      `¿Te sientes ${adjective}? “${title}” puede ayudarte, en solo 3 minutos.`,
-    resultButton: (title: string) => `Empezar ${title}`,
     lengthLabel: '¿Cuánto tiempo?',
     minutes: (n: number) => `${n} min`,
     voiceLabel: 'Guía de voz',
@@ -139,18 +153,7 @@ export const es: Messages = {
     one: (name: string, n: number) => `${name} en ${n} de 100.`,
     two: (name: string, n: number, name2: string, n2: number) => `${name} en ${n} de 100, con ${name2} en ${n2}.`,
   },
-
-  gauge: {
-    label: 'Intensidad',
-    valueText: (n: number, band: string) => `${n} de 100, ${band.toLowerCase()}`,
-  },
-
   tags: {
-    legend: '¿De qué se trata? (opcional)',
-    hint: (max: number) => `Las etiquetas te ayudan a ver patrones más adelante. Hasta ${max}.`,
-    addLabel: 'Agrega tu propia etiqueta',
-    addPlaceholder: 'Agrega la tuya',
-    add: 'Agregar',
     suggested: {
       work: 'trabajo',
       school: 'estudios',
@@ -161,29 +164,9 @@ export const es: Messages = {
       exercise: 'ejercicio',
       money: 'dinero',
       weather: 'clima',
+      relationship: 'pareja',
     },
   },
-
-  share: {
-    title: 'Compartir o guardar',
-    description: 'Elige qué aparece en la imagen. Nada sale de la app hasta que pulses Guardar o Compartir.',
-    legend: 'Incluir en la imagen',
-    name: 'Nombre del sentimiento',
-    intensity: 'Puntuación de intensidad',
-    date: 'Fecha y hora',
-    text: 'Lo que escribí',
-    textWarning: 'Cualquiera que vea esta imagen podrá leer tus palabras.',
-    share: 'Compartir',
-    save: 'Guardar imagen',
-    close: 'Cerrar',
-    saved: 'Imagen guardada.',
-    shared: 'Compartido.',
-    savedInstead: 'Aquí no se puede compartir, así que la imagen se guardó.',
-    renderFailed: 'Lo sentimos, no se pudo crear la imagen.',
-    shareFailed: 'Lo sentimos, no se pudo compartir.',
-    shareTitle: 'Mi flor de emociones',
-  },
-
   chart: {
     summary: (days: number, parts: string[]) =>
       parts.length ? `En los últimos ${days} días: ${parts.join(', ')}.` : `Aún no hay registros en los últimos ${days} días.`,
@@ -209,7 +192,7 @@ export const es: Messages = {
     streakStat: 'Días seguidos',
     practicesStat: 'Prácticas',
     practiceLogHeading: 'Registro de prácticas',
-    practiceLogEmpty: 'Aquí aparecerán tus visualizaciones guiadas.',
+    practiceLogEmpty: 'Aquí aparecerán tus visualizaciones.',
     practiceItem: (title: string, minutes: number) => `${title} · ${minutes} min`,
     endedEarly: 'terminada antes',
     listHeading: 'Registros',
@@ -255,18 +238,18 @@ export const es: Messages = {
     step: (n: number, total: number) => `Paso ${n} de ${total}`,
     steps: [
       {
-        title: 'Escribe cómo te sientes',
-        body: 'Usa tus propias palabras. No hay respuestas incorrectas, y si hoy cuesta encontrar palabras puedes elegir un sentimiento de una lista.',
-        example: '“Estoy muy ansioso por el examen de mañana, pero también un poco emocionado.”',
+        title: 'Di cómo te sientes, y adónde te gustaría ir',
+        body: 'Usa tus propias palabras. Si quieres, menciona un lugar o lo que te ayudaría. No hay respuestas incorrectas.',
+        example: '“Estoy nervioso por el examen de mañana. Llévame a una playa tranquila.”',
       },
       {
-        title: 'Míralo como una imagen y una puntuación',
-        body: 'El color muestra el sentimiento, el tamaño muestra su fuerza, y debajo hay una puntuación de 0 a 100. Si no encaja, puedes cambiarla.',
+        title: 'Recibe una visualización hecha para ti',
+        body: 'Viz it escribe al momento una visualización guiada con tus palabras: tu sentimiento, tu lugar, lo que necesitas. Elige 3, 5 o 10 minutos.',
         example: '',
       },
       {
-        title: 'Después, practica',
-        body: 'Viz it te sugiere una visualización guiada corta según cómo te sientes, como un lugar seguro y tranquilo cuando sientes ansiedad. Una voz te guía y, al terminar, puedes ver cómo cambió el sentimiento. ¿Es tu primera vez? La pestaña Practicar te enseña lo básico.',
+        title: 'Cierra los ojos y sigue la voz',
+        body: 'Una voz tranquila te guía mientras un círculo de respiración marca el ritmo. Al terminar, mira cuánto cambió el sentimiento. ¿Es tu primera vez? Empieza por lo básico en la Biblioteca.',
         example: '',
       },
       {

@@ -4,6 +4,8 @@ import { expect, type Page } from '@playwright/test';
 /** WCAG 2.2 A and AA, the target in the project plan. */
 const WCAG_TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
+export const FEELING_LABEL = 'What’s on your mind, and what would you like to imagine?';
+
 export async function expectNoA11yViolations(page: Page, label: string) {
   const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).analyze();
   const summary = results.violations.map(
@@ -23,12 +25,12 @@ export async function skipOnboarding(page: Page) {
   await expect(page.getByRole('dialog')).toBeHidden();
 }
 
-export async function checkIn(page: Page, text: string, tag?: string) {
-  await page.getByRole('button', { name: 'Check in', exact: true }).click();
-  await page.getByLabel('How are you feeling?').fill(text);
-  await page.getByRole('button', { name: 'Visualize' }).click();
-  await page.locator('#result-heading').waitFor();
-  if (tag) await page.getByRole('button', { name: tag, exact: true }).click();
+/** Writes on the front page and creates a visualization, which also saves the check-in. */
+export async function create(page: Page, text: string) {
+  await page.getByRole('button', { name: 'Visualize', exact: true }).click();
+  await page.getByLabel(FEELING_LABEL).fill(text);
+  await page.getByRole('button', { name: 'Create my visualization' }).click();
+  await page.locator('#session-heading').waitFor();
 }
 
 /** Turn off animation so screenshots and axe see final states. */

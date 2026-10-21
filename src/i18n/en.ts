@@ -32,10 +32,8 @@ export const en = {
   app: {
     skipLink: 'Skip to main content',
     navLabel: 'Main',
-    views: { today: 'Check in', practice: 'Practice', history: 'History', settings: 'Settings', privacy: 'Privacy' },
+    views: { today: 'Visualize', practice: 'Library', history: 'Journal', settings: 'Settings', privacy: 'Privacy' },
     pageHeading: (view: string) => `Viz it: ${view}`,
-    emptyResult: 'Your emotion bloom will appear here.',
-    thisWeek: 'This week',
     aiFallback: 'Smarter analysis isn’t available right now, so the built-in word list was used.',
     loading: 'Loading…',
     footer: 'Viz it is a reflection tool. It isn’t a diagnosis or a replacement for professional support.',
@@ -54,19 +52,6 @@ export const en = {
     icsSummary: 'Check in with Viz it',
     icsDescription: (url: string) => `How are you feeling? Open Viz it: ${url}`,
   },
-
-  entry: {
-    label: 'How are you feeling?',
-    hintLocal: 'Write it in your own words. What you write stays on this device.',
-    hintAi: 'Write it in your own words. Smarter analysis is on, so this text is sent to Claude when you press Visualize.',
-    placeholder: 'Today I feel… because…',
-    count: (n: number, max: number) => `${n}/${max} characters`,
-    chipsLegend: 'Or pick what fits (optional)',
-    needsChip: 'I couldn’t tell from those words. Pick one or more feelings that fit, then try again.',
-    submit: 'Visualize',
-    submitting: 'Visualizing…',
-  },
-
   result: {
     mostly: (adjective: string) => `Mostly ${adjective}`,
     feeling: (adjective: string) => `Feeling ${adjective}`,
@@ -82,8 +67,42 @@ export const en = {
     newCheckIn: 'New check-in',
   },
 
+  create: {
+    heroTitle: 'Visualize how you want to feel',
+    heroBody:
+      'Tell me what’s on your mind and how you’d like to imagine it. Viz it writes a guided visualization just for you, instantly, and a calm voice walks you through it.',
+    label: 'What’s on your mind, and what would you like to imagine?',
+    hintLocal: 'Write freely, in English, Hindi or Hinglish. What you write stays on this device.',
+    hintAi: 'Write freely. Smarter analysis is on, so this text is also sent to Claude to read your feelings.',
+    placeholder: 'e.g. I’m anxious about my exam tomorrow. Take me to a quiet beach.',
+    examplesLabel: 'Need an idea? Try one:',
+    examples: [
+      'I’m anxious about my exam tomorrow. Take me to a quiet beach.',
+      'Feeling low after a fight with my friend. I want to feel warm and safe.',
+      'I can’t sleep, my mind keeps racing about work.',
+      'I have an interview today. I want to feel confident, somewhere like the mountains.',
+    ],
+    sceneLegend: 'Where would you like to go? (optional)',
+    goalLegend: 'What would help most? (optional)',
+    create: 'Create my visualization',
+    creating: 'Creating…',
+    needMore: 'Tell me a little about how you feel, or pick a place or what would help.',
+    madeFrom: 'Made from your words',
+    understood: 'What I picked up',
+    feeling: (name: string, n: number) => `Feeling: ${name} (${n}/100)`,
+    place: (place: string) => `Place: ${place}`,
+    goal: (goal: string) => `Focus: ${goal}`,
+    about: (topic: string) => `About: ${topic}`,
+    readScript: 'Read the script',
+    newHereTitle: 'New to visualization?',
+    newHereBody:
+      'It’s simply imagining with your senses while a calm voice guides you. You don’t need any experience, and you don’t even need to “see” pictures.',
+    firstTry: 'Try a 3-minute first visualization',
+    learn: 'Learn the basics',
+  },
+
   practice: {
-    // Practice tab
+    // Library tab
     startHereTitle: 'New to visualization?',
     startHereBody:
       'Visualization is a kind of meditation where you use your imagination: picturing calm places, warm light or open sky to change how you feel. Read the basics, then try a short first practice.',
@@ -96,10 +115,6 @@ export const en = {
     forBeginners: 'Good for: getting started',
     open: 'Start',
     openLabel: (title: string) => `Start ${title}`,
-    // Shown under a check-in result
-    resultTitle: 'Try a guided visualization',
-    resultBody: (adjective: string, title: string) => `Feeling ${adjective}? “${title}” can help, in as little as 3 minutes.`,
-    resultButton: (title: string) => `Start ${title}`,
     // Before starting
     lengthLabel: 'How long?',
     minutes: (n: number) => `${n} min`,
@@ -150,18 +165,7 @@ export const en = {
     two: (name: string, n: number, name2: string, n2: number) =>
       `${name} at ${n} out of 100, with ${name2} at ${n2}.`,
   },
-
-  gauge: {
-    label: 'Intensity',
-    valueText: (n: number, band: string) => `${n} out of 100, ${band.toLowerCase()}`,
-  },
-
   tags: {
-    legend: 'What’s this about? (optional)',
-    hint: (max: number) => `Tags help you spot patterns later. Up to ${max}.`,
-    addLabel: 'Add your own tag',
-    addPlaceholder: 'Add your own',
-    add: 'Add',
     suggested: {
       work: 'work',
       school: 'school',
@@ -172,29 +176,9 @@ export const en = {
       exercise: 'exercise',
       money: 'money',
       weather: 'weather',
+      relationship: 'relationship',
     } as Record<string, string>,
   },
-
-  share: {
-    title: 'Share or save',
-    description: 'Choose what goes on the image. Nothing leaves the app until you press Save or Share.',
-    legend: 'Include on the image',
-    name: 'Feeling name',
-    intensity: 'Intensity score',
-    date: 'Date and time',
-    text: 'What I wrote',
-    textWarning: 'Anyone who sees this image will be able to read your words.',
-    share: 'Share',
-    save: 'Save image',
-    close: 'Close',
-    saved: 'Image saved.',
-    shared: 'Shared.',
-    savedInstead: 'Sharing isn’t available here, so the image was saved instead.',
-    renderFailed: 'Sorry, the image could not be made.',
-    shareFailed: 'Sorry, sharing didn’t work.',
-    shareTitle: 'My emotion bloom',
-  },
-
   chart: {
     summary: (days: number, parts: string[]) =>
       parts.length ? `In the last ${days} days: ${parts.join(', ')}.` : `No check-ins in the last ${days} days yet.`,
@@ -220,7 +204,7 @@ export const en = {
     streakStat: 'Day streak',
     practicesStat: 'Practices',
     practiceLogHeading: 'Practice log',
-    practiceLogEmpty: 'Your guided visualizations will show up here.',
+    practiceLogEmpty: 'Your visualizations will show up here.',
     practiceItem: (title: string, minutes: number) => `${title} · ${minutes} min`,
     endedEarly: 'ended early',
     listHeading: 'Check-ins',
@@ -266,18 +250,18 @@ export const en = {
     step: (n: number, total: number) => `Step ${n} of ${total}`,
     steps: [
       {
-        title: 'Write how you feel',
-        body: 'Use your own words. There are no wrong answers, and you can pick a feeling from a list if words are hard today.',
-        example: '“I’m really anxious about tomorrow’s exam but kind of excited too.”',
+        title: 'Say how you feel, and where you’d like to go',
+        body: 'Use your own words. Mention a place if you like, or what would help. There are no wrong answers.',
+        example: '“I’m anxious about my exam tomorrow. Take me to a quiet beach.”',
       },
       {
-        title: 'See it as a picture and a score',
-        body: 'Color shows the feeling, size shows how strong it is, and a score from 0 to 100 sits underneath. If the score feels off, you can change it.',
+        title: 'Get a visualization made just for you',
+        body: 'Viz it writes a guided visualization from your words in a moment: your feeling, your place, what you need. Choose 3, 5 or 10 minutes.',
         example: '',
       },
       {
-        title: 'Then practice',
-        body: 'Viz it suggests a short guided visualization for how you feel, like a calm safe place when you’re anxious. A voice guides you, and afterwards you can see how the feeling changed. New to it? The Practice tab teaches the basics.',
+        title: 'Close your eyes and follow the voice',
+        body: 'A calm voice guides you while a breathing circle keeps your pace. Afterwards, see how much the feeling changed. New to it? Start with the basics in the Library.',
         example: '',
       },
       {

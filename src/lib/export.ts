@@ -1,13 +1,5 @@
-import { toBlob } from 'html-to-image';
 import { effectiveIntensity } from './summary';
 import type { EmotionEntry } from './types';
-
-export async function nodeToPng(node: HTMLElement): Promise<Blob> {
-  const backgroundColor = getComputedStyle(document.body).backgroundColor;
-  const blob = await toBlob(node, { pixelRatio: 2, backgroundColor, cacheBust: true });
-  if (!blob) throw new Error('Could not render the image');
-  return blob;
-}
 
 export function downloadBlob(blob: Blob, filename: string): void {
   const url = URL.createObjectURL(blob);
@@ -18,17 +10,6 @@ export function downloadBlob(blob: Blob, filename: string): void {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
-/** Uses the native share sheet where it can share files, otherwise downloads. */
-export async function shareOrDownload(blob: Blob, filename: string, title: string): Promise<'shared' | 'downloaded'> {
-  const file = new File([blob], filename, { type: blob.type });
-  if (navigator.canShare?.({ files: [file] })) {
-    await navigator.share({ files: [file], title });
-    return 'shared';
-  }
-  downloadBlob(blob, filename);
-  return 'downloaded';
 }
 
 function csvCell(value: string | number | boolean | undefined, userText = false): string {

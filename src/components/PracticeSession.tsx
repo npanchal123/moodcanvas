@@ -6,13 +6,15 @@ import { logPractice } from '../lib/db';
 import { usePersistentFlag, usePersistentState } from '../lib/hooks';
 import { formatClock, planPauses, segmentsFor } from '../lib/session';
 import type { PracticeBefore, PracticeLog } from '../lib/types';
-import { LENGTHS, PRACTICE_CONTENT, PRACTICE_META, type Minutes, type PracticeId } from '../practices';
+import { LENGTHS, type Minutes, type Playable } from '../practices';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 
 interface Props {
-  practiceId: PracticeId;
+  practice: Playable;
   /** The check-in this practice was started from, if any, for a before/after comparison. */
   before?: PracticeBefore;
+  /** Shown above the options before starting, e.g. what Viz it understood from the person's words. */
+  intro?: React.ReactNode;
   animate: boolean;
   onBack: () => void;
   onCheckIn: () => void;
@@ -23,12 +25,11 @@ type Stage = 'ready' | 'playing' | 'after';
 const isMinutes = (value: unknown): value is Minutes => LENGTHS.includes(value as Minutes);
 
 /** Default export so App can load it lazily. */
-export default function PracticeSession({ practiceId, before, animate, onBack, onCheckIn }: Props) {
-  const { t, locale } = useI18n();
-  const script = PRACTICE_CONTENT[locale].practices[practiceId];
-  const meta = PRACTICE_META[practiceId];
+export default function PracticeSession({ practice, before, intro, animate, onBack, onCheckIn }: Props) {
+  const { t } = useI18n();
+  const { script, lengths } = practice;
   const [preferred, setPreferred] = usePersistentState<Minutes>('moodcanvas.practiceMinutes', 3, isMinutes);
-  const minutes = meta.lengths.includes(preferred) ? preferred : meta.lengths[0];
+  const minutes = lengths.includes(preferred) ? preferred : lengths[0];
   const [voice, setVoice] = usePersistentFlag('moodcanvas.practiceVoice', true);
   const [sound, setSound] = usePersistentFlag('moodcanvas.practiceSound', true);
   const [stage, setStage] = useState<Stage>('ready');
@@ -46,7 +47,16 @@ export default function PracticeSession({ practiceId, before, animate, onBack, o
   }
 
   function finish(completed: boolean, startedAt: string) {
-    const entry: PracticeLog = { id: crypto.randomUUID(), practiceId, minutes, startedAt, completed, before };
+    const entry: PracticeLog = {
+      id: crypto.randomUUID(),
+      practiceId: practice.id,
+      minutes,
+      startedAt,
+      completed,
+      before,
+      // Composed practices aren't in the library, so the log keeps their title and icon.
+      ...(practice.id === 'custom' && { title: script.title, icon: practice.icon }),
+    };
     setLog(entry);
     void logPractice(entry);
     setStage('after');
@@ -54,7 +64,7 @@ export default function PracticeSession({ practiceId, before, animate, onBack, o
 
   const title = (
     <>
-      <span aria-hidden="true">{meta.icon} </span>
+      <span aria-hidden="true">{practice.icon} </span>
       {script.title}
     </>
   );
@@ -62,7 +72,7 @@ export default function PracticeSession({ practiceId, before, animate, onBack, o
   if (stage === 'playing') {
     return (
       <Player
-        practiceId={practiceId}
+        practice={practice}
         minutes={minutes}
         voice={voice}
         sound={sound}
@@ -87,13 +97,15 @@ export default function PracticeSession({ practiceId, before, animate, onBack, o
         <p className="mt-1">{script.summary}</p>
       </div>
 
-      {meta.lengths.length > 1 && (
+      {intro}
+
+      {lengths.length > 1 && (
         <div role="group" aria-labelledby="length-label">
           <p id="length-label" className="mb-2 font-medium">
             {t.practice.lengthLabel}
           </p>
           <div className="flex flex-wrap gap-2">
-            {meta.lengths.map((m) => (
+            {lengths.map((m) => (
               <button
                 key={m}
                 type="button"
@@ -129,6 +141,15 @@ export default function PracticeSession({ practiceId, before, animate, onBack, o
           {t.practice.soundLabel}
         </label>
       </div>
+
+      <details className="rounded-xl border border-(--border) px-4">
+        <summary className="cursor-pointer py-3 font-medium">{t.create.readScript}</summary>
+        <ol className="flex list-decimal flex-col gap-2 pb-4 pl-5">
+          {segmentsFor(script, minutes).map((s) => (
+            <li key={s.id}>{s.text}</li>
+          ))}
+        </ol>
+      </details>
 
       <p className="rounded-xl bg-(--surface-alt) p-4 text-sm">{t.practice.tip}</p>
 
@@ -189,7 +210,7 @@ function useBreath(active: boolean): 'in' | 'out' | null {
 }
 
 interface PlayerProps {
-  practiceId: PracticeId;
+  practice: Playable;
   minutes: Minutes;
   voice: boolean;
   sound: boolean;
@@ -199,10 +220,9 @@ interface PlayerProps {
   onFinish: (completed: boolean, startedAt: string) => void;
 }
 
-function Player({ practiceId, minutes, voice, sound, animate, title, headingRef, onFinish }: PlayerProps) {
+function Player({ practice, minutes, voice, sound, animate, title, headingRef, onFinish }: PlayerProps) {
   const { t, locale } = useI18n();
-  const script = PRACTICE_CONTENT[locale].practices[practiceId];
-  const meta = PRACTICE_META[practiceId];
+  const { script, hues } = practice;
   const segments = useMemo(() => segmentsFor(script, minutes), [script, minutes]);
   const [narrator, setNarrator] = useState<Narrator | null>(null);
   const [total, setTotal] = useState(minutes * 60);
@@ -222,7 +242,7 @@ function Player({ practiceId, minutes, voice, sound, animate, title, headingRef,
     let stopAmbient: (() => void) | null = null;
 
     void (async () => {
-      n = await createNarrator(locale, practiceId, segments, voice);
+      n = await createNarrator(locale, practice.id, segments, voice);
       if (run.stopped) return;
       const pauses = planPauses(segments, n.durations, minutes);
       setTotal([...n.durations, ...pauses].reduce((a, b) => a + b, 0));
@@ -257,7 +277,7 @@ function Player({ practiceId, minutes, voice, sound, animate, title, headingRef,
       stopAmbient?.();
       resumeAudio();
     };
-  }, [locale, practiceId, segments, voice, sound, minutes]);
+  }, [locale, practice.id, segments, voice, sound, minutes]);
 
   // Count time only while actually playing.
   useEffect(() => {
@@ -317,7 +337,7 @@ function Player({ practiceId, minutes, voice, sound, animate, title, headingRef,
         <div
           className="h-40 w-40 rounded-full shadow-lg"
           style={{
-            background: `radial-gradient(circle at 35% 30%, ${meta.hues[0]}, ${meta.hues[1]})`,
+            background: `radial-gradient(circle at 35% 30%, ${hues[0]}, ${hues[1]})`,
             transform: `scale(${scale})`,
             transition: animate ? `transform ${breath === 'out' ? 6 : 4}s ease-in-out` : undefined,
             opacity: paused ? 0.6 : 1,

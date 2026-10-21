@@ -3,7 +3,7 @@ import type { EmotionLabel } from '../lib/emotions';
 import { en } from './en';
 import { es } from './es';
 import { hi } from './hi';
-import { PRACTICE_IDS, type Minutes, type PracticeContent, type PracticeId } from './types';
+import { PRACTICE_IDS, type Minutes, type PracticeContent, type PracticeId, type PracticeScript } from './types';
 
 export { LENGTHS, PRACTICE_IDS } from './types';
 export type { Lesson, Minutes, PracticeId, PracticeScript, Segment } from './types';
@@ -28,6 +28,21 @@ export const PRACTICE_META: Record<PracticeId, PracticeMeta> = {
   'grounding-tree': { icon: '🌳', feelings: ['calm'], lengths: [3, 5, 10], hues: ['#bbf7d0', '#15803d'] },
   'clear-sky': { icon: '☁️', feelings: ['surprise'], lengths: [3, 5, 10], hues: ['#bae6fd', '#0369a1'] },
 };
+
+/** Anything the player can run: a library practice, or one composed from what someone wrote. */
+export interface Playable {
+  /** A library id, or 'custom' for a composed practice. Names audio files and the practice log entry. */
+  id: string;
+  icon: string;
+  hues: [string, string];
+  lengths: readonly Minutes[];
+  script: PracticeScript;
+}
+
+export function libraryPlayable(id: PracticeId, locale: Locale): Playable {
+  const meta = PRACTICE_META[id];
+  return { id, icon: meta.icon, hues: meta.hues, lengths: meta.lengths, script: PRACTICE_CONTENT[locale].practices[id] };
+}
 
 export function practiceFor(feeling: EmotionLabel): PracticeId {
   return PRACTICE_IDS.find((id) => PRACTICE_META[id].feelings.includes(feeling)) ?? 'clear-sky';

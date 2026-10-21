@@ -147,13 +147,15 @@ export default function History({ entries, logs, animate }: Props) {
           <p className="text-(--muted)">{t.history.practiceLogEmpty}</p>
         ) : (
           <ul className="flex flex-col divide-y divide-(--border)">
-            {logs.slice(0, LOG_LIMIT).filter((l) => isPracticeId(l.practiceId)).map((l) => {
-              const id = l.practiceId as PracticeId;
+            {logs.slice(0, LOG_LIMIT).map((l) => {
+              const library = isPracticeId(l.practiceId) ? l.practiceId : null;
+              const icon = library ? PRACTICE_META[library].icon : (l.icon ?? '✨');
+              const title = library ? PRACTICE_CONTENT[locale].practices[library].title : (l.title ?? '');
               return (
                 <li key={l.id} className="py-3">
                   <p className="font-medium">
-                    <span aria-hidden="true">{PRACTICE_META[id].icon} </span>
-                    {t.history.practiceItem(PRACTICE_CONTENT[locale].practices[id].title, l.minutes)}
+                    <span aria-hidden="true">{icon} </span>
+                    {t.history.practiceItem(title, l.minutes)}
                     {!l.completed && <span className="font-normal text-(--muted)"> · {t.history.endedEarly}</span>}
                   </p>
                   <p className="text-sm text-(--muted)">

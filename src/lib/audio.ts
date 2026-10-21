@@ -1,6 +1,6 @@
 import type { Locale } from '../i18n';
 import { LOCALES } from '../i18n';
-import type { PracticeId, Segment } from '../practices';
+import type { Segment } from '../practices';
 import { audioFile, audioKey, estimateSpeechSeconds } from './session';
 
 /**
@@ -56,7 +56,7 @@ export interface Narrator {
 }
 
 /** Natural-voice recordings for every step, or null if any step has no up-to-date recording. */
-async function recordedNarrator(locale: Locale, practiceId: PracticeId, segments: Segment[]): Promise<Narrator | null> {
+async function recordedNarrator(locale: Locale, practiceId: string, segments: Segment[]): Promise<Narrator | null> {
   const files = await loadManifest();
   const paths = segments.map((s) => audioFile(locale, practiceId, s));
   if (!segments.every((s, i) => files[audioKey(locale, practiceId, s.id)] === paths[i])) return null;
@@ -161,7 +161,7 @@ function silentNarrator(segments: Segment[]): Narrator {
 
 export async function createNarrator(
   locale: Locale,
-  practiceId: PracticeId,
+  practiceId: string,
   segments: Segment[],
   voice: boolean,
 ): Promise<Narrator> {

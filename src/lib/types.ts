@@ -41,7 +41,11 @@ export interface PracticeBefore {
 /** One guided practice. Kept on this device only (not synced yet). */
 export interface PracticeLog {
   id: string;
+  /** A library practice id, or 'custom' for one composed from the person's words. */
   practiceId: string;
+  /** Composed practices only: their title and icon, since they aren't in the library. */
+  title?: string;
+  icon?: string;
   minutes: number;
   /** ISO timestamp */
   startedAt: string;
