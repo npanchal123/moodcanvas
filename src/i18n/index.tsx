@@ -2,13 +2,16 @@ import { createContext, useContext, useEffect, useMemo, type ReactNode } from 'r
 import { usePersistentState } from '../lib/hooks';
 import { en, type Messages } from './en';
 import { es } from './es';
+import { hi } from './hi';
 
-export const LOCALES = { en, es } satisfies Record<string, Messages>;
+export const LOCALES = { en, hi, es } satisfies Record<string, Messages>;
 export type Locale = keyof typeof LOCALES;
 export type { Messages };
 
 function detectLocale(): Locale {
-  return navigator.language.toLowerCase().startsWith('es') ? 'es' : 'en';
+  const language = navigator.language.toLowerCase();
+  if (language.startsWith('hi')) return 'hi';
+  return language.startsWith('es') ? 'es' : 'en';
 }
 
 function isLocale(value: unknown): value is Locale {

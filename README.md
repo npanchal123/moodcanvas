@@ -37,15 +37,23 @@ how much the feeling changed.
   shows the practice log with each change, such as "Fear / Anxiety: 75 → 40".
 - **Safety:** no practice is suggested when the crisis banner is showing. Every practice says you can stop at
   any time.
-- **Writing new scripts:** keep step ids, tiers and pauses the same in `en.ts` and `es.ts`. A unit test checks
-  this, and that each version leaves at least a third of its time quiet.
+- **Writing new scripts:** keep step ids, tiers and pauses the same in `en.ts`, `hi.ts` and `es.ts`. A unit
+  test checks this, and that each version leaves at least a third of its time quiet.
 
-### Natural-voice audio (ElevenLabs)
+### Voices
 
-Until recordings exist, practices use the device's built-in voice. To make natural-voice MP3s:
+**Today (free):** practices are spoken by the device's own text-to-speech voice. Most phones include English
+and Hindi voices: Google's voices on Android, and "Lekha" for Hindi on iPhone. Some devices have no voice for
+the chosen language, such as this Windows test machine for Hindi. In that case the session says so, explains
+how to add a voice, and continues with on-screen captions instead of reading Hindi in an English accent.
 
-1. Create an ElevenLabs account. The **Starter** plan covers the whole library in one month: about 18,000
-   characters for both languages. The free plan has too few characters and no commercial use.
+### Natural-voice audio (ElevenLabs, optional and paid)
+
+This is ready for later; nothing needs it today. To make natural-voice MP3s:
+
+1. Create an ElevenLabs account. The **Starter** plan covers the whole library in about one month: roughly
+   26,000 characters for English, Hindi and Spanish together, or `--locale` one language at a time. The free
+   plan has too few characters and no commercial use.
 2. Put `ELEVENLABS_API_KEY` in `.env`, then run `npm run audio -- --voices` and pick a calm, warm voice.
    Put its id in `.env` as `ELEVENLABS_VOICE_ID`.
 3. Run `npm run audio -- --dry-run` to see what will be generated, then `npm run audio`. Add `--locale en`
@@ -82,11 +90,14 @@ Copy `.env.example` to `.env` to turn on the optional features.
 
 ### Tests and CI
 
-- **Unit tests** (`npm test`, Vitest) cover the analyzer in English and Spanish, stats, the calendar, the
-  weekly summary, insights, reminders and the sync merge rules.
+- **Unit tests** (`npm test`, Vitest) cover:
+  - the analyzer in English, Hindi/Hinglish and Spanish
+  - stats, the calendar, the weekly summary and insights
+  - reminders and the sync merge rules
+  - practice timing and scripts
 - **Browser tests** (`npm run test:e2e`, Playwright) run against the production build:
   - an axe accessibility audit (WCAG 2.2 A and AA) of every screen and dialog, in the light, dark and
-    high-contrast themes and in Spanish
+    high-contrast themes and in Hindi and Spanish
   - feature tests for insights, reminders, the calendar file, theme and language switching, and working
     offline
 - **CI:** `.github/workflows/ci.yml` runs lint, unit tests, build and browser tests on every push and pull
@@ -107,17 +118,26 @@ under that folder.
 
 ### Languages
 
-The app speaks English and Spanish. It picks the language from the browser; you can change it in
-**Settings → Display and language**.
+The app speaks English, Hindi (हिन्दी) and Spanish. It picks the language from the browser; you can change it
+in **Settings → Display and language**.
 - **Interface text** lives in `src/i18n/en.ts`. Every other language must match its shape exactly, so a
-  missing string is a type error.
+  missing string is a type error. Practice scripts and lessons are in `src/practices/`.
 - **The word-list analyzer** has one language pack per language in `src/lib/lexicons/`. Each check-in is read
-  with every pack, and the pack that understands the most words wins. So English text is still understood
-  with the Spanish interface, and the reverse.
-- **Crisis phrases** are checked in every language, whatever the interface language is.
-- **Adding a language:** copy `es.ts` in both `src/i18n/` and `src/lib/lexicons/`, translate it, and
-  register it in `LOCALES` and `LANGUAGE_PACKS`.
-- **Review needed:** the Spanish was drafted by AI. Have a native speaker review it before release.
+  with every pack, and the pack that understands the most words wins, so any language works with any
+  interface language.
+- **Hindi pack** (`hi.ts`):
+  - Reads Devanagari and romanized Hinglish, and includes the English list, so mixed sentences like "aaj
+    bahut tension hai" or "main bahut happy hoon" work.
+  - Spellings with and without the nukta dot (ज़्यादा / ज्यादा) both match.
+  - Feminine endings map to the base word (अकेली → अकेला).
+  - "Not" can come after the word ("खुश नहीं", "khush nahi").
+  - Accent stripping applies only to Latin letters, so Devanagari vowel signs are kept.
+- **Crisis phrases** are checked in every language, whatever the interface language is, including Hindi and
+  Hinglish.
+- **Adding a language:** copy `es.ts` in `src/i18n/`, `src/lib/lexicons/` and `src/practices/`, translate it,
+  and register it in `LOCALES`, `LANGUAGE_PACKS` and `PRACTICE_CONTENT`.
+- **Review needed:** the Hindi and Spanish were drafted by AI. Have native speakers review them before
+  release.
 
 ### Installing and offline use
 

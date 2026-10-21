@@ -17,9 +17,10 @@ import { fileURLToPath } from 'node:url';
 import { audioFile, audioKey } from '../src/lib/session.ts';
 import { en } from '../src/practices/en.ts';
 import { es } from '../src/practices/es.ts';
+import { hi } from '../src/practices/hi.ts';
 import type { PracticeContent } from '../src/practices/types.ts';
 
-const CONTENT: Record<string, PracticeContent> = { en, es };
+const CONTENT: Record<string, PracticeContent> = { en, hi, es };
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'audio');
 const API = 'https://api.elevenlabs.io/v1';
 

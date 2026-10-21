@@ -2,12 +2,13 @@ import { EMOTIONS, type EmotionLabel } from './emotions';
 import { EMOJI_LEXICON } from './lexicons/emoji';
 import { english } from './lexicons/en';
 import { spanish } from './lexicons/es';
-import type { LanguagePack } from './lexicons/types';
+import { hindi } from './lexicons/hi';
+import type { LanguagePack, Weights } from './lexicons/types';
 import type { EmotionScore } from './types';
 
-export const ANALYZER_VERSION = 'lexicon-1.1';
+export const ANALYZER_VERSION = 'lexicon-1.2';
 
-export const LANGUAGE_PACKS = { en: english, es: spanish } satisfies Record<string, LanguagePack>;
+export const LANGUAGE_PACKS = { en: english, hi: hindi, es: spanish } satisfies Record<string, LanguagePack>;
 export type AnalyzerLanguage = keyof typeof LANGUAGE_PACKS;
 
 const POSITIVE: EmotionLabel[] = ['joy', 'calm'];
@@ -31,15 +32,55 @@ export interface AnalysisResult {
   analyzerVersion: string;
 }
 
-/** Lowercase and strip accents, so "Pánico" and "panico" match the same entry. */
+/**
+ * Lowercase and strip accents, so "Pánico" and "panico" match the same entry. Only marks on Latin letters are
+ * accents: in scripts like Devanagari, combining marks are vowel signs ("खुश") and must stay.
+ */
 function fold(text: string): string {
-  return text.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '');
+  return text.toLowerCase().normalize('NFD').replace(/(\p{Script=Latin})\p{M}+/gu, '$1').normalize('NFC');
+}
+
+/** A pack with every word folded and normalized exactly as text will be, so lookups always line up. */
+interface PreparedPack {
+  pack: LanguagePack;
+  norm: (text: string) => string;
+  lexicon: Record<string, Weights>;
+  negators: Set<string>;
+  negatorsAfter: Set<string>;
+  boosters: Set<string>;
+  dampeners: Set<string>;
+  clauseBreaks: Set<string>;
+  stopwords: Set<string>;
+}
+
+const prepared = new Map<LanguagePack, PreparedPack>();
+function prepare(pack: LanguagePack): PreparedPack {
+  let p = prepared.get(pack);
+  if (!p) {
+    const norm = (text: string) => (pack.normalize ? pack.normalize(fold(text)) : fold(text));
+    const words = (s: Iterable<string>) => new Set([...s].map(norm));
+    p = {
+      pack,
+      norm,
+      lexicon: Object.fromEntries(Object.entries(pack.lexicon).map(([k, v]) => [norm(k), v])),
+      negators: words(pack.negators),
+      negatorsAfter: words(pack.negatorsAfter ?? []),
+      boosters: words(pack.boosters),
+      dampeners: words(pack.dampeners),
+      clauseBreaks: words(pack.clauseBreaks),
+      stopwords: words(pack.stopwords),
+    };
+    prepared.set(pack, p);
+  }
+  return p;
 }
 
 /** Checked against every language, whatever the UI language is. */
 export function detectCrisis(text: string): boolean {
-  const folded = fold(text);
-  return Object.values(LANGUAGE_PACKS).some((pack) => pack.crisis.some((p) => p.test(folded)));
+  return Object.values(LANGUAGE_PACKS).some((pack) => {
+    const normalized = prepare(pack).norm(text);
+    return pack.crisis.some((p) => p.test(normalized));
+  });
 }
 
 function isShouted(token: string): boolean {
@@ -56,19 +97,25 @@ interface PackReading {
   contentWords: number;
 }
 
-function readWith(pack: LanguagePack, text: string): PackReading {
+function readWith(languagePack: LanguagePack, text: string): PackReading {
+  const pack = prepare(languagePack);
   const raw = Object.fromEntries(EMOTIONS.map((e) => [e, 0])) as Record<EmotionLabel, number>;
   const matched: string[] = [];
 
   let clean = text.replace(/[’‘]/g, "'").replace(/https?:\/\/\S+/g, ' ');
-  for (const [pattern, replacement] of pack.phrases) clean = clean.replace(pattern, replacement);
-  const tokens = (clean.match(/[\p{L}']+/gu) ?? []).map((t) => t.replace(/^'+|'+$/g, '')).filter(Boolean);
-  const words = tokens.map(fold);
+  for (const [pattern, replacement] of languagePack.phrases) clean = clean.replace(pattern, replacement);
+  // Letters plus combining marks, so Devanagari words keep their vowel signs.
+  // Zero-width (non-)joiners can sit inside Devanagari words; normalize() removes them afterwards.
+  const tokens = (clean.match(/(?:[\p{L}\p{M}']|‌|‍)+/gu) ?? [])
+    .map((t) => t.replace(/^'+|'+$/g, ''))
+    .filter(Boolean);
+  const words = tokens.map(pack.norm);
 
-  const isNegator = (w: string) => pack.negators.has(w) || (pack.negatorSuffix != null && w.endsWith(pack.negatorSuffix));
+  const suffix = languagePack.negatorSuffix;
+  const isNegator = (w: string) => pack.negators.has(w) || (suffix != null && w.endsWith(suffix));
   const isModifier = (w: string) => pack.boosters.has(w) || pack.dampeners.has(w) || isNegator(w);
   const lookup = (w: string) => {
-    for (const candidate of pack.variants ? pack.variants(w) : [w]) {
+    for (const candidate of languagePack.variants ? languagePack.variants(w) : [w]) {
       if (pack.lexicon[candidate]) return pack.lexicon[candidate];
     }
     return undefined;
@@ -96,6 +143,11 @@ function readWith(pack: LanguagePack, text: string): PackReading {
         negated = true;
         break;
       }
+    }
+    // Hindi: "खुश नहीं हूं" / "khush nahi hoon".
+    for (let j = i + 1; !negated && j <= Math.min(words.length - 1, i + 2); j++) {
+      if (pack.clauseBreaks.has(words[j])) break;
+      if (pack.negatorsAfter.has(words[j])) negated = true;
     }
 
     for (const [label, weight] of Object.entries(weights) as [EmotionLabel, number][]) {

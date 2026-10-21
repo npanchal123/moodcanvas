@@ -12,6 +12,8 @@ export interface LanguagePack {
   negators: Set<string>;
   /** Contractions such as "don't" count as negators when they end with this. */
   negatorSuffix?: string;
+  /** Negators that come after the word they negate, as in Hindi "खुश नहीं" ("not happy"). */
+  negatorsAfter?: Set<string>;
   boosters: Set<string>;
   dampeners: Set<string>;
   /** Words that end a clause, so "not happy but excited" doesn't negate "excited". */
@@ -23,4 +25,6 @@ export interface LanguagePack {
   crisis: RegExp[];
   /** Other spellings to try when a word isn't in the lexicon (plurals, gender). */
   variants?: (word: string) => string[];
+  /** Extra clean-up after folding, applied to the text and to every word in this pack (e.g. dropping nukta). */
+  normalize?: (text: string) => string;
 }

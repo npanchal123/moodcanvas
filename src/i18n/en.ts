@@ -122,6 +122,8 @@ export const en = {
     voiceDevice: 'Voice: your device’s built-in voice',
     voiceRecorded: 'Voice: natural voice recording',
     voiceSilent: 'Voice off: follow the words on screen',
+    voiceMissing:
+      'This device has no voice for this language yet, so follow the words on screen. You can add one in your device’s text-to-speech settings.',
     canStop: 'You can open your eyes or stop at any time.',
     // After
     doneTitle: 'Well done',
@@ -403,7 +405,7 @@ export const en = {
     themes: { system: 'Match my device', light: 'Light', dark: 'Dark', contrast: 'High contrast' },
     languageLabel: 'Language',
     languageHint:
-      'The built-in word list understands English and Spanish. Smarter analysis understands most languages.',
+      'The built-in word list understands English, Hindi (including Hinglish) and Spanish. Smarter analysis understands most languages.',
     calmTitle: 'Calm mode',
     calmHint: 'Turns off animation. It’s also on automatically if your device asks for reduced motion.',
     aiHeading: 'Smarter analysis',

@@ -78,6 +78,22 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
   });
 }
 
+test('accessibility: Hindi', async ({ page }) => {
+  await calm(page);
+  await page.addInitScript(() => localStorage.setItem('moodcanvas.locale', '"hi"'));
+  await openApp(page);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'hi');
+  await expectNoA11yViolations(page, 'Hindi onboarding');
+  await page.getByRole('button', { name: 'छोड़ें' }).click();
+  await page.getByLabel('आप कैसा महसूस कर रहे हैं?').fill('कल के एग्ज़ाम को लेकर बहुत चिंता है, पर थोड़ी खुशी भी है।');
+  await page.getByRole('button', { name: 'दिखाएँ' }).click();
+  await expect(page.locator('#result-heading')).toContainText('ज़्यादातर चिंतित');
+  await expectNoA11yViolations(page, 'Hindi result');
+  await page.getByRole('button', { name: 'अभ्यास', exact: true }).click();
+  await page.getByRole('heading', { name: 'सभी अभ्यास' }).waitFor();
+  await expectNoA11yViolations(page, 'Hindi practice tab');
+});
+
 test('accessibility: Spanish', async ({ page }) => {
   await calm(page);
   await page.addInitScript(() => localStorage.setItem('moodcanvas.locale', '"es"'));

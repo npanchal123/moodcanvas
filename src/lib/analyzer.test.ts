@@ -83,3 +83,47 @@ describe('analyze (Spanish)', () => {
     expect(analyze('pensé en hacerme daño').crisis).toBe(true);
   });
 });
+
+describe('analyze (Hindi and Hinglish)', () => {
+  it('reads Devanagari without breaking words at vowel signs', () => {
+    const r = analyze('कल के एग्ज़ाम को लेकर बहुत चिंता है, पर थोड़ी खुशी भी है।', { language: 'hi' });
+    expect(r.emotions[0].label).toBe('fear');
+    expect(r.emotions[1].label).toBe('joy');
+    expect(r.emotions[0].intensity).toBeGreaterThan(r.emotions[1].intensity);
+  });
+
+  it('reads romanized Hinglish mixed with English, in any UI language', () => {
+    expect(analyze('aaj bahut tension hai yaar', { language: 'en' }).emotions[0].label).toBe('fear');
+    expect(analyze('main bahut happy hoon', { language: 'en' }).emotions[0].label).toBe('joy');
+    expect(analyze('bahut gussa aa raha hai', { language: 'es' }).emotions[0].label).toBe('anger');
+  });
+
+  it('boosts with बहुत / bahut', () => {
+    const plain = analyze('मैं उदास हूं').emotions[0].intensity;
+    expect(analyze('मैं बहुत उदास हूं').emotions[0].intensity).toBeGreaterThan(plain);
+  });
+
+  it('understands "not" after the word, and spellings with or without nukta and chandrabindu', () => {
+    expect(analyze('मैं खुश नहीं हूँ', { language: 'hi' }).emotions[0].label).toBe('sadness');
+    expect(analyze('khush nahi hoon', { language: 'hi' }).emotions[0].label).toBe('sadness');
+    expect(analyze('बहुत ज़्यादा डर लग रहा है').emotions[0].label).toBe('fear');
+    expect(analyze('बहुत ज्यादा डर लग रहा है').emotions[0].label).toBe('fear');
+  });
+
+  it('maps feminine and oblique forms to the base word', () => {
+    expect(analyze('मैं अकेली हूं').emotions[0].label).toBe('sadness');
+    expect(analyze('main akeli hoon').emotions[0].label).toBe('sadness');
+  });
+
+  it('keeps English negation working when the UI is in Hindi', () => {
+    expect(analyze('I am not happy', { language: 'hi' }).emotions[0].label).toBe('sadness');
+    expect(analyze('happy, not sad', { language: 'hi' }).emotions[0].label).toBe('joy');
+  });
+
+  it('detects Hindi and Hinglish crisis language in any UI language', () => {
+    expect(analyze('मैं मरना चाहता हूं').crisis).toBe(true);
+    expect(analyze('ख़ुद को ख़त्म करने का मन करता है').crisis).toBe(true);
+    expect(analyze('ab jeena nahi chahti').crisis).toBe(true);
+    expect(analyze('exam ki itni tension hai ki mar jaunga lol').crisis).toBe(false);
+  });
+});

@@ -150,6 +150,22 @@ test('beginners can learn the basics and try a first practice', async ({ page })
   await expect(page.getByRole('heading', { name: 'All practices' })).toBeVisible();
 });
 
+test('Hindi: a Hinglish check-in leads to a practice spoken in Hindi', async ({ page }) => {
+  await page.clock.install();
+  await page.addInitScript(() => localStorage.setItem('moodcanvas.locale', '"hi"'));
+  await page.goto('/');
+  await page.getByRole('button', { name: 'छोड़ें' }).click();
+  await page.getByLabel('आप कैसा महसूस कर रहे हैं?').fill('aaj bahut tension hai, kuch accha nahi lag raha');
+  await page.getByRole('button', { name: 'दिखाएँ' }).click();
+  await page.getByRole('button', { name: 'सुरक्षित जगह शुरू करें' }).click();
+  await page.getByLabel('आवाज़ से मार्गदर्शन').uncheck();
+  await page.getByLabel('पीछे हल्की आवाज़').uncheck();
+  await page.getByRole('button', { name: 'शुरू करें', exact: true }).click();
+  await expect(page.getByText(/अपने मन में एक शांत, सुरक्षित जगह/)).toBeVisible();
+  await page.getByRole('button', { name: 'खत्म करें' }).click();
+  await expect(page.getByRole('heading', { name: 'अभ्यास खत्म' })).toBeVisible();
+});
+
 test('no practice is suggested when the crisis banner shows', async ({ page }) => {
   await skipOnboarding(page);
   await page.getByLabel('How are you feeling?').fill('I feel so sad and I want to die');

@@ -44,6 +44,8 @@ function loadManifest(): Promise<Record<string, string>> {
 
 export interface Narrator {
   kind: VoiceKind;
+  /** True when a voice was wanted but the device has none for this language, so captions are used instead. */
+  missingVoice?: boolean;
   /** Seconds each step takes to say. */
   durations: number[];
   /** Resolves when the step has been said, or with 'interrupted' if pause() cut it off and it should be said again. */
@@ -93,13 +95,24 @@ async function recordedNarrator(locale: Locale, practiceId: PracticeId, segments
   }
 }
 
-function pickVoice(lang: string): SpeechSynthesisVoice | undefined {
-  const voices = speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith(lang));
+/** The device's voices for a language. Browsers load the list late, so wait briefly for it. */
+async function voicesFor(lang: string): Promise<SpeechSynthesisVoice[]> {
+  const matching = () => speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith(lang));
+  if (speechSynthesis.getVoices().length === 0) {
+    await new Promise<void>((resolve) => {
+      speechSynthesis.addEventListener('voiceschanged', () => resolve(), { once: true });
+      window.setTimeout(resolve, 1500);
+    });
+  }
+  return matching();
+}
+
+function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undefined {
   // Prefer the more natural-sounding voices some systems ship ("Natural" on Windows/Edge, "Enhanced" on Apple).
   return voices.find((v) => /natural|enhanced|premium/i.test(v.name)) ?? voices.find((v) => v.localService) ?? voices[0];
 }
 
-function deviceNarrator(locale: Locale, segments: Segment[]): Narrator {
+function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthesisVoice | undefined): Narrator {
   const lang = LOCALES[locale].htmlLang;
   let interrupted = false;
   return {
@@ -109,8 +122,7 @@ function deviceNarrator(locale: Locale, segments: Segment[]): Narrator {
       new Promise((resolve) => {
         interrupted = false;
         // One utterance per sentence: some browsers cut long utterances off part-way.
-        const sentences = segments[index].text.match(/[^.!?…]+[.!?…]*\s*/g) ?? [segments[index].text];
-        const voice = pickVoice(lang);
+        const sentences = segments[index].text.match(/[^.!?…।]+[.!?…।]*\s*/g) ?? [segments[index].text];
         sentences.forEach((sentence, i) => {
           const utterance = new SpeechSynthesisUtterance(sentence.trim());
           utterance.lang = lang;
@@ -156,7 +168,11 @@ export async function createNarrator(
   if (!voice) return silentNarrator(segments);
   const recorded = await recordedNarrator(locale, practiceId, segments);
   if (recorded) return recorded;
-  return deviceVoiceAvailable() ? deviceNarrator(locale, segments) : silentNarrator(segments);
+  if (!deviceVoiceAvailable()) return silentNarrator(segments);
+  const voices = await voicesFor(LOCALES[locale].htmlLang);
+  // Without a voice for the language, the browser would read the words with the wrong accent or not at all.
+  if (voices.length === 0) return { ...silentNarrator(segments), missingVoice: true };
+  return deviceNarrator(locale, segments, pickVoice(voices));
 }
 
 /** A quiet, slowly swelling wash of filtered noise, like distant waves. Returns a function that fades it out. */

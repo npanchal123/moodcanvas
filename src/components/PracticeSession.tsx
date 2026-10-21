@@ -296,8 +296,9 @@ function Player({ practiceId, minutes, voice, sound, animate, title, headingRef,
   const segment = segments[index];
   const breath = useBreath(Boolean(narrator) && !paused && phase === 'silence' && Boolean(segment.breath));
   const scale = !animate || !breath ? 1 : breath === 'in' ? 1.18 : 0.86;
-  const voiceNote =
-    narrator?.kind === 'recorded'
+  const voiceNote = narrator?.missingVoice
+    ? t.practice.voiceMissing
+    : narrator?.kind === 'recorded'
       ? t.practice.voiceRecorded
       : narrator?.kind === 'device'
         ? t.practice.voiceDevice

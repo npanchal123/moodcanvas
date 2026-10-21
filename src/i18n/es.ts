@@ -111,6 +111,8 @@ export const es: Messages = {
     voiceDevice: 'Voz: la voz integrada de tu dispositivo',
     voiceRecorded: 'Voz: grabación de voz natural',
     voiceSilent: 'Voz desactivada: sigue las palabras en pantalla',
+    voiceMissing:
+      'Este dispositivo aún no tiene una voz para este idioma, así que sigue las palabras en pantalla. Puedes agregar una en los ajustes de texto a voz de tu dispositivo.',
     canStop: 'Puedes abrir los ojos o parar en cualquier momento.',
     doneTitle: 'Muy bien',
     endedTitle: 'Práctica terminada',
@@ -392,7 +394,7 @@ export const es: Messages = {
     themes: { system: 'Igual que mi dispositivo', light: 'Claro', dark: 'Oscuro', contrast: 'Alto contraste' },
     languageLabel: 'Idioma',
     languageHint:
-      'La lista de palabras integrada entiende inglés y español. El análisis inteligente entiende la mayoría de los idiomas.',
+      'La lista de palabras integrada entiende inglés, hindi (incluido el hinglish) y español. El análisis inteligente entiende la mayoría de los idiomas.',
     calmTitle: 'Modo calma',
     calmHint: 'Desactiva las animaciones. También se activa solo si tu dispositivo pide reducir el movimiento.',
     aiHeading: 'Análisis inteligente',

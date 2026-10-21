@@ -34,12 +34,15 @@ describe('planPauses', () => {
 
 describe('practice content', () => {
   it('has the same steps in every language, and each version fits its length', () => {
+    const scripts = Object.values(PRACTICE_CONTENT);
     for (const id of PRACTICE_IDS) {
       const en = PRACTICE_CONTENT.en.practices[id];
-      const es = PRACTICE_CONTENT.es.practices[id];
-      expect(es.segments.map((s) => [s.id, s.tier, s.pause]), id).toEqual(en.segments.map((s) => [s.id, s.tier, s.pause]));
+      for (const content of scripts) {
+        const shape = content.practices[id].segments.map((s) => [s.id, s.tier, s.pause]);
+        expect(shape, id).toEqual(en.segments.map((s) => [s.id, s.tier, s.pause]));
+      }
       for (const minutes of PRACTICE_META[id].lengths) {
-        for (const script of [en, es]) {
+        for (const script of scripts.map((c) => c.practices[id])) {
           const speech = segmentsFor(script, minutes).reduce((a, s) => a + estimateSpeechSeconds(s.text), 0);
           // Speech should leave at least a third of the time for quiet imagining.
           expect(speech, `${id} ${minutes} min`).toBeLessThan(minutes * 60 * (2 / 3));
