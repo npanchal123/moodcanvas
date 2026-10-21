@@ -207,9 +207,9 @@ export default function App() {
               }}
               className="inline-flex items-center gap-2 rounded font-bold tracking-tight no-underline"
             >
-              <img src={`${HOME_URL}favicon.svg`} alt="" width={32} height={32} className="h-8 w-8" />
+              <img src={`${HOME_URL}logo-mark.png`} alt="" width={49} height={44} className="h-11 w-auto" />
               <span>
-                Viz<span className="text-(--accent)">It</span>
+                Viz<span className="text-(--brand)">It</span>
               </span>
             </a>
           </p>

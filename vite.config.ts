@@ -15,7 +15,7 @@ export default defineConfig({
     // so the service worker precaches the whole app shell.
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'sw-notifications.js'],
+      includeAssets: ['favicon-64.png', 'logo-mark.png', 'apple-touch-icon.png', 'sw-notifications.js'],
       manifest: {
         name: 'Viz it',
         short_name: 'Viz it',
