@@ -28,6 +28,7 @@ type View = 'today' | 'practice' | 'history' | 'settings' | 'privacy';
 const VIEW_IDS: View[] = ['today', 'practice', 'history', 'settings'];
 // The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
 const PRIVACY_HASH = '#privacy';
+const HOME_URL = import.meta.env.BASE_URL;
 
 const NO_ENTRIES: EmotionEntry[] = [];
 const NO_LOGS: PracticeLog[] = [];
@@ -195,7 +196,19 @@ export default function App() {
       <header className="border-b border-(--border) bg-(--surface)">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           <p className="text-lg font-semibold">
-            <span aria-hidden="true">🌸 </span>Viz it
+            {/* A real link, so it also works opened in a new tab; a normal click stays in the app. */}
+            <a
+              href={HOME_URL}
+              onClick={(e) => {
+                if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+                e.preventDefault();
+                goTo('today');
+                window.scrollTo(0, 0);
+              }}
+              className="rounded no-underline"
+            >
+              <span aria-hidden="true">🌸 </span>Viz it
+            </a>
           </p>
           <nav aria-label={t.app.navLabel}>
             <ul className="flex gap-1.5 sm:gap-2">
