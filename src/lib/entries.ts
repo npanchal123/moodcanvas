@@ -57,10 +57,11 @@ export async function deleteEntry(id: string): Promise<void> {
 
 export async function deleteAllEntries(): Promise<void> {
   const track = await tracksDeletions();
-  await db.transaction('rw', db.entries, db.deletions, db.practices, async () => {
+  await db.transaction('rw', [db.entries, db.deletions, db.practices, db.breakerSessions], async () => {
     const ids = await db.entries.toCollection().primaryKeys();
     await db.entries.clear();
     await db.practices.clear();
+    await db.breakerSessions.clear();
     if (track) {
       const deletedAt = new Date().toISOString();
       await db.deletions.bulkPut(ids.map((id) => ({ id, deletedAt })));

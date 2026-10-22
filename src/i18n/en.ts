@@ -35,7 +35,7 @@ export const en = {
     tagline: 'Visualize · Imagine · Create',
     skipLink: 'Skip to main content',
     navLabel: 'Main',
-    views: { today: 'Visualize', practice: 'Library', history: 'Journal', settings: 'Settings', privacy: 'Privacy' },
+    views: { today: 'Visualize', breaker: 'Unstuck', practice: 'Library', history: 'Journal', settings: 'Settings', privacy: 'Privacy' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'Smarter analysis isn’t available right now, so the built-in word list was used.',
     loading: 'Loading…',

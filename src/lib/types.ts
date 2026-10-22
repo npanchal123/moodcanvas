@@ -1,3 +1,4 @@
+import type { BreakerOutcome, ObstacleId } from './breaker/types';
 import type { EmotionLabel } from './emotions';
 
 export interface EmotionScore {
@@ -56,4 +57,47 @@ export interface PracticeLog {
   after?: number;
   /** Self-report when there was no check-in to compare with. */
   felt?: 'better' | 'same' | 'worse';
+}
+
+/**
+ * One Procrastination Breaker session: a task someone was putting off, what made it hard, the small step they
+ * chose and how the focus time went. Kept on this device only, like the practice log.
+ */
+export interface BreakerSession {
+  id: string;
+  /** The task in their own words. */
+  task: string;
+  obstacles: ObstacleId[];
+  /** Their own words when they chose "Something else". */
+  otherObstacle?: string;
+  /** Why the task matters to them. */
+  why?: string;
+  /** The outcome they imagined. */
+  vision?: string;
+  /** Other things set aside for now (when overwhelmed). */
+  setAside?: string;
+  /** The advice shown, as it read in their language at the time. */
+  intervention: string;
+  /** The tiny next step they chose. */
+  action: string;
+  /** If–then plan. */
+  plan?: string;
+  plannedMinutes: number;
+  /** Seconds of focus, pauses left out. While running, time since `runningSince` is added on top. */
+  focusedSeconds: number;
+  /** Epoch ms when the timer was last started or resumed; null while paused or stopped. */
+  runningSince: number | null;
+  /** 'active' while the timer screen is open or paused; 'finished' once the outcome is recorded. */
+  status: 'active' | 'finished';
+  outcome?: BreakerOutcome;
+  reflection?: string;
+  /** ISO timestamp chosen when rescheduling. */
+  rescheduledFor?: string;
+  /** The earlier session this one picks up. */
+  resumedFrom?: string;
+  /** ISO timestamps */
+  startedAt: string;
+  endedAt?: string;
+  createdAt: string;
+  updatedAt: string;
 }

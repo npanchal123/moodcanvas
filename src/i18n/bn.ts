@@ -22,7 +22,7 @@ export const bn: Messages = {
     tagline: 'দেখুন · কল্পনা করুন · সৃষ্টি করুন',
     skipLink: 'মূল অংশে যান',
     navLabel: 'প্রধান মেনু',
-    views: { today: 'ভিজ্যুয়ালাইজ', practice: 'লাইব্রেরি', history: 'ডায়েরি', settings: 'সেটিংস', privacy: 'গোপনীয়তা' },
+    views: { today: 'ভিজ্যুয়ালাইজ', breaker: 'শুরু করুন', practice: 'লাইব্রেরি', history: 'ডায়েরি', settings: 'সেটিংস', privacy: 'গোপনীয়তা' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'স্মার্ট বিশ্লেষণ এখন পাওয়া যাচ্ছে না, তাই অ্যাপের নিজস্ব শব্দ-তালিকা ব্যবহার করা হয়েছে।',
     loading: 'লোড হচ্ছে…',

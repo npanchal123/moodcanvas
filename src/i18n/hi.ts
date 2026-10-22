@@ -28,7 +28,7 @@ export const hi: Messages = {
     tagline: 'देखें · कल्पना करें · रचें',
     skipLink: 'मुख्य हिस्से पर जाएँ',
     navLabel: 'मुख्य',
-    views: { today: 'विज़ुअलाइज़', practice: 'लाइब्रेरी', history: 'डायरी', settings: 'सेटिंग्स', privacy: 'गोपनीयता' },
+    views: { today: 'विज़ुअलाइज़', breaker: 'शुरुआत', practice: 'लाइब्रेरी', history: 'डायरी', settings: 'सेटिंग्स', privacy: 'गोपनीयता' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'स्मार्ट विश्लेषण अभी उपलब्ध नहीं है, इसलिए ऐप की अपनी शब्द-सूची इस्तेमाल हुई।',
     loading: 'लोड हो रहा है…',

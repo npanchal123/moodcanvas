@@ -8,6 +8,7 @@ import { useI18n } from './i18n';
 import { useAuth, useSync } from './lib/account';
 import { analyzeWithAI } from './lib/aiAnalyzer';
 import { analyze, type AnalysisResult } from './lib/analyzer';
+import { EMPTY_BREAKER_DRAFT, type BreakerDraft } from './lib/breaker/types';
 import { compose, TOPIC_TAGS } from './lib/compose';
 import { db } from './lib/db';
 import { addEntry } from './lib/entries';
@@ -22,9 +23,10 @@ const Settings = lazy(() => import('./components/Settings'));
 const Privacy = lazy(() => import('./components/Privacy'));
 const PracticeLibrary = lazy(() => import('./components/PracticeLibrary'));
 const PracticeSession = lazy(() => import('./components/PracticeSession'));
+const Breaker = lazy(() => import('./components/Breaker'));
 
-type View = 'today' | 'practice' | 'history' | 'settings' | 'privacy';
-const VIEW_IDS: View[] = ['today', 'practice', 'history', 'settings'];
+type View = 'today' | 'breaker' | 'practice' | 'history' | 'settings' | 'privacy';
+const VIEW_IDS: View[] = ['today', 'breaker', 'practice', 'history', 'settings'];
 // The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
 const PRIVACY_HASH = '#privacy';
 const HOME_URL = import.meta.env.BASE_URL;
@@ -44,6 +46,7 @@ export default function App() {
   const [crisis, setCrisis] = useState<'detected' | 'asked' | null>(null);
   const [practice, setPractice] = useState<ActivePractice | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [breakerDraft, setBreakerDraft] = useState<BreakerDraft>(EMPTY_BREAKER_DRAFT);
   const [calm, setCalm] = usePersistentFlag('moodcanvas.calmMode', false);
   const [onboarded, setOnboarded] = usePersistentFlag('moodcanvas.onboarded', false);
   const [aiEnabled, setAiEnabled] = usePersistentFlag('moodcanvas.aiAnalysis', false);
@@ -224,18 +227,28 @@ export default function App() {
             </a>
           </p>
           <nav aria-label={t.app.navLabel}>
-            <ul className="flex flex-wrap gap-1 rounded-full border border-(--border) bg-(--surface-strong) p-1">
+            <ul className="flex flex-wrap gap-0.5 rounded-[1.75rem] border border-(--border) bg-(--surface-strong) p-1 sm:gap-1">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
                   <button
                     type="button"
                     aria-current={view === id ? 'page' : undefined}
                     onClick={() => goTo(id)}
-                    className={`inline-flex min-h-10 items-center whitespace-nowrap rounded-full px-3 text-sm font-semibold transition-colors sm:px-4 ${
+                    className={`inline-flex min-h-10 min-w-10 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-sm font-semibold transition-colors sm:px-4 ${
                       view === id ? 'btn-glow text-(--on-accent)' : 'text-(--muted) hover:bg-(--surface-alt) hover:text-(--text)'
                     }`}
                   >
-                    {t.app.views[id]}
+                    {id === 'settings' ? (
+                      // A gear on phones, so five tabs fit on one line; the name is still read out.
+                      <>
+                        <span aria-hidden="true" className="text-base sm:hidden">
+                          ⚙
+                        </span>
+                        <span className="sr-only sm:not-sr-only">{t.app.views[id]}</span>
+                      </>
+                    ) : (
+                      t.app.views[id]
+                    )}
                   </button>
                 </li>
               ))}
@@ -265,6 +278,7 @@ export default function App() {
             ))}
           {view === 'practice' &&
             (session ?? <PracticeLibrary entries={entries} logs={logs} onOpen={openLibraryPractice} />)}
+          {view === 'breaker' && <Breaker draft={breakerDraft} onDraftChange={setBreakerDraft} animate={animate} />}
           {view === 'history' && <History entries={entries} logs={logs} animate={animate} />}
           {view === 'settings' && (
             <Settings

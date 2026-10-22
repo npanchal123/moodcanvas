@@ -119,6 +119,12 @@ function earliest<T extends string>(text: string, ids: readonly T[], keywords: (
   return best;
 }
 
+/** Whether any keyword appears in the text, matched the same way as places and goals. */
+export function mentions(text: string, keywords: string[]): boolean {
+  const normalized = normalize(text);
+  return keywords.some((keyword) => position(normalized, keyword) >= 0);
+}
+
 const ALL = Object.values(COMPOSE_CONTENT);
 const sceneKeywords = (id: SceneId) => ALL.flatMap((c) => c.scenes[id].keywords);
 const goalKeywords = (id: GoalId) => ALL.flatMap((c) => c.goals[id].keywords);

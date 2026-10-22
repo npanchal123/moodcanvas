@@ -36,7 +36,7 @@ export const ru: Messages = {
     tagline: 'Визуализируй · Представь · Создай',
     skipLink: 'Перейти к основному содержанию',
     navLabel: 'Главное меню',
-    views: { today: 'Визуализация', practice: 'Библиотека', history: 'Дневник', settings: 'Настройки', privacy: 'Конфиденциальность' },
+    views: { today: 'Визуализация', breaker: 'Начать', practice: 'Библиотека', history: 'Дневник', settings: 'Настройки', privacy: 'Конфиденциальность' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'Умный анализ сейчас недоступен, поэтому использован встроенный список слов.',
     loading: 'Загрузка…',

@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { EmotionEntry, PracticeLog } from './types';
+import type { BreakerSession, EmotionEntry, PracticeLog } from './types';
 
 /** An entry deleted on this device that the server still needs to hear about. */
 export interface Deletion {
@@ -22,6 +22,7 @@ export const db = new Dexie('moodcanvas') as Dexie & {
   deletions: EntityTable<Deletion, 'id'>;
   meta: EntityTable<MetaRow, 'key'>;
   practices: EntityTable<PracticeLog, 'id'>;
+  breakerSessions: EntityTable<BreakerSession, 'id'>;
 };
 
 db.version(1).stores({
@@ -47,6 +48,11 @@ db.version(2)
 // v3: the practice log (guided visualizations). Existing tables are unchanged.
 db.version(3).stores({
   practices: '&id, startedAt',
+});
+
+// v4: Procrastination Breaker sessions. Existing tables are unchanged.
+db.version(4).stores({
+  breakerSessions: '&id, createdAt, status',
 });
 
 export async function logPractice(log: PracticeLog): Promise<void> {

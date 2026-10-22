@@ -36,7 +36,7 @@ export const ar: Messages = {
     tagline: 'تخيُّل · تصوُّر · إبداع',
     skipLink: 'الانتقال إلى المحتوى الرئيسي',
     navLabel: 'القائمة الرئيسية',
-    views: { today: 'التخيّل', practice: 'المكتبة', history: 'اليوميات', settings: 'الإعدادات', privacy: 'الخصوصية' },
+    views: { today: 'التخيّل', breaker: 'ابدأ', practice: 'المكتبة', history: 'اليوميات', settings: 'الإعدادات', privacy: 'الخصوصية' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'التحليل الذكي غير متاح الآن، لذلك استُخدمت قائمة الكلمات المدمجة.',
     loading: 'جارٍ التحميل…',
