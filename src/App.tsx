@@ -3,7 +3,6 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { CrisisBanner } from './components/CrisisBanner';
 import { Onboarding } from './components/Onboarding';
 import { ReminderBanner } from './components/ReminderBanner';
-import { toggle } from './components/ui';
 import { CreatedIntro, EMPTY_DRAFT, FEELING_INPUT_ID, Visualize, type Draft } from './components/Visualize';
 import { useI18n } from './i18n';
 import { useAuth, useSync } from './lib/account';
@@ -193,8 +192,16 @@ export default function App() {
         {t.app.skipLink}
       </a>
 
-      <header className="border-b border-(--border) bg-(--surface)">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+      <div className="sky" aria-hidden="true">
+        <span className="stars" />
+        <span className="c1" />
+        <span className="c2" />
+        <span className="c3" />
+        <span className="c4" />
+      </div>
+
+      <header className="glass z-30 border-x-0 border-t-0 sm:sticky sm:top-0">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">
           <p className="text-lg font-semibold">
             {/* A real link, so it also works opened in a new tab; a normal click stays in the app. */}
             <a
@@ -217,14 +224,16 @@ export default function App() {
             </a>
           </p>
           <nav aria-label={t.app.navLabel}>
-            <ul className="flex flex-wrap gap-1.5 sm:gap-2">
+            <ul className="flex flex-wrap gap-1 rounded-full border border-(--border) bg-(--surface-strong) p-1">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
                   <button
                     type="button"
                     aria-current={view === id ? 'page' : undefined}
                     onClick={() => goTo(id)}
-                    className={`${toggle(view === id)} whitespace-nowrap px-2.5 text-sm sm:px-3`}
+                    className={`inline-flex min-h-10 items-center whitespace-nowrap rounded-full px-3 text-sm font-semibold transition-colors sm:px-4 ${
+                      view === id ? 'btn-glow text-(--on-accent)' : 'text-(--muted) hover:bg-(--surface-alt) hover:text-(--text)'
+                    }`}
                   >
                     {t.app.views[id]}
                   </button>
@@ -235,7 +244,7 @@ export default function App() {
         </div>
       </header>
 
-      <main id="main" className="mx-auto max-w-5xl px-4 py-6">
+      <main id="main" className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
         <h1 className="sr-only">{t.app.pageHeading(t.app.views[view])}</h1>
         {crisis && <CrisisBanner reason={crisis} onDismiss={() => setCrisis(null)} />}
         {reminderState.due && !practice && (
@@ -274,10 +283,10 @@ export default function App() {
         </Suspense>
       </main>
 
-      <footer className="mx-auto flex max-w-5xl flex-col gap-2 px-4 pb-8 text-sm text-(--muted)">
+      <footer className="mx-auto flex max-w-5xl flex-col items-center gap-2 px-4 pb-10 text-center text-sm text-(--muted)">
         <p>{t.app.footer}</p>
         <nav aria-label={t.app.footerLinks}>
-          <ul className="flex flex-wrap gap-x-6">
+          <ul className="flex flex-wrap justify-center gap-x-6">
             <li>
               <a href={PRIVACY_HASH} className="inline-flex min-h-11 items-center font-medium text-(--text) underline">
                 {t.app.privacyLink}

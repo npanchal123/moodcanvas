@@ -51,12 +51,17 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <form onSubmit={(e) => void submit(e)} className={`${card} flex flex-col gap-5`} noValidate>
-        <div>
-          <h2 className="text-2xl font-semibold sm:text-3xl">{t.create.heroTitle}</h2>
-          <p className="mt-2 text-(--muted)">{t.create.heroBody}</p>
-        </div>
+    <div className="mx-auto flex max-w-3xl flex-col gap-8">
+      <div className="fade-up relative flex flex-col items-center px-2 pt-4 text-center">
+        <div className="aura -top-6 h-44 w-44 sm:h-56 sm:w-56" aria-hidden="true" />
+        <img src={`${import.meta.env.BASE_URL}logo-mark.png`} alt="" width={96} height={86} className="relative h-20 w-auto drop-shadow-lg sm:h-24" />
+        <h2 className="display relative mt-4 text-3xl leading-tight font-extrabold sm:text-5xl">
+          <span className="text-gradient">{t.create.heroTitle}</span>
+        </h2>
+        <p className="relative mt-3 max-w-xl text-lg text-(--muted)">{t.create.heroBody}</p>
+      </div>
+
+      <form onSubmit={(e) => void submit(e)} className={`${card} fade-up flex flex-col gap-6`} noValidate>
 
         <div className="flex flex-col gap-2">
           <label htmlFor={FEELING_INPUT_ID} className="text-lg font-semibold">
@@ -74,17 +79,17 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
             onChange={(e) => set({ text: e.target.value })}
             aria-describedby={`feeling-hint${error ? ' create-error' : ''}`}
             aria-invalid={error ? true : undefined}
-            className="rounded-xl border border-(--border) bg-(--surface) p-3 text-lg"
+            className="field rounded-2xl border border-(--border) bg-(--surface-strong) p-4 text-lg leading-relaxed shadow-inner transition-shadow"
           />
           <details>
-            <summary className="cursor-pointer py-2 text-sm font-medium">{t.create.examplesLabel}</summary>
+            <summary className="cursor-pointer py-2 text-sm font-semibold text-(--accent)">{t.create.examplesLabel}</summary>
             <ul className="flex flex-col gap-2 pt-1">
               {t.create.examples.map((example) => (
                 <li key={example}>
                   <button
                     type="button"
                     onClick={() => set({ text: example })}
-                    className="min-h-11 rounded-xl bg-(--surface-alt) px-3 py-2 text-start text-sm hover:bg-(--track)"
+                    className="min-h-11 rounded-2xl border border-(--border) bg-(--surface-strong) px-4 py-2 text-start text-sm italic hover:border-(--accent)"
                   >
                     “{example}”
                   </button>
@@ -95,25 +100,41 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
         </div>
 
         <fieldset>
-          <legend className="mb-2 font-medium">{t.create.sceneLegend}</legend>
-          <div className="flex flex-wrap gap-2">
-            {SCENE_IDS.map((id) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={draft.scene === id}
-                onClick={() => set({ scene: draft.scene === id ? null : id })}
-                className={`${toggle(draft.scene === id)} text-sm`}
-              >
-                <span aria-hidden="true">{SCENE_LOOK[id].icon}</span>
-                {content.scenes[id].name}
-              </button>
-            ))}
+          <legend className="mb-3 font-semibold">{t.create.sceneLegend}</legend>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
+            {SCENE_IDS.map((id) => {
+              const pressed = draft.scene === id;
+              const [light, deep] = SCENE_LOOK[id].hues;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={pressed}
+                  onClick={() => set({ scene: pressed ? null : id })}
+                  style={{ background: `radial-gradient(circle at 30% 20%, ${light}, ${deep})` }}
+                  className={`group relative flex aspect-[4/3] min-h-20 flex-col items-center justify-end overflow-hidden rounded-2xl p-1.5 shadow-sm transition-transform hover:-translate-y-0.5 ${
+                    pressed ? 'ring-4 ring-(--accent) ring-offset-2 ring-offset-(--bg)' : ''
+                  }`}
+                >
+                  <span aria-hidden="true" className="absolute inset-x-0 top-[18%] text-center text-3xl drop-shadow transition-transform group-hover:scale-110">
+                    {SCENE_LOOK[id].icon}
+                  </span>
+                  <span className="relative w-full truncate rounded-xl bg-(--surface-strong) px-1.5 py-0.5 text-center text-xs font-semibold text-(--text) sm:text-sm">
+                    {content.scenes[id].name}
+                  </span>
+                  {pressed && (
+                    <span aria-hidden="true" className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-(--surface-strong) text-sm font-bold text-(--accent)">
+                      ✓
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </fieldset>
 
         <fieldset>
-          <legend className="mb-2 font-medium">{t.create.goalLegend}</legend>
+          <legend className="mb-3 font-semibold">{t.create.goalLegend}</legend>
           <div className="flex flex-wrap gap-2">
             {GOAL_IDS.map((id) => (
               <button
@@ -136,18 +157,18 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
           </p>
         )}
 
-        <button type="submit" disabled={busy} className={`${btnPrimary} min-h-12 self-start px-6 text-lg`}>
+        <button type="submit" disabled={busy} className={`${btnPrimary} min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
           <span aria-hidden="true">✨</span>
           {busy ? t.create.creating : t.create.create}
         </button>
       </form>
 
-      <section aria-labelledby="new-here-heading" className={`${card} flex flex-col gap-3`}>
+      <section aria-labelledby="new-here-heading" className={`${card} flex flex-col items-center gap-3 text-center`}>
         <h2 id="new-here-heading" className="text-xl font-semibold">
           {t.create.newHereTitle}
         </h2>
-        <p>{t.create.newHereBody}</p>
-        <div className="flex flex-wrap gap-2">
+        <p className="max-w-xl text-(--muted)">{t.create.newHereBody}</p>
+        <div className="flex flex-wrap justify-center gap-2">
           <button type="button" onClick={onFirstPractice} className={btnSecondary}>
             <span aria-hidden="true">🍋</span>
             {t.create.firstTry}
@@ -174,7 +195,7 @@ export function CreatedIntro({ text, result, composed }: { text: string; result:
   ].filter((chip): chip is string => Boolean(chip));
 
   return (
-    <div className="flex flex-col gap-3 rounded-xl bg-(--surface-alt) p-4 sm:flex-row sm:items-start">
+    <div className="flex flex-col gap-3 rounded-2xl bg-(--surface-alt) p-4 sm:flex-row sm:items-start">
       {result && primary && (
         <EmotionBloom emotions={result.emotions} valence={result.valence} size={96} decorative />
       )}
@@ -192,7 +213,7 @@ export function CreatedIntro({ text, result, composed }: { text: string; result:
         <p className="text-sm font-medium text-(--muted)">{t.create.understood}</p>
         <ul className="mt-1 flex flex-wrap gap-2">
           {chips.map((chip) => (
-            <li key={chip} className="rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-sm">
+            <li key={chip} className="rounded-full border border-(--border) bg-(--surface-strong) px-3 py-1 text-sm">
               {chip}
             </li>
           ))}

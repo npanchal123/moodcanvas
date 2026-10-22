@@ -154,7 +154,7 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
       <p className="rounded-xl bg-(--surface-alt) p-4 text-sm">{t.practice.tip}</p>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={begin} className={btnPrimary}>
+        <button type="button" onClick={begin} className={`${btnPrimary} min-h-13 px-10 text-lg`}>
           {t.practice.begin}
         </button>
         <button type="button" onClick={onBack} className={btnGhost}>
@@ -333,11 +333,19 @@ function Player({ practice, minutes, voice, sound, animate, title, headingRef, o
         {narrator && <p className="text-sm text-(--muted)">{voiceNote}</p>}
       </div>
 
-      <div className="flex h-56 w-56 items-center justify-center" aria-hidden="true">
+      <div className="relative flex h-64 w-64 items-center justify-center" aria-hidden="true">
+        <div className="aura inset-6 opacity-80" />
+        {animate && !paused && (
+          <div className="absolute inset-10" style={{ color: hues[0] }}>
+            <span className="halo" />
+            <span className="halo" />
+          </div>
+        )}
         <div
-          className="h-40 w-40 rounded-full shadow-lg"
+          className="relative h-40 w-40 rounded-full"
           style={{
-            background: `radial-gradient(circle at 35% 30%, ${hues[0]}, ${hues[1]})`,
+            background: `radial-gradient(circle at 35% 30%, #ffffffcc, ${hues[0]} 30%, ${hues[1]})`,
+            boxShadow: `0 0 60px 8px ${hues[0]}80, inset 0 -10px 30px ${hues[1]}`,
             transform: `scale(${scale})`,
             transition: animate ? `transform ${breath === 'out' ? 6 : 4}s ease-in-out` : undefined,
             opacity: paused ? 0.6 : 1,
@@ -345,7 +353,7 @@ function Player({ practice, minutes, voice, sound, animate, title, headingRef, o
         />
       </div>
 
-      <p className="min-h-7 text-lg font-semibold">
+      <p className="display min-h-7 text-xl font-bold text-(--accent)">
         {!narrator ? t.practice.preparing : paused ? t.practice.paused : breath === 'in' ? t.practice.breatheIn : breath === 'out' ? t.practice.breatheOut : ''}
       </p>
 
@@ -362,9 +370,9 @@ function Player({ practice, minutes, voice, sound, animate, title, headingRef, o
           aria-valuemin={0}
           aria-valuemax={100}
           aria-valuenow={Math.round((Math.min(elapsed, total) / total) * 100)}
-          className="h-2 grow overflow-hidden rounded-full border border-(--border) bg-(--track)"
+          className="h-2 grow overflow-hidden rounded-full bg-(--track)"
         >
-          <div className="h-full bg-(--accent)" style={{ width: `${(Math.min(elapsed, total) / total) * 100}%` }} />
+          <div className="btn-glow h-full rounded-full" style={{ width: `${(Math.min(elapsed, total) / total) * 100}%` }} />
         </div>
         <span className="w-20 text-right text-sm tabular-nums text-(--muted)">
           {t.practice.remaining(formatClock(total - elapsed))}
