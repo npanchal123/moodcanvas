@@ -106,6 +106,10 @@ export const es: Messages = {
     goal: (goal: string) => `Enfoque: ${goal}`,
     about: (topic: string) => `Sobre: ${topic}`,
     readScript: 'Leer el guion',
+    readyTitle: 'O empieza con una visualización lista',
+    readyBody: 'Sesiones guiadas para sentimientos frecuentes, listas para reproducir.',
+    seeAll: 'Ver todo en la biblioteca',
+    savedTitle: 'Tus visualizaciones guardadas',
     newHereTitle: '¿Es tu primera vez con la visualización?',
     newHereBody:
       'Es simplemente imaginar con tus sentidos mientras una voz tranquila te guía. No necesitas experiencia, y ni siquiera hace falta “ver” imágenes.',

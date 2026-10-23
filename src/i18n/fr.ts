@@ -109,6 +109,10 @@ export const fr: Messages = {
     goal: (goal: string) => `Objectif : ${goal}`,
     about: (topic: string) => `Sujet : ${topic}`,
     readScript: 'Lire le texte',
+    readyTitle: 'Ou commencez par une visualisation toute prête',
+    readyBody: 'Des séances guidées pour les ressentis courants, prêtes à écouter.',
+    seeAll: 'Tout voir dans la bibliothèque',
+    savedTitle: 'Vos visualisations enregistrées',
     newHereTitle: 'Nouveau dans la visualisation ?',
     newHereBody:
       'Il s’agit simplement d’imaginer avec vos sens pendant qu’une voix calme vous guide. Aucune expérience n’est nécessaire, et vous n’avez même pas besoin de « voir » des images.',

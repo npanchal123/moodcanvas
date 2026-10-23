@@ -117,6 +117,10 @@ export const en = {
     goal: (goal: string) => `Focus: ${goal}`,
     about: (topic: string) => `About: ${topic}`,
     readScript: 'Read the script',
+    readyTitle: 'Or start with a ready-made visualization',
+    readyBody: 'Guided sessions for common feelings, ready to play.',
+    seeAll: 'See all in Library',
+    savedTitle: 'Your saved visualizations',
     newHereTitle: 'New to visualization?',
     newHereBody:
       'It’s simply imagining with your senses while a calm voice guides you. You don’t need any experience, and you don’t even need to “see” pictures.',

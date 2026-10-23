@@ -110,6 +110,10 @@ export const pt: Messages = {
     goal: (goal: string) => `Foco: ${goal}`,
     about: (topic: string) => `Sobre: ${topic}`,
     readScript: 'Ler o roteiro',
+    readyTitle: 'Ou comece com uma visualização pronta',
+    readyBody: 'Sessões guiadas para sentimentos comuns, prontas para ouvir.',
+    seeAll: 'Ver tudo na biblioteca',
+    savedTitle: 'Suas visualizações salvas',
     newHereTitle: 'Primeira vez com visualização?',
     newHereBody:
       'É simplesmente imaginar com os sentidos enquanto uma voz calma guia você. Não precisa de experiência, e nem precisa “ver” imagens.',

@@ -360,6 +360,12 @@ export default function App() {
                 aiEnabled={aiEnabled}
                 onFirstPractice={() => openLibraryPractice('first-visualization')}
                 onLearn={() => goTo('practice')}
+                onOpenPractice={(id) => {
+                  // Played right here on the front page, without switching tabs.
+                  setPractice({ playable: libraryPlayable(id, locale) });
+                  window.scrollTo(0, 0);
+                }}
+                onPlaySaved={playSaved}
               />
             ))}
           {view === 'practice' &&

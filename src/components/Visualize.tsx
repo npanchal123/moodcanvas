@@ -16,7 +16,10 @@ import {
 } from '../lib/compose';
 import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
+import type { SavedPractice } from '../lib/types';
+import type { PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
+import { ReadyMade } from './ReadyMade';
 import { btnPrimary, btnSecondary, card, toggle } from './ui';
 
 export const FEELING_INPUT_ID = 'feeling-input';
@@ -53,10 +56,12 @@ interface Props {
   aiEnabled: boolean;
   onFirstPractice: () => void;
   onLearn: () => void;
+  onOpenPractice: (id: PracticeId) => void;
+  onPlaySaved: (saved: SavedPractice) => void;
 }
 
 /** The front page: say how you feel and what you'd like to imagine, and get a visualization made for you. */
-export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPractice, onLearn }: Props) {
+export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPractice, onLearn, onOpenPractice, onPlaySaved }: Props) {
   const { t, locale } = useI18n();
   const content = COMPOSE_CONTENT[locale];
   const [busy, setBusy] = useState(false);
@@ -216,6 +221,8 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
           {busy ? t.create.creating : t.create.create}
         </button>
       </form>
+
+      <ReadyMade onOpen={onOpenPractice} onPlaySaved={onPlaySaved} onSeeAll={onLearn} />
 
       <section aria-labelledby="new-here-heading" className={`${card} flex flex-col items-center gap-3 text-center`}>
         <h2 id="new-here-heading" className="text-xl font-semibold">

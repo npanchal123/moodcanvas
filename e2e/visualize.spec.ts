@@ -121,3 +121,28 @@ test('skipping the reflection is fine; long text is capped; the form survives a 
   await expect(page.getByText('How are you feeling now?')).toBeHidden();
   await expect(page.getByRole('button', { name: 'Create again' })).toBeVisible();
 });
+
+test('ready-made visualizations right on the front page, plus saved ones', async ({ page }) => {
+  await skipOnboarding(page);
+  const ready = page.getByRole('region', { name: 'Or start with a ready-made visualization' });
+  await expect(ready.getByRole('button', { name: /^Start / })).toHaveCount(6);
+  await expect(ready.getByText('Your saved visualizations')).toBeHidden();
+  await expectNoA11yViolations(page, 'front page with ready-made visualizations');
+
+  // Plays right here, without leaving Visualize.
+  await ready.getByRole('button', { name: 'Start Clear Sky' }).click();
+  await expect(page.getByRole('heading', { name: /Clear Sky/ })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Visualize' })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Back' }).click();
+
+  // A saved visualization shows up there too.
+  await page.getByLabel(FEELING_LABEL).fill(MATCH);
+  await page.getByRole('button', { name: 'Create my visualization' }).click();
+  await page.getByRole('button', { name: 'Save to my Library' }).click();
+  await expect(page.getByText('Saved to your Library.')).toBeVisible();
+  await page.getByRole('button', { name: 'Back' }).click();
+  await expect(ready.getByText('Your saved visualizations')).toBeVisible();
+
+  await ready.getByRole('button', { name: 'See all in Library' }).click();
+  await expect(page.getByRole('button', { name: 'Library' })).toHaveAttribute('aria-current', 'page');
+});

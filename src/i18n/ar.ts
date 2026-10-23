@@ -117,6 +117,10 @@ export const ar: Messages = {
     goal: (goal: string) => `الهدف: ${goal}`,
     about: (topic: string) => `الموضوع: ${topic}`,
     readScript: 'قراءة النص',
+    readyTitle: 'أو البدء بتأمّل جاهز',
+    readyBody: 'جلسات موجّهة لمشاعر شائعة، جاهزة للتشغيل.',
+    seeAll: 'عرض الكل في المكتبة',
+    savedTitle: 'تأمّلاتك المحفوظة',
     newHereTitle: 'جديد على التخيّل؟',
     newHereBody:
       'هو ببساطة تخيّل بالحواس بينما يرشدك صوت هادئ. لا حاجة إلى أي خبرة، ولا حتى إلى «رؤية» صور.',
