@@ -41,37 +41,31 @@ export function sortObstacles(obstacles: ObstacleId[]): ObstacleId[] {
 }
 
 export interface Suggestion {
-  /** Advice for each chosen obstacle. */
+  /** Advice for each chosen obstacle. Empty when none was chosen. */
   help: string[];
-  /** The task broken into steps, when not knowing where to start or feeling overwhelmed. */
-  breakdown: string[] | null;
   /** Candidate tiny steps, best first. "Show another" walks through them. */
   options: string[];
-  /** If–then plans that fit the chosen obstacles. */
-  plans: string[];
 }
 
 /**
  * Rule-based guidance for a task and what makes it hard to start. Runs on the device; nothing is sent anywhere.
- * `minutes` is the time available, when the person said they're short on time.
+ * With no obstacle chosen, the step is the two-minute starter: starting is the hard part.
  */
-export function suggest(text: BreakerText, task: string, obstacles: ObstacleId[], minutes?: number): Suggestion {
-  const sorted = sortObstacles(obstacles.length ? obstacles : ['other']);
+export function suggest(text: BreakerText, task: string, obstacles: ObstacleId[]): Suggestion {
+  const sorted = sortObstacles(obstacles);
   const c = text.categories[categorize(task)];
   const [first, second] = c.steps;
   const primary = sorted[0];
 
   let options: string[];
-  if (primary === 'big' || primary === 'motivation' || primary === 'tired') options = [c.tiny, c.prep, first];
-  else if (primary === 'badly' || primary === 'perfect') options = [c.draft, c.tiny, first];
-  else if (primary === 'time') options = (minutes ?? 2) <= 2 ? [c.tiny, c.prep, first] : [first, c.draft, c.tiny];
+  if (!primary || primary === 'big' || primary === 'motivation' || primary === 'tired' || primary === 'time') {
+    options = [c.tiny, c.prep, first];
+  } else if (primary === 'badly' || primary === 'perfect' || primary === 'fear') options = [c.draft, c.tiny, first];
   else options = [first, c.tiny, second, c.prep];
 
   return {
     help: sorted.map((id) => text.obstacles[id].help),
-    breakdown: sorted.includes('start') || sorted.includes('overwhelmed') ? c.steps : null,
     options: [...new Set(options)],
-    plans: [...new Set(sorted.map((id) => text.obstacles[id].plan))],
   };
 }
 
@@ -118,11 +112,6 @@ export function unfinished(sessions: BreakerSession[], limit = 5): BreakerSessio
     .slice(0, limit);
 }
 
-/** The reason given the last time this task came up, to save typing it again. */
-export function previousWhy(sessions: BreakerSession[], task: string): string | undefined {
-  return sessions.find((s) => s.why && sameTask(s.task, task))?.why;
-}
-
 export interface BreakerStats {
   sessions: number;
   done: number;
@@ -156,11 +145,11 @@ export function formatDuration(text: BreakerText, seconds: number): string {
   return seconds < 60 ? text.seconds(Math.round(seconds)) : text.mins(Math.round(seconds / 60));
 }
 
-/** A draft that picks up an earlier session, ready at `step`. */
-export function draftFrom(session: BreakerSession, step: number, changes: Partial<BreakerDraft> = {}): BreakerDraft {
+/** A draft that picks up an earlier session, at the step screen ready to start. */
+export function draftFrom(session: BreakerSession, changes: Partial<BreakerDraft> = {}): BreakerDraft {
   const draft: BreakerDraft = {
     ...EMPTY_BREAKER_DRAFT,
-    step,
+    step: 1,
     task: session.task,
     obstacles: session.obstacles,
     otherObstacle: session.otherObstacle ?? '',
@@ -173,11 +162,11 @@ export function draftFrom(session: BreakerSession, step: number, changes: Partia
     resumedFrom: session.id,
     ...changes,
   };
-  // The step comes from the session, so going back to step 3 keeps it rather than suggesting a new one.
+  // The step comes from the session, so going back and forth keeps it rather than suggesting a new one.
   return { ...draft, actionFor: suggestionBasis(draft) };
 }
 
-/** What a suggested step depends on. When this changes, step 3 offers a fresh suggestion. */
+/** What a suggested step depends on. When this changes, the step screen offers a fresh suggestion. */
 export function suggestionBasis(draft: BreakerDraft): string {
-  return [draft.task.trim(), sortObstacles(draft.obstacles).join(), draft.minutesAvailable ?? ''].join('|');
+  return [draft.task.trim(), sortObstacles(draft.obstacles).join()].join('|');
 }

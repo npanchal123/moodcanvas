@@ -8,11 +8,7 @@ export const es: BreakerText = {
   title: 'Rompe la procrastinación',
   principle: 'No esperes a la motivación. Haz que empezar sea más fácil.',
   tabs: { start: 'Empezar', progress: 'Mi progreso' },
-  steps: ['Tarea', 'Obstáculo', 'Por qué', 'Primer paso', 'Plan', 'Empezar'],
-  stepOf: (n, total) => `Paso ${n} de ${total}`,
   back: 'Atrás',
-  next: 'Continuar',
-  skip: 'Omitir',
   mins: (n) => `${n} min`,
   seconds: (n) => `${n} s`,
 
@@ -32,119 +28,72 @@ export const es: BreakerText = {
   obstacle: {
     title: '¿Qué hace que te cueste empezar?',
     hint: 'Elige todas las que encajen. No hay respuestas incorrectas.',
-    need: 'Elige al menos una.',
-    otherLabel: 'En pocas palabras, ¿qué se interpone?',
   },
 
   obstacles: {
     start: {
       label: 'No sé por dónde empezar.',
       help: 'Dividámosla en unos pasos sencillos y empecemos por el más fácil que sea útil.',
-      plan: 'Si me atasco sin saber qué hacer, haré solo el primer paso de mi lista.',
     },
     big: {
       label: 'La tarea parece demasiado grande.',
       help: 'No tienes que hacerla entera. Empieza con algo que lleve unos dos minutos.',
-      plan: 'Si vuelve a parecer enorme, solo terminaré el paso de dos minutos.',
     },
     fear: {
       label: 'Me da miedo fracasar.',
       help: 'Toma este primer intento como práctica. La meta es aprender algo, no hacerlo perfecto.',
-      plan: 'Si empiezo a dudar de mí, recordaré que es práctica y seguiré dos minutos más.',
     },
     badly: {
       label: 'Me preocupa hacerlo mal.',
       help: 'Decide cómo sería una primera versión imperfecta: lo bastante buena para mejorarla después.',
-      plan: 'Si empiezo a juzgar mi trabajo, lo llamaré borrador y seguiré.',
     },
     motivation: {
       label: 'No tengo motivación.',
       help: 'La motivación suele llegar después de empezar, no antes. Comprométete solo con un primer paso pequeño.',
-      plan: 'Si no me apetece, haré solo el primer paso y después decidiré.',
     },
     distracted: {
       label: 'El móvil u otras cosas me distraen.',
       help: 'Cambia una cosa a tu alrededor: deja el móvil fuera de tu alcance y cierra las pestañas que no necesites.',
-      plan: 'Si busco el móvil, lo pondré fuera de mi alcance y volveré a mi paso.',
     },
     overwhelmed: {
       label: 'Todo me abruma.',
       help: 'Elige solo esta tarea por ahora. Lo demás puede esperar en una lista, fuera de tu cabeza.',
-      plan: 'Si me vienen otras tareas a la cabeza, las anotaré para después y volveré.',
     },
     perfect: {
       label: 'Intento que todo quede perfecto.',
       help: 'Apunta a una primera versión pequeña e imperfecta, y decide de antemano dónde parar.',
-      plan: 'Si empiezo a pulir, pararé y seguiré adelante. Puedo mejorarlo después.',
     },
     easier: {
       label: 'Sigo eligiendo tareas más fáciles.',
       help: 'Haz primero una pequeña acción en esta tarea. Las fáciles pueden venir después, como premio.',
-      plan: 'Si siento ganas de hacer algo más fácil, primero terminaré este paso.',
     },
     time: {
       label: 'No tengo suficiente tiempo.',
       help: 'Incluso unos minutos pueden hacerla avanzar. Elige cuánto tiempo tienes y el paso se ajustará.',
-      plan: 'Si solo tengo unos minutos, haré la versión de dos minutos.',
     },
     tired: {
       label: 'Tengo cansancio o poca energía.',
       help: 'Hazlo más ligero: haz la versión más fácil, descansa un poco antes o planéalo para cuando tengas más energía.',
-      plan: 'Si me faltan fuerzas, haré solo el paso de dos minutos y descansaré después.',
     },
     other: {
       label: 'Otra cosa.',
       help: 'Gracias por contarlo. Empecemos con un paso lo bastante pequeño para sortearlo.',
-      plan: 'Si me atasco, haré el paso aún más pequeño y seguiré.',
     },
-  },
-
-  vision: {
-    title: '¿Por qué te importa?',
-    body: 'Opcional y rápido. Ayuda recordar para qué es.',
-    whyLabel: 'Una razón breve',
-    whyPlaceholder: 'p. ej. Quiero un trabajo que me guste',
-    fromBefore: 'De tu última sesión con esta tarea',
-    imagine: 'Imagina cómo te sentirías al completar esta tarea, sabiendo que diste un paso adelante.',
-    visionLabel: '¿Qué resultado quieres?',
-    visionPlaceholder: 'p. ej. Alivio, y alegría por haber empezado por fin',
   },
 
   action: {
     title: 'Hagamos que el primer paso sea más fácil.',
     mayHelp: 'Lo que puede ayudar',
-    breakdown: 'Una forma sencilla de avanzar',
     label: 'Tu pequeño siguiente paso',
     another: 'Ver otro',
     smaller: 'Hacerlo más pequeño',
-    confirm: 'Este es mi siguiente paso',
     need: 'Primero escribe un paso pequeño.',
-    remember: (why) => `Recuerda por qué: ${why}`,
-    timeQuestion: '¿Cuánto tiempo tienes?',
     rest: 'Descansar ahora y planearlo para después',
-    setAsideLabel: 'Deja otras cosas a un lado por ahora (opcional)',
-    setAsidePlaceholder: 'Todo lo demás que tengas en mente puede esperar aquí.',
-  },
-
-  plan: {
-    title: '¿Qué podría impedirte hacerlo?',
-    body: 'Decídelo ahora para no tener que decidir en el momento.',
-    suggestions: 'Sugerencias',
-    label: 'Tu plan si–entonces',
-    placeholder: 'Si …, entonces …',
   },
 
   ready: {
-    title: 'Tu siguiente paso está listo.',
-    task: 'Tarea',
-    action: 'Siguiente paso',
-    why: 'Por qué importa',
-    obstacle: 'Lo que lo hacía difícil',
-    plan: 'Plan si–entonces',
     howLong: '¿Cuánto tiempo?',
     lengths: { 2: 'Arranque de 2 minutos', 10: '10 minutos de enfoque', 25: '25 minutos de enfoque' },
-    custom: 'Otro',
-    customLabel: 'Minutos (1–120)',
     start: 'Empezar ahora',
   },
 
@@ -172,8 +121,6 @@ export const es: BreakerText = {
       interrupted: 'Algo me interrumpió.',
       rescheduled: 'Decidí reprogramarla.',
     },
-    need: 'Elige qué pasó.',
-    noteLabel: '¿Qué te ayudó a empezar o qué se interpuso? (opcional)',
     when: '¿Cuándo volverás a ella?',
     needDate: 'Elige una fecha y hora.',
     save: 'Guardar',

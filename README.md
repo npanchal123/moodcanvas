@@ -44,26 +44,22 @@ The composer is in `src/lib/compose/`. It runs instantly and offline on the devi
 Helps someone go from putting a task off to taking one small, real step. The principle: don't wait for
 motivation; make starting easier.
 
-- **The flow:** six short steps, each of which can be revisited without losing answers.
-  1. **Task:** the task, in the person's own words.
-  2. **Obstacle:** one or more of 12 self-reported reasons, such as "the task feels too big" or "I'm distracted
-     by my phone".
-  3. **Why:** an optional reason and imagined outcome. The reason given last time for the same task is filled in.
-  4. **First step:** a tiny step that fits both the kind of task and the obstacle. It can be edited, swapped or
-     made smaller.
-  5. **Plan:** an optional if–then plan, picked from suggestions or written freely.
-  6. **Start:** a focus timer of 2 (the default), 10, 25 or 1–120 minutes.
+- **The flow:** two screens before the timer, kept short on purpose. Going back keeps every answer.
+  1. **Task:** the task, in the person's own words, with optional quick choices for what makes it hard, such as
+     "the task feels too big" or "I'm distracted by my phone".
+  2. **First step:** a tiny step that fits the kind of task and what makes it hard, with a short tip. It can be
+     edited, swapped or made smaller. Then a focus length (2 minutes by default, 10 or 25) and Start.
 - **Suggestions (`src/lib/breaker/`):** rule-based, on the device. Keywords in any of the nine languages sort
   the task into one of nine kinds: code, job, exercise, business, writing, study, cleaning, admin, or general.
-  Each kind has concrete steps, a two-minute starter, a "just get set up" step and a rough-draft version. The
-  obstacle decides which comes first: a too-big task gets the two-minute starter, perfectionism gets the rough
-  draft, and "don't know where to start" shows the steps in order.
+  Each kind has concrete steps, a two-minute starter, a "just get set up" step and a rough-draft version. What
+  makes it hard decides which comes first: a too-big task (or no answer) gets the two-minute starter,
+  perfectionism or fear of failing gets the rough draft, and "don't know where to start" gets the first step.
 - **Timer:** worked out from saved timestamps, so it keeps counting when someone switches tabs, and survives a
   reload. When time runs out unattended, only the planned minutes count as focus.
-- **Reflection:** the person records what happened: done, some progress, still too hard, interrupted, or
-  rescheduled (with a date). Each answer leads to a fitting next step, such as the next step in the list, a
-  smaller step, another session, or "pick up where you left off". Finishing the starter step never marks the
-  whole task done.
+- **Reflection:** "I did it" saves in one tap. Stopping early asks what happened, also in one tap: done, some
+  progress, still too hard, interrupted, or rescheduled (which asks for a date). Each answer leads to a fitting
+  next step, such as the next step in the list, a smaller step, another session, or "pick up where you left
+  off". Finishing the starter step never marks the whole task done.
 - **My progress:** saved sessions with filters, details, "pick this up again" and delete. Four counts come
   straight from saved, finished sessions: sessions, actions completed, focus time, and tasks picked up after
   rescheduling. There are no streaks or badges.

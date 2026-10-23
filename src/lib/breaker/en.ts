@@ -10,11 +10,7 @@ export const en = {
   title: 'Procrastination Breaker',
   principle: 'Don’t wait for motivation. Make starting easier.',
   tabs: { start: 'Get started', progress: 'My progress' },
-  steps: ['Task', 'Obstacle', 'Why', 'First step', 'Plan', 'Start'],
-  stepOf: (n: number, total: number) => `Step ${n} of ${total}`,
   back: 'Back',
-  next: 'Continue',
-  skip: 'Skip',
   mins,
   seconds: (n: number) => `${n} sec`,
 
@@ -34,119 +30,72 @@ export const en = {
   obstacle: {
     title: 'What’s making it difficult to start?',
     hint: 'Choose any that fit. There’s no wrong answer.',
-    need: 'Choose at least one.',
-    otherLabel: 'In a few words, what’s getting in the way?',
   },
 
   obstacles: {
     start: {
       label: 'I don’t know where to start.',
       help: 'Let’s split it into a few simple steps and begin with the easiest useful one.',
-      plan: 'If I feel stuck on what to do, then I’ll just do the first step on my list.',
     },
     big: {
       label: 'The task feels too big.',
       help: 'You don’t have to do all of it. Start with something that takes about two minutes.',
-      plan: 'If it starts to feel huge again, then I’ll only finish the two-minute step.',
     },
     fear: {
       label: 'I’m afraid I’ll fail.',
       help: 'Treat this first try as practice. The aim is to learn something, not to get it right.',
-      plan: 'If I start doubting myself, then I’ll remind myself it’s practice and keep going for two more minutes.',
     },
     badly: {
       label: 'I’m worried about doing it badly.',
       help: 'Decide what a rough first version looks like. Good enough to improve later is the goal.',
-      plan: 'If I start judging my work, then I’ll call it a draft and carry on.',
     },
     motivation: {
       label: 'I don’t feel motivated.',
       help: 'Motivation often comes after starting, not before. Commit only to a small first step.',
-      plan: 'If I don’t feel like it, then I’ll do just the first step and decide after that.',
     },
     distracted: {
       label: 'I’m distracted by my phone or other things.',
       help: 'Change one thing around you: put your phone out of reach, and close tabs you don’t need.',
-      plan: 'If I reach for my phone, then I’ll put it out of reach and go back to my step.',
     },
     overwhelmed: {
       label: 'I feel overwhelmed.',
       help: 'Choose only this one task for now. Everything else can wait on a list, outside your head.',
-      plan: 'If other tasks pop into my head, then I’ll write them down for later and come back.',
     },
     perfect: {
       label: 'I’m trying to make everything perfect.',
       help: 'Aim for a small, imperfect first version, and decide in advance where you’ll stop.',
-      plan: 'If I start polishing, then I’ll stop and move on. I can improve it later.',
     },
     easier: {
       label: 'I keep choosing easier tasks instead.',
       help: 'Do one small action on this task first. The easier tasks can come after, as a reward.',
-      plan: 'If I feel the pull to do something easier, then I’ll finish this one step first.',
     },
     time: {
       label: 'I don’t have enough time.',
       help: 'Even a few minutes can move it forward. Choose how much time you have, and the step will fit.',
-      plan: 'If I only have a few minutes, then I’ll do the two-minute version.',
     },
     tired: {
       label: 'I’m tired or low on energy.',
       help: 'Make it lighter: do the easiest version, take a short break first, or plan it for when you have more energy.',
-      plan: 'If I feel too tired, then I’ll do just the two-minute step and rest after.',
     },
     other: {
       label: 'Something else.',
       help: 'Thanks for naming it. Let’s start with a step small enough to work around it.',
-      plan: 'If I get stuck, then I’ll make the step even smaller and keep going.',
     },
   } as Record<ObstacleId, ObstacleContent>,
-
-  vision: {
-    title: 'Why does this matter to you?',
-    body: 'Optional, and quick. It helps to remember what this is for.',
-    whyLabel: 'A short reason',
-    whyPlaceholder: 'e.g. I want a job I enjoy',
-    fromBefore: 'From your last session with this task',
-    imagine: 'Imagine how it would feel to complete this task and know you took one step forward.',
-    visionLabel: 'What outcome do you want?',
-    visionPlaceholder: 'e.g. Relieved, and glad I finally began',
-  },
 
   action: {
     title: 'Let’s make the first step easier.',
     mayHelp: 'What may help',
-    breakdown: 'A simple way through it',
     label: 'Your tiny next step',
     another: 'Show another',
     smaller: 'Make it smaller',
-    confirm: 'This is my next step',
     need: 'Write a small step first.',
-    remember: (why: string) => `Remember why: ${why}`,
-    timeQuestion: 'How much time do you have?',
     rest: 'Rest now and plan it for later',
-    setAsideLabel: 'Set other things aside for now (optional)',
-    setAsidePlaceholder: 'Anything else on your mind can wait here.',
-  },
-
-  plan: {
-    title: 'What might stop you from doing it?',
-    body: 'Decide now, so you don’t have to decide in the moment.',
-    suggestions: 'Suggestions',
-    label: 'Your if–then plan',
-    placeholder: 'If …, then I will …',
   },
 
   ready: {
-    title: 'Your next step is ready.',
-    task: 'Task',
-    action: 'Next step',
-    why: 'Why it matters',
-    obstacle: 'What made it hard',
-    plan: 'If–then plan',
     howLong: 'How long?',
     lengths: { 2: '2-minute start', 10: '10-minute focus', 25: '25-minute focus' } as Record<number, string>,
-    custom: 'Other',
-    customLabel: 'Minutes (1–120)',
     start: 'Start now',
   },
 
@@ -174,8 +123,6 @@ export const en = {
       interrupted: 'Something interrupted me.',
       rescheduled: 'I decided to reschedule.',
     } as Record<BreakerOutcome, string>,
-    need: 'Choose what happened.',
-    noteLabel: 'What helped you start, or what got in the way? (optional)',
     when: 'When will you come back to it?',
     needDate: 'Choose a date and time.',
     save: 'Save',

@@ -9,7 +9,6 @@ import {
   focusedSeconds,
   nextStep,
   OBSTACLE_IDS,
-  previousWhy,
   smaller,
   suggest,
   suggestionBasis,
@@ -58,30 +57,26 @@ describe('categorize', () => {
 
 describe('suggest', () => {
   it('starts a too-big task with something that takes about two minutes', () => {
-    const s = suggest(en, 'Learn Python', ['big']);
+    expect(suggest(en, 'Learn Python', ['big']).options[0]).toBe(en.categories.code.tiny);
+  });
+
+  it('starts with the two-minute step, and no advice, when no obstacle was chosen', () => {
+    const s = suggest(en, 'Learn Python', []);
     expect(s.options[0]).toBe(en.categories.code.tiny);
-    expect(s.breakdown).toBeNull();
+    expect(s.help).toEqual([]);
   });
 
-  it('breaks the task into steps when not knowing where to start', () => {
-    const s = suggest(en, 'Apply for jobs', ['start']);
-    expect(s.breakdown).toEqual(en.categories.job.steps);
-    expect(s.options[0]).toBe(en.categories.job.steps[0]);
+  it('begins with the first real step when not knowing where to start', () => {
+    expect(suggest(en, 'Apply for jobs', ['start']).options[0]).toBe(en.categories.job.steps[0]);
   });
 
-  it('offers a rough first version to perfectionists', () => {
+  it('offers a rough first version to perfectionists and the fear of failing', () => {
     expect(suggest(en, 'Write my essay', ['perfect']).options[0]).toBe(en.categories.write.draft);
+    expect(suggest(en, 'Write my essay', ['fear']).options[0]).toBe(en.categories.write.draft);
   });
 
-  it('fits the step to the time available', () => {
-    expect(suggest(en, 'Study for the exam', ['time'], 2).options[0]).toBe(en.categories.study.tiny);
-    expect(suggest(en, 'Study for the exam', ['time'], 25).options[0]).toBe(en.categories.study.steps[0]);
-  });
-
-  it('gives advice and a plan for every chosen obstacle, in a fixed order', () => {
-    const s = suggest(en, 'x', ['tired', 'distracted']);
-    expect(s.help).toEqual([en.obstacles.distracted.help, en.obstacles.tired.help]);
-    expect(s.plans).toEqual([en.obstacles.distracted.plan, en.obstacles.tired.plan]);
+  it('gives advice for every chosen obstacle, in a fixed order', () => {
+    expect(suggest(en, 'x', ['tired', 'distracted']).help).toEqual([en.obstacles.distracted.help, en.obstacles.tired.help]);
   });
 
   it('never offers the same step twice', () => {
@@ -147,14 +142,9 @@ describe('sessions', () => {
     expect(unfinished(sessions).map((s) => s.task)).toEqual(['Gym', 'Essay']);
   });
 
-  it('remembers why a task mattered', () => {
-    const sessions = [session({ task: 'Gym' }), session({ task: 'gym', why: 'Feel strong' })];
-    expect(previousWhy(sessions, ' GYM')).toBe('Feel strong');
-    expect(previousWhy(sessions, 'Essay')).toBeUndefined();
-  });
-
   it('keeps the chosen step when picking a session back up', () => {
-    const draft = draftFrom(session({ action: 'Run one line', obstacles: ['fear'] }), 5);
+    const draft = draftFrom(session({ action: 'Run one line', obstacles: ['fear'] }));
+    expect(draft.step).toBe(1);
     expect(draft.action).toBe('Run one line');
     expect(draft.actionFor).toBe(suggestionBasis(draft));
   });

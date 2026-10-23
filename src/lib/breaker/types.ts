@@ -5,6 +5,9 @@ export const OBSTACLE_IDS = [
 ] as const;
 export type ObstacleId = (typeof OBSTACLE_IDS)[number];
 
+/** The obstacles offered as quick choices. The rest stay valid for sessions saved before the flow was shortened. */
+export const QUICK_OBSTACLES = ['big', 'start', 'motivation', 'distracted', 'fear', 'tired'] as const satisfies readonly ObstacleId[];
+
 /** Kinds of task with their own concrete first steps. Checked in this order; 'general' fits anything. */
 export const CATEGORY_IDS = ['code', 'job', 'exercise', 'business', 'write', 'study', 'clean', 'admin', 'general'] as const;
 export type CategoryId = (typeof CATEGORY_IDS)[number];
@@ -20,8 +23,6 @@ export interface ObstacleContent {
   label: string;
   /** What may help, in a sentence or two. */
   help: string;
-  /** A suggested if–then plan. */
-  plan: string;
 }
 
 export interface CategoryContent {
@@ -37,9 +38,12 @@ export interface CategoryContent {
   draft: string;
 }
 
-/** The guided flow's answers so far. Kept by the app, so switching tabs mid-flow loses nothing. */
+/**
+ * The guided flow's answers so far. Kept by the app, so switching tabs mid-flow loses nothing. `why`, `vision`,
+ * `setAside` and `plan` are no longer asked for, but are carried over from sessions saved before the flow was shortened.
+ */
 export interface BreakerDraft {
-  /** 0 task, 1 obstacle, 2 why, 3 first step, 4 if–then plan, 5 ready to start */
+  /** 0 the task and what makes it hard, 1 the first step and starting it */
   step: number;
   task: string;
   obstacles: ObstacleId[];
@@ -47,8 +51,6 @@ export interface BreakerDraft {
   why: string;
   vision: string;
   setAside: string;
-  /** Time available, when short on time. */
-  minutesAvailable?: number;
   action: string;
   /** What the suggested step was worked out from; a change means a fresh suggestion. */
   actionFor: string;

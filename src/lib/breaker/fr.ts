@@ -8,11 +8,7 @@ export const fr: BreakerText = {
   title: 'Briser la procrastination',
   principle: 'N’attendez pas la motivation. Rendez le démarrage plus facile.',
   tabs: { start: 'Commencer', progress: 'Mes progrès' },
-  steps: ['Tâche', 'Obstacle', 'Pourquoi', 'Première étape', 'Plan', 'C’est parti'],
-  stepOf: (n, total) => `Étape ${n} sur ${total}`,
   back: 'Retour',
-  next: 'Continuer',
-  skip: 'Passer',
   mins: (n) => `${n} min`,
   seconds: (n) => `${n} s`,
 
@@ -32,119 +28,72 @@ export const fr: BreakerText = {
   obstacle: {
     title: 'Qu’est-ce qui rend le démarrage difficile ?',
     hint: 'Choisissez tout ce qui correspond. Il n’y a pas de mauvaise réponse.',
-    need: 'Choisissez-en au moins un.',
-    otherLabel: 'En quelques mots, qu’est-ce qui vous bloque ?',
   },
 
   obstacles: {
     start: {
       label: 'Je ne sais pas par où commencer.',
       help: 'Découpons-la en quelques étapes simples, et commençons par la plus facile qui soit utile.',
-      plan: 'Si je ne sais plus quoi faire, alors je fais seulement la première étape de ma liste.',
     },
     big: {
       label: 'La tâche paraît trop grande.',
       help: 'Inutile de tout faire. Commencez par quelque chose qui prend environ deux minutes.',
-      plan: 'Si elle me paraît de nouveau énorme, alors je termine seulement l’étape de deux minutes.',
     },
     fear: {
       label: 'J’ai peur d’échouer.',
       help: 'Considérez ce premier essai comme un entraînement. Le but est d’apprendre, pas de réussir parfaitement.',
-      plan: 'Si je commence à douter de moi, alors je me rappelle que c’est un entraînement et je continue deux minutes.',
     },
     badly: {
       label: 'J’ai peur de mal faire.',
       help: 'Décidez à quoi ressemble une première version brute : assez bonne pour être améliorée plus tard.',
-      plan: 'Si je commence à juger mon travail, alors je l’appelle un brouillon et je continue.',
     },
     motivation: {
       label: 'Je manque de motivation.',
       help: 'La motivation vient souvent après avoir commencé, pas avant. Engagez-vous seulement sur une petite première étape.',
-      plan: 'Si je n’en ai pas envie, alors je fais juste la première étape et je décide ensuite.',
     },
     distracted: {
       label: 'Mon téléphone ou d’autres choses me distraient.',
       help: 'Changez une chose autour de vous : posez le téléphone hors de portée et fermez les onglets inutiles.',
-      plan: 'Si je prends mon téléphone, alors je le pose hors de portée et je reviens à mon étape.',
     },
     overwhelmed: {
       label: 'Tout me submerge.',
       help: 'Choisissez seulement cette tâche pour l’instant. Le reste peut attendre sur une liste, hors de votre tête.',
-      plan: 'Si d’autres tâches me viennent en tête, alors je les note pour plus tard et je reviens.',
     },
     perfect: {
       label: 'Je veux que tout soit parfait.',
       help: 'Visez une petite première version imparfaite, et décidez à l’avance où vous arrêter.',
-      plan: 'Si je commence à peaufiner, alors je m’arrête et je passe à la suite. Je pourrai améliorer plus tard.',
     },
     easier: {
       label: 'Je choisis sans cesse des tâches plus faciles.',
       help: 'Faites d’abord une petite action sur cette tâche. Les plus faciles peuvent venir après, comme récompense.',
-      plan: 'Si j’ai envie de faire quelque chose de plus facile, alors je termine d’abord cette étape.',
     },
     time: {
       label: 'Je manque de temps.',
       help: 'Même quelques minutes peuvent la faire avancer. Choisissez le temps dont vous disposez, et l’étape s’adaptera.',
-      plan: 'Si je n’ai que quelques minutes, alors je fais la version de deux minutes.',
     },
     tired: {
       label: 'Je manque d’énergie.',
       help: 'Allégez-la : faites la version la plus simple, prenez d’abord une courte pause, ou prévoyez-la pour un moment où vous aurez plus d’énergie.',
-      plan: 'Si l’énergie me manque trop, alors je fais seulement l’étape de deux minutes et je me repose ensuite.',
     },
     other: {
       label: 'Autre chose.',
       help: 'Merci de l’avoir nommé. Commençons par une étape assez petite pour le contourner.',
-      plan: 'Si je bloque, alors je rends l’étape encore plus petite et je continue.',
     },
-  },
-
-  vision: {
-    title: 'Pourquoi est-ce important pour vous ?',
-    body: 'Facultatif, et rapide. Se rappeler à quoi ça sert aide.',
-    whyLabel: 'Une courte raison',
-    whyPlaceholder: 'ex. Je veux un métier qui me plaît',
-    fromBefore: 'De votre dernière séance sur cette tâche',
-    imagine: 'Imaginez ce que vous ressentiriez en terminant cette tâche, en sachant que vous avez fait un pas en avant.',
-    visionLabel: 'Quel résultat souhaitez-vous ?',
-    visionPlaceholder: 'ex. Du soulagement, et la joie d’avoir enfin commencé',
   },
 
   action: {
     title: 'Rendons la première étape plus facile.',
     mayHelp: 'Ce qui peut aider',
-    breakdown: 'Un chemin simple',
     label: 'Votre petite prochaine étape',
     another: 'Une autre idée',
     smaller: 'Plus petit',
-    confirm: 'C’est ma prochaine étape',
     need: 'Écrivez d’abord une petite étape.',
-    remember: (why) => `Rappelez-vous pourquoi : ${why}`,
-    timeQuestion: 'De combien de temps disposez-vous ?',
     rest: 'Me reposer maintenant et la prévoir plus tard',
-    setAsideLabel: 'Mettre le reste de côté pour l’instant (facultatif)',
-    setAsidePlaceholder: 'Tout ce qui vous occupe l’esprit peut attendre ici.',
-  },
-
-  plan: {
-    title: 'Qu’est-ce qui pourrait vous en empêcher ?',
-    body: 'Décidez maintenant, pour ne pas avoir à décider sur le moment.',
-    suggestions: 'Suggestions',
-    label: 'Votre plan si–alors',
-    placeholder: 'Si …, alors je …',
   },
 
   ready: {
-    title: 'Votre prochaine étape est prête.',
-    task: 'Tâche',
-    action: 'Prochaine étape',
-    why: 'Pourquoi c’est important',
-    obstacle: 'Ce qui la rendait difficile',
-    plan: 'Plan si–alors',
     howLong: 'Combien de temps ?',
     lengths: { 2: 'Démarrage de 2 minutes', 10: '10 minutes de concentration', 25: '25 minutes de concentration' },
-    custom: 'Autre',
-    customLabel: 'Minutes (1–120)',
     start: 'Commencer maintenant',
   },
 
@@ -172,8 +121,6 @@ export const fr: BreakerText = {
       interrupted: 'Il y a eu une interruption.',
       rescheduled: 'J’ai décidé de reporter.',
     },
-    need: 'Choisissez ce qui s’est passé.',
-    noteLabel: 'Qu’est-ce qui a aidé à commencer, ou qu’est-ce qui a gêné ? (facultatif)',
     when: 'Quand allez-vous y revenir ?',
     needDate: 'Choisissez une date et une heure.',
     save: 'Enregistrer',

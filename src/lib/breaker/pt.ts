@@ -8,11 +8,7 @@ export const pt: BreakerText = {
   title: 'Quebre a procrastinação',
   principle: 'Não espere a motivação. Torne o começo mais fácil.',
   tabs: { start: 'Começar', progress: 'Meu progresso' },
-  steps: ['Tarefa', 'Obstáculo', 'Por quê', 'Primeiro passo', 'Plano', 'Começar'],
-  stepOf: (n, total) => `Passo ${n} de ${total}`,
   back: 'Voltar',
-  next: 'Continuar',
-  skip: 'Pular',
   mins: (n) => `${n} min`,
   seconds: (n) => `${n} s`,
 
@@ -32,119 +28,72 @@ export const pt: BreakerText = {
   obstacle: {
     title: 'O que está dificultando começar?',
     hint: 'Escolha tudo o que se aplica. Não existe resposta errada.',
-    need: 'Escolha pelo menos um.',
-    otherLabel: 'Em poucas palavras, o que está atrapalhando?',
   },
 
   obstacles: {
     start: {
       label: 'Não sei por onde começar.',
       help: 'Vamos dividir em alguns passos simples e começar pelo mais fácil que seja útil.',
-      plan: 'Se eu travar sem saber o que fazer, então faço só o primeiro passo da minha lista.',
     },
     big: {
       label: 'A tarefa parece grande demais.',
       help: 'Você não precisa fazer tudo. Comece com algo que leve uns dois minutos.',
-      plan: 'Se parecer enorme de novo, então só termino o passo de dois minutos.',
     },
     fear: {
       label: 'Tenho medo de falhar.',
       help: 'Encare essa primeira tentativa como treino. O objetivo é aprender algo, não acertar tudo.',
-      plan: 'Se eu começar a duvidar de mim, então lembro que é treino e continuo por mais dois minutos.',
     },
     badly: {
       label: 'Tenho medo de fazer mal feito.',
       help: 'Defina como seria uma primeira versão simples: boa o bastante para melhorar depois.',
-      plan: 'Se eu começar a julgar meu trabalho, então chamo de rascunho e sigo em frente.',
     },
     motivation: {
       label: 'Estou sem motivação.',
       help: 'A motivação costuma vir depois de começar, não antes. Comprometa-se só com um pequeno primeiro passo.',
-      plan: 'Se eu não estiver com vontade, então faço só o primeiro passo e decido depois.',
     },
     distracted: {
       label: 'O celular ou outras coisas me distraem.',
       help: 'Mude uma coisa ao seu redor: deixe o celular fora de alcance e feche as abas que não precisa.',
-      plan: 'Se eu pegar o celular, então coloco ele longe e volto para o meu passo.',
     },
     overwhelmed: {
       label: 'Tudo está pesando demais.',
       help: 'Escolha só esta tarefa por agora. O resto pode esperar numa lista, fora da sua cabeça.',
-      plan: 'Se outras tarefas vierem à cabeça, então anoto para depois e volto.',
     },
     perfect: {
       label: 'Quero que tudo fique perfeito.',
       help: 'Mire numa primeira versão pequena e imperfeita, e decida antes onde vai parar.',
-      plan: 'Se eu começar a polir demais, então paro e sigo adiante. Dá para melhorar depois.',
     },
     easier: {
       label: 'Sempre acabo escolhendo tarefas mais fáceis.',
       help: 'Faça primeiro uma pequena ação nesta tarefa. As fáceis podem vir depois, como recompensa.',
-      plan: 'Se der vontade de fazer algo mais fácil, então termino este passo primeiro.',
     },
     time: {
       label: 'Não tenho tempo suficiente.',
       help: 'Até alguns minutos fazem a tarefa andar. Escolha quanto tempo você tem, e o passo vai caber nele.',
-      plan: 'Se eu só tiver alguns minutos, então faço a versão de dois minutos.',
     },
     tired: {
       label: 'Estou com pouca energia.',
       help: 'Deixe mais leve: faça a versão mais fácil, descanse um pouco antes, ou marque para quando tiver mais energia.',
-      plan: 'Se faltar energia, então faço só o passo de dois minutos e descanso depois.',
     },
     other: {
       label: 'Outra coisa.',
       help: 'Que bom que você contou. Vamos começar com um passo pequeno o bastante para contornar isso.',
-      plan: 'Se eu travar, então deixo o passo ainda menor e continuo.',
     },
-  },
-
-  vision: {
-    title: 'Por que isso importa para você?',
-    body: 'Opcional e rápido. Lembrar para que serve ajuda.',
-    whyLabel: 'Um motivo curto',
-    whyPlaceholder: 'ex.: Quero um trabalho de que eu goste',
-    fromBefore: 'Da sua última sessão com esta tarefa',
-    imagine: 'Imagine como seria terminar esta tarefa, sabendo que deu um passo à frente.',
-    visionLabel: 'Que resultado você quer?',
-    visionPlaceholder: 'ex.: Alívio, e alegria por finalmente ter começado',
   },
 
   action: {
     title: 'Vamos deixar o primeiro passo mais fácil.',
     mayHelp: 'O que pode ajudar',
-    breakdown: 'Um caminho simples',
     label: 'Seu pequeno próximo passo',
     another: 'Ver outro',
     smaller: 'Diminuir',
-    confirm: 'Este é o meu próximo passo',
     need: 'Primeiro, escreva um passo pequeno.',
-    remember: (why) => `Lembre por quê: ${why}`,
-    timeQuestion: 'Quanto tempo você tem?',
     rest: 'Descansar agora e marcar para depois',
-    setAsideLabel: 'Deixe outras coisas de lado por agora (opcional)',
-    setAsidePlaceholder: 'Tudo o mais que está na sua cabeça pode esperar aqui.',
-  },
-
-  plan: {
-    title: 'O que pode te impedir de fazer?',
-    body: 'Decida agora, para não ter que decidir na hora.',
-    suggestions: 'Sugestões',
-    label: 'Seu plano se–então',
-    placeholder: 'Se …, então …',
   },
 
   ready: {
-    title: 'Seu próximo passo está pronto.',
-    task: 'Tarefa',
-    action: 'Próximo passo',
-    why: 'Por que importa',
-    obstacle: 'O que dificultava',
-    plan: 'Plano se–então',
     howLong: 'Por quanto tempo?',
     lengths: { 2: 'Arrancada de 2 minutos', 10: '10 minutos de foco', 25: '25 minutos de foco' },
-    custom: 'Outro',
-    customLabel: 'Minutos (1–120)',
     start: 'Começar agora',
   },
 
@@ -172,8 +121,6 @@ export const pt: BreakerText = {
       interrupted: 'Algo me interrompeu.',
       rescheduled: 'Decidi remarcar.',
     },
-    need: 'Escolha o que aconteceu.',
-    noteLabel: 'O que ajudou a começar, ou o que atrapalhou? (opcional)',
     when: 'Quando você vai voltar a ela?',
     needDate: 'Escolha uma data e um horário.',
     save: 'Salvar',

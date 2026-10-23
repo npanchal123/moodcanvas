@@ -10,11 +10,9 @@ import {
   formatDuration,
   LIMITS,
   nextStep,
-  OBSTACLE_IDS,
   OUTCOMES,
-  previousWhy,
+  QUICK_OBSTACLES,
   smaller,
-  sortObstacles,
   suggest,
   suggestionBasis,
   unfinished,
@@ -76,7 +74,7 @@ export default function Breaker({ draft, onDraftChange, animate }: Props) {
     if (busy) return;
     setBusy(true);
     try {
-      const help = suggest(text, from.task, from.obstacles, from.minutesAvailable).help.join(' ');
+      const help = suggest(text, from.task, from.obstacles).help.join(' ');
       const session = await startSession(from, help, running);
       onDraftChange(EMPTY_BREAKER_DRAFT);
       show(running ? { kind: 'timer', id: session.id } : { kind: 'reflect', id: session.id, preset: 'rescheduled' });
@@ -101,8 +99,8 @@ export default function Breaker({ draft, onDraftChange, animate }: Props) {
         sessions={sessions}
         text={text}
         formatDate={formatDate}
-        onResume={(s) => continueWith(draftFrom(s, 1))}
-        onSimplify={(s) => continueWith(draftFrom(s, 3, { action: smaller(text, s.task, s.action) ?? s.action }))}
+        onResume={(s) => continueWith(draftFrom(s))}
+        onSimplify={(s) => continueWith(draftFrom(s, { action: smaller(text, s.task, s.action) ?? s.action }))}
         onOpenActive={openActive}
         onStartFirst={() => continueWith(EMPTY_BREAKER_DRAFT)}
       />
@@ -114,6 +112,7 @@ export default function Breaker({ draft, onDraftChange, animate }: Props) {
         text={text}
         animate={animate}
         onReflect={(preset) => show({ kind: 'reflect', id: screen.id, preset })}
+        onDone={() => show({ kind: 'after', id: screen.id })}
         onMissing={() => show({ kind: 'flow' })}
       />
     );
@@ -153,7 +152,7 @@ export default function Breaker({ draft, onDraftChange, animate }: Props) {
         onStart={(d) => void start(d)}
         onRest={(d) => void start(d, false)}
         onOpenActive={openActive}
-        onResume={(s) => continueWith(draftFrom(s, 1))}
+        onResume={(s) => continueWith(draftFrom(s))}
       />
     );
   }
@@ -204,14 +203,8 @@ function useFocusOnLoad(loaded: boolean): RefObject<HTMLHeadingElement> {
   return ref;
 }
 
-function obstacleNames(text: BreakerText, obstacles: ObstacleId[], other?: string): string {
-  return sortObstacles(obstacles)
-    .map((id) => (id === 'other' && other ? other : text.obstacles[id].label))
-    .join(' · ');
-}
-
 // ---------------------------------------------------------------------------------------------------------------
-// The guided flow: task → obstacle → why → first step → if–then plan → ready.
+// The guided flow, kept short on purpose: the task (and, optionally, what makes it hard), then one tiny step to start.
 
 interface FlowProps {
   draft: BreakerDraft;
@@ -230,18 +223,14 @@ interface FlowProps {
 function Flow({ draft, set, text, sessions, active, busy, formatDate, onStart, onRest, onOpenActive, onResume }: FlowProps) {
   const headingRef = useFocusOnChange(draft.step);
   const [error, setError] = useState('');
-  const suggestion = useMemo(
-    () => suggest(text, draft.task, draft.obstacles, draft.minutesAvailable),
-    [text, draft.task, draft.obstacles, draft.minutesAvailable],
-  );
+  const suggestion = useMemo(() => suggest(text, draft.task, draft.obstacles), [text, draft.task, draft.obstacles]);
 
-  function go(step: number, changes: Partial<BreakerDraft> = {}) {
+  function go(step: number) {
     setError('');
-    let next = { ...draft, ...changes, step };
-    if (step === 2 && !next.why) next = { ...next, why: previousWhy(sessions, next.task) ?? '' };
-    // Arriving at the first step: suggest one, unless the person already chose one for these answers.
-    if (step === 3 && next.actionFor !== suggestionBasis(next)) {
-      const options = suggest(text, next.task, next.obstacles, next.minutesAvailable).options;
+    let next = { ...draft, step };
+    // Arriving at the step screen: suggest one, unless the person already chose one for these answers.
+    if (step === 1 && next.actionFor !== suggestionBasis(next)) {
+      const options = suggest(text, next.task, next.obstacles).options;
       next = { ...next, action: options[0], optionIndex: 0, actionFor: suggestionBasis(next) };
     }
     set(next);
@@ -258,24 +247,14 @@ function Flow({ draft, set, text, sessions, active, busy, formatDate, onStart, o
       {error}
     </p>
   );
-  const nav = (onNext: () => void, nextLabel = text.next, skip?: () => void) => (
-    <div className="flex flex-wrap items-center gap-2">
-      <button type="button" onClick={onNext} className={`${btnPrimary} min-h-12 px-7`}>
-        {nextLabel}
-      </button>
-      {skip && (
-        <button type="button" onClick={skip} className={btnSecondary}>
-          {text.skip}
-        </button>
-      )}
-      <button type="button" onClick={() => go(draft.step - 1)} className={btnGhost}>
-        {text.back}
-      </button>
-    </div>
-  );
 
   if (draft.step === 0) {
     const open = unfinished(sessions);
+    const toggleObstacle = (id: ObstacleId) =>
+      set({
+        ...draft,
+        obstacles: draft.obstacles.includes(id) ? draft.obstacles.filter((o) => o !== id) : [...draft.obstacles, id],
+      });
     return (
       <>
         {active && (
@@ -310,7 +289,7 @@ function Flow({ draft, set, text, sessions, active, busy, formatDate, onStart, o
             </label>
             <textarea
               id="breaker-task"
-              rows={3}
+              rows={2}
               maxLength={LIMITS.task}
               value={draft.task}
               placeholder={text.entry.placeholder}
@@ -321,6 +300,27 @@ function Flow({ draft, set, text, sessions, active, busy, formatDate, onStart, o
             />
           </div>
           {errorText}
+          <fieldset>
+            <legend className={label}>{text.obstacle.title}</legend>
+            <p className="mb-2 text-sm text-(--muted)">{text.obstacle.hint}</p>
+            <div className="flex flex-wrap gap-2">
+              {QUICK_OBSTACLES.map((id) => {
+                const pressed = draft.obstacles.includes(id);
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    aria-pressed={pressed}
+                    onClick={() => toggleObstacle(id)}
+                    className={`${toggle(pressed)} text-start text-sm`}
+                  >
+                    {pressed && <span aria-hidden="true">✓</span>}
+                    {text.obstacles[id].label}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
           <button type="submit" className={`${btnPrimary} min-h-14 w-full px-8 text-lg sm:w-auto sm:self-start`}>
             {text.entry.start}
           </button>
@@ -353,395 +353,76 @@ function Flow({ draft, set, text, sessions, active, busy, formatDate, onStart, o
     );
   }
 
-  let content: ReactNode;
-  if (draft.step === 1) {
-    const toggleObstacle = (id: ObstacleId) =>
-      set({
-        ...draft,
-        obstacles: draft.obstacles.includes(id) ? draft.obstacles.filter((o) => o !== id) : [...draft.obstacles, id],
-      });
-    content = (
-      <>
-        <div className="flex flex-col gap-2">
-          {heading(text.obstacle.title)}
-          <p className="text-(--muted)">{text.obstacle.hint}</p>
-        </div>
-        <ul className="grid gap-2 sm:grid-cols-2">
-          {OBSTACLE_IDS.map((id) => {
-            const pressed = draft.obstacles.includes(id);
-            return (
-              <li key={id}>
-                <button
-                  type="button"
-                  aria-pressed={pressed}
-                  onClick={() => toggleObstacle(id)}
-                  className={`flex min-h-14 w-full items-center gap-3 rounded-2xl border px-4 py-3 text-start transition-colors ${
-                    pressed
-                      ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)'
-                      : 'border-(--border) bg-(--surface-strong) hover:bg-(--surface-alt)'
-                  }`}
-                >
-                  <span
-                    aria-hidden="true"
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold ${
-                      pressed ? 'btn-glow border-transparent text-(--on-accent)' : 'border-(--border)'
-                    }`}
-                  >
-                    {pressed ? '✓' : ''}
-                  </span>
-                  {text.obstacles[id].label}
-                </button>
-              </li>
-            );
-          })}
-        </ul>
-        {draft.obstacles.includes('other') && (
-          <div className="flex flex-col gap-2">
-            <label htmlFor="breaker-other" className={label}>
-              {text.obstacle.otherLabel}
-            </label>
-            <input
-              id="breaker-other"
-              maxLength={LIMITS.short}
-              value={draft.otherObstacle}
-              onChange={(e) => set({ ...draft, otherObstacle: e.target.value })}
-              className={field}
-            />
-          </div>
-        )}
-        {errorText}
-        {nav(() => (draft.obstacles.length ? go(2) : setError(text.obstacle.need)))}
-      </>
-    );
-  } else if (draft.step === 2) {
-    const fromBefore = draft.why !== '' && draft.why === previousWhy(sessions, draft.task);
-    content = (
-      <>
-        <div className="flex flex-col gap-2">
-          {heading(text.vision.title)}
-          <p className="text-(--muted)">{text.vision.body}</p>
-        </div>
-        <p className="rounded-2xl bg-(--surface-alt) px-4 py-3">
-          <span className="text-sm text-(--muted)">{text.ready.task}: </span>
-          <span className="font-semibold break-words">{draft.task}</span>
-        </p>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="breaker-why" className={label}>
-            {text.vision.whyLabel}
-          </label>
-          <input
-            id="breaker-why"
-            maxLength={LIMITS.short}
-            value={draft.why}
-            placeholder={text.vision.whyPlaceholder}
-            onChange={(e) => set({ ...draft, why: e.target.value })}
-            aria-describedby={fromBefore ? 'breaker-why-note' : undefined}
-            className={field}
-          />
-          {fromBefore && (
-            <p id="breaker-why-note" className="text-sm text-(--muted)">
-              {text.vision.fromBefore}
-            </p>
-          )}
-        </div>
-        <div className="relative overflow-hidden rounded-3xl p-5 text-center">
-          <div aria-hidden="true" className="aura inset-0 opacity-70" />
-          <div className="relative flex flex-col gap-3">
-            <p className="display text-lg font-bold">{text.vision.imagine}</p>
-            <label htmlFor="breaker-vision" className="text-sm font-semibold text-(--muted)">
-              {text.vision.visionLabel}
-            </label>
-            <textarea
-              id="breaker-vision"
-              rows={2}
-              maxLength={LIMITS.short}
-              value={draft.vision}
-              placeholder={text.vision.visionPlaceholder}
-              onChange={(e) => set({ ...draft, vision: e.target.value })}
-              className={`${field} text-center`}
-            />
-          </div>
-        </div>
-        {nav(() => go(3), text.next, () => go(3, { why: '', vision: '' }))}
-      </>
-    );
-  } else if (draft.step === 3) {
-    const options = suggestion.options;
-    const smallerStep = smaller(text, draft.task, draft.action);
-    const short = draft.obstacles.includes('time');
-    content = (
-      <>
-        {heading(text.action.title)}
-        <section aria-labelledby="breaker-help" className="flex flex-col gap-2 rounded-2xl bg-(--surface-alt) p-4">
-          <h3 id="breaker-help" className="font-semibold">
-            {text.action.mayHelp}
-          </h3>
-          <ul className="flex list-disc flex-col gap-1 ps-5">
-            {suggestion.help.map((help) => (
-              <li key={help}>{help}</li>
-            ))}
-          </ul>
-          {draft.obstacles.includes('motivation') && draft.why.trim() && (
-            <p className="font-medium">{text.action.remember(draft.why.trim())}</p>
-          )}
-        </section>
-
-        {suggestion.breakdown && (
-          <section aria-labelledby="breaker-breakdown" className="flex flex-col gap-2">
-            <h3 id="breaker-breakdown" className="font-semibold">
-              {text.action.breakdown}
-            </h3>
-            <ol className="flex list-decimal flex-col gap-1 ps-5">
-              {suggestion.breakdown.map((step) => (
-                <li key={step}>{step}</li>
-              ))}
-            </ol>
-          </section>
-        )}
-
-        {short && (
-          <fieldset>
-            <legend className={`${label} mb-2`}>{text.action.timeQuestion}</legend>
-            <div className="flex flex-wrap gap-2">
-              {FOCUS_LENGTHS.map((m) => (
-                <button
-                  key={m}
-                  type="button"
-                  aria-pressed={(draft.minutesAvailable ?? 2) === m}
-                  onClick={() => {
-                    const next = { ...draft, minutesAvailable: m, plannedMinutes: m };
-                    const first = suggest(text, next.task, next.obstacles, m).options[0];
-                    set({ ...next, action: first, optionIndex: 0, actionFor: suggestionBasis(next) });
-                  }}
-                  className={toggle((draft.minutesAvailable ?? 2) === m)}
-                >
-                  {text.mins(m)}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-        )}
-
-        {draft.obstacles.includes('overwhelmed') && (
-          <div className="flex flex-col gap-2">
-            <label htmlFor="breaker-aside" className={label}>
-              {text.action.setAsideLabel}
-            </label>
-            <textarea
-              id="breaker-aside"
-              rows={2}
-              maxLength={LIMITS.long}
-              value={draft.setAside}
-              placeholder={text.action.setAsidePlaceholder}
-              onChange={(e) => set({ ...draft, setAside: e.target.value })}
-              className={field}
-            />
-          </div>
-        )}
-
-        <div className="flex flex-col gap-2">
-          <label htmlFor="breaker-action" className={`${label} text-lg`}>
-            {text.action.label}
-          </label>
-          <textarea
-            id="breaker-action"
-            rows={2}
-            maxLength={LIMITS.short}
-            value={draft.action}
-            onChange={(e) => set({ ...draft, action: e.target.value })}
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? 'breaker-error' : undefined}
-            className={`${field} border-(--accent) text-lg font-semibold`}
-          />
-          <div className="flex flex-wrap gap-2">
-            {options.length > 1 && (
-              <button
-                type="button"
-                onClick={() => {
-                  const i = (draft.optionIndex + 1) % options.length;
-                  set({ ...draft, optionIndex: i, action: options[i] });
-                }}
-                className={btnSecondary}
-              >
-                <span aria-hidden="true">↻</span>
-                {text.action.another}
-              </button>
-            )}
-            <button
-              type="button"
-              disabled={!smallerStep}
-              onClick={() => smallerStep && set({ ...draft, action: smallerStep })}
-              className={btnSecondary}
-            >
-              <span aria-hidden="true">↓</span>
-              {text.action.smaller}
-            </button>
-          </div>
-        </div>
-        {errorText}
-        {nav(() => (draft.action.trim() ? go(4) : setError(text.action.need)), text.action.confirm)}
-        {draft.obstacles.includes('tired') && (
-          <button type="button" disabled={busy} onClick={() => onRest(draft)} className={`${btnGhost} self-start underline`}>
-            {text.action.rest}
-          </button>
-        )}
-      </>
-    );
-  } else if (draft.step === 4) {
-    content = (
-      <>
-        <div className="flex flex-col gap-2">
-          {heading(text.plan.title)}
-          <p className="text-(--muted)">{text.plan.body}</p>
-        </div>
-        <fieldset>
-          <legend className={`${label} mb-2`}>{text.plan.suggestions}</legend>
-          <ul className="flex flex-col gap-2">
-            {suggestion.plans.map((plan) => (
-              <li key={plan}>
-                <button
-                  type="button"
-                  aria-pressed={draft.plan === plan}
-                  onClick={() => set({ ...draft, plan })}
-                  className={`min-h-11 w-full rounded-2xl border px-4 py-2 text-start transition-colors ${
-                    draft.plan === plan
-                      ? 'border-(--accent) bg-(--accent-soft)'
-                      : 'border-(--border) bg-(--surface-strong) hover:bg-(--surface-alt)'
-                  }`}
-                >
-                  {plan}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </fieldset>
-        <div className="flex flex-col gap-2">
-          <label htmlFor="breaker-plan" className={label}>
-            {text.plan.label}
-          </label>
-          <textarea
-            id="breaker-plan"
-            rows={2}
-            maxLength={LIMITS.short}
-            value={draft.plan}
-            placeholder={text.plan.placeholder}
-            onChange={(e) => set({ ...draft, plan: e.target.value })}
-            className={field}
-          />
-        </div>
-        {nav(() => go(5), text.next, () => go(5, { plan: '' }))}
-      </>
-    );
-  } else {
-    content = <Ready draft={draft} set={set} text={text} heading={heading} busy={busy} onStart={onStart} onBack={() => go(4)} />;
-  }
-
-  return (
-    <section className={`${card} flex flex-col gap-5`} aria-label={text.title}>
-      <StepTrail step={draft.step} text={text} onGo={(step) => go(step)} />
-      {content}
-    </section>
-  );
-}
-
-/** Where you are in the flow. Earlier steps can be revisited; answers are kept. */
-function StepTrail({ step, text, onGo }: { step: number; text: BreakerText; onGo: (step: number) => void }) {
-  return (
-    <nav aria-label={text.stepOf(step + 1, text.steps.length)}>
-      <ol className="flex w-full items-center gap-1.5">
-        {text.steps.map((name, i) => {
-          const done = i < step;
-          const current = i === step;
-          const dot = (
-            <>
-              <span
-                aria-hidden="true"
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
-                  current ? 'btn-glow text-(--on-accent)' : done ? 'bg-(--accent-soft) text-(--accent)' : 'bg-(--track) text-(--muted)'
-                }`}
-              >
-                {done ? '✓' : i + 1}
-              </span>
-              <span className="sr-only">{name}</span>
-            </>
-          );
-          return (
-            <li
-              key={name}
-              aria-current={current ? 'step' : undefined}
-              className={`flex items-center gap-1.5 ${i < text.steps.length - 1 ? 'flex-1' : ''}`}
-            >
-              {done ? (
-                <button type="button" onClick={() => onGo(i)} className="flex items-center rounded-full">
-                  {dot}
-                </button>
-              ) : (
-                <span className="flex items-center gap-1.5">{dot}</span>
-              )}
-              {i < text.steps.length - 1 && <span aria-hidden="true" className="h-px min-w-1.5 flex-1 bg-(--border)" />}
-            </li>
-          );
-        })}
-      </ol>
-      {/* Screen readers hear the step names from the list above. */}
-      <p aria-hidden="true" className="mt-2 text-sm font-semibold text-(--muted)">
-        {text.stepOf(step + 1, text.steps.length)} · {text.steps[step]}
-      </p>
-    </nav>
-  );
-}
-
-function Ready({
-  draft,
-  set,
-  text,
-  heading,
-  busy,
-  onStart,
-  onBack,
-}: {
-  draft: BreakerDraft;
-  set: (draft: BreakerDraft) => void;
-  text: BreakerText;
-  heading: (title: string) => ReactNode;
-  busy: boolean;
-  onStart: (draft: BreakerDraft) => void;
-  onBack: () => void;
-}) {
-  const preset = (FOCUS_LENGTHS as readonly number[]).includes(draft.plannedMinutes);
-  const [custom, setCustom] = useState(!preset);
-  const [error, setError] = useState('');
-  const rows: [string, string | undefined][] = [
-    [text.ready.task, draft.task],
-    [text.ready.action, draft.action],
-    [text.ready.why, draft.why.trim() || undefined],
-    [text.ready.obstacle, obstacleNames(text, draft.obstacles, draft.otherObstacle.trim())],
-    [text.ready.plan, draft.plan.trim() || undefined],
-  ];
+  const options = suggestion.options;
+  const smallerStep = smaller(text, draft.task, draft.action);
 
   function begin() {
-    const m = draft.plannedMinutes;
-    if (!Number.isInteger(m) || m < 1 || m > LIMITS.minutes) {
-      setError(text.ready.customLabel);
-      document.getElementById('breaker-minutes')?.focus();
+    if (!draft.action.trim()) {
+      setError(text.action.need);
+      document.getElementById('breaker-action')?.focus();
       return;
     }
     onStart(draft);
   }
 
   return (
-    <>
-      {heading(text.ready.title)}
-      <dl className="flex flex-col gap-3 rounded-2xl bg-(--surface-alt) p-4">
-        {rows
-          .filter((row): row is [string, string] => Boolean(row[1]))
-          .map(([name, value], i) => (
-            <div key={name}>
-              <dt className="text-sm text-(--muted)">{name}</dt>
-              <dd className={`break-words ${i === 1 ? 'display text-xl font-bold' : 'font-medium'}`}>{value}</dd>
-            </div>
+    <section className={`${card} fade-up flex flex-col gap-5`} aria-label={text.title}>
+      <div className="flex flex-col gap-1">
+        <p className="text-sm text-(--muted) break-words">{draft.task}</p>
+        {heading(text.action.title)}
+      </div>
+
+      {suggestion.help.length > 0 && (
+        <section aria-labelledby="breaker-help" className="flex flex-col gap-1 rounded-2xl bg-(--surface-alt) p-4">
+          <h3 id="breaker-help" className="font-semibold">
+            {text.action.mayHelp}
+          </h3>
+          {suggestion.help.map((help) => (
+            <p key={help}>{help}</p>
           ))}
-      </dl>
+        </section>
+      )}
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="breaker-action" className={`${label} text-lg`}>
+          {text.action.label}
+        </label>
+        <textarea
+          id="breaker-action"
+          rows={2}
+          maxLength={LIMITS.short}
+          value={draft.action}
+          onChange={(e) => set({ ...draft, action: e.target.value })}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? 'breaker-error' : undefined}
+          className={`${field} border-(--accent) text-lg font-semibold`}
+        />
+        <div className="flex flex-wrap gap-2">
+          {options.length > 1 && (
+            <button
+              type="button"
+              onClick={() => {
+                const i = (draft.optionIndex + 1) % options.length;
+                set({ ...draft, optionIndex: i, action: options[i] });
+              }}
+              className={btnSecondary}
+            >
+              <span aria-hidden="true">↻</span>
+              {text.action.another}
+            </button>
+          )}
+          <button
+            type="button"
+            disabled={!smallerStep}
+            onClick={() => smallerStep && set({ ...draft, action: smallerStep })}
+            className={btnSecondary}
+          >
+            <span aria-hidden="true">↓</span>
+            {text.action.smaller}
+          </button>
+        </div>
+      </div>
+
       <fieldset>
         <legend className={`${label} mb-2`}>{text.ready.howLong}</legend>
         <div className="flex flex-wrap gap-2">
@@ -749,56 +430,32 @@ function Ready({
             <button
               key={m}
               type="button"
-              aria-pressed={!custom && draft.plannedMinutes === m}
-              onClick={() => {
-                setCustom(false);
-                setError('');
-                set({ ...draft, plannedMinutes: m });
-              }}
-              className={toggle(!custom && draft.plannedMinutes === m)}
+              aria-pressed={draft.plannedMinutes === m}
+              onClick={() => set({ ...draft, plannedMinutes: m })}
+              className={toggle(draft.plannedMinutes === m)}
             >
               {text.ready.lengths[m]}
             </button>
           ))}
-          <button type="button" aria-pressed={custom} onClick={() => setCustom(true)} className={toggle(custom)}>
-            {text.ready.custom}
-          </button>
         </div>
-        {custom && (
-          <div className="mt-3 flex flex-col gap-1">
-            <label htmlFor="breaker-minutes" className="text-sm font-semibold">
-              {text.ready.customLabel}
-            </label>
-            <input
-              id="breaker-minutes"
-              type="number"
-              inputMode="numeric"
-              min={1}
-              max={LIMITS.minutes}
-              step={1}
-              value={Number.isFinite(draft.plannedMinutes) ? draft.plannedMinutes : ''}
-              onChange={(e) => set({ ...draft, plannedMinutes: e.target.valueAsNumber })}
-              aria-invalid={error ? true : undefined}
-              className={`${field} w-32`}
-            />
-          </div>
-        )}
       </fieldset>
-      {error && (
-        <p role="alert" className="font-medium text-(--danger)">
-          {error}
-        </p>
-      )}
+
+      {errorText}
       <div className="flex flex-wrap items-center gap-2">
         <button type="button" disabled={busy} onClick={begin} className={`${btnPrimary} min-h-14 px-10 text-lg`}>
           <span aria-hidden="true">▶</span>
           {text.ready.start}
         </button>
-        <button type="button" onClick={onBack} className={btnGhost}>
+        <button type="button" onClick={() => go(0)} className={btnGhost}>
           {text.back}
         </button>
       </div>
-    </>
+      {draft.obstacles.includes('tired') && (
+        <button type="button" disabled={busy} onClick={() => onRest(draft)} className={`${btnGhost} self-start underline`}>
+          {text.action.rest}
+        </button>
+      )}
+    </section>
   );
 }
 
@@ -819,16 +476,19 @@ function Timer({
   text,
   animate,
   onReflect,
+  onDone,
   onMissing,
 }: {
   id: string;
   text: BreakerText;
   animate: boolean;
   onReflect: (preset?: BreakerOutcome) => void;
+  onDone: () => void;
   onMissing: () => void;
 }) {
   const session = useSession(id, onMissing);
   const [now, setNow] = useState(Date.now);
+  const [saving, setSaving] = useState(false);
   const headingRef = useFocusOnLoad(Boolean(session));
   useEffect(() => {
     const tick = setInterval(() => setNow(Date.now()), 500);
@@ -851,9 +511,17 @@ function Timer({
 
   if (!session) return null;
 
-  async function stop(preset?: BreakerOutcome) {
+  async function stop() {
     await pauseSession(session!);
-    onReflect(preset);
+    onReflect();
+  }
+
+  /** Done is the common case, so it's saved in one tap. */
+  async function done() {
+    if (saving) return;
+    setSaving(true);
+    await finishSession(session!, 'done', '', undefined);
+    onDone();
   }
 
   const r = 88;
@@ -901,7 +569,7 @@ function Timer({
 
       {session.plan && (
         <p className="max-w-prose rounded-2xl bg-(--surface-alt) px-4 py-3 text-sm">
-          <span className="font-semibold">{text.ready.plan}: </span>
+          <span className="font-semibold">{text.progress.plan}: </span>
           {session.plan}
         </p>
       )}
@@ -909,7 +577,11 @@ function Timer({
       <div className="flex flex-wrap justify-center gap-2">
         {timeUp ? (
           <>
-            <button type="button" onClick={() => onReflect()} className={`${btnPrimary} min-h-12 px-7`}>
+            <button type="button" disabled={saving} onClick={() => void done()} className={`${btnPrimary} min-h-12 px-7`}>
+              <span aria-hidden="true">✓</span>
+              {text.timer.done}
+            </button>
+            <button type="button" onClick={() => onReflect()} className={btnSecondary}>
               {text.timer.record}
             </button>
             <button type="button" onClick={() => void addMinutes(session, 5)} className={btnSecondary}>
@@ -925,7 +597,7 @@ function Timer({
             >
               {running ? text.timer.pause : text.timer.resume}
             </button>
-            <button type="button" onClick={() => void stop('done')} className={`${btnPrimary} min-h-12 px-7`}>
+            <button type="button" disabled={saving} onClick={() => void done()} className={`${btnPrimary} min-h-12 px-7`}>
               <span aria-hidden="true">✓</span>
               {text.timer.done}
             </button>
@@ -962,8 +634,7 @@ function Reflect({
   onMissing: () => void;
 }) {
   const session = useSession(id, onMissing);
-  const [outcome, setOutcome] = useState<BreakerOutcome | undefined>(preset);
-  const [note, setNote] = useState('');
+  const [later, setLater] = useState(preset === 'rescheduled');
   const [when, setWhen] = useState('');
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
@@ -971,9 +642,9 @@ function Reflect({
 
   if (!session) return null;
 
-  async function save() {
+  /** One tap saves; only rescheduling asks for something more, a date. */
+  async function save(outcome: BreakerOutcome) {
     if (saving) return;
-    if (!outcome) return setError(text.reflect.need);
     let rescheduledFor: string | undefined;
     if (outcome === 'rescheduled') {
       const date = new Date(when);
@@ -986,7 +657,7 @@ function Reflect({
     }
     setSaving(true);
     try {
-      await finishSession(session!, outcome, note, rescheduledFor);
+      await finishSession(session!, outcome, '', rescheduledFor);
       onSaved();
     } finally {
       setSaving(false);
@@ -1004,66 +675,52 @@ function Reflect({
         )}
       </div>
       <p className="rounded-2xl bg-(--surface-alt) px-4 py-3 font-semibold break-words">{session.action}</p>
-      <fieldset>
-        <legend className={`${label} mb-2 text-lg`}>{text.reflect.question}</legend>
-        <div className="flex flex-col gap-2">
-          {OUTCOMES.map((o) => (
-            <label
-              key={o}
-              className="flex min-h-12 cursor-pointer items-center gap-3 rounded-2xl border border-(--border) bg-(--surface-strong) px-4 py-2 has-[:checked]:border-(--accent) has-[:checked]:bg-(--accent-soft)"
-            >
-              <input
-                type="radio"
-                name="breaker-outcome"
-                value={o}
-                checked={outcome === o}
-                onChange={() => {
-                  setOutcome(o);
-                  setError('');
-                }}
-                className="h-5 w-5 shrink-0 accent-(--accent)"
-              />
-              {text.reflect.outcomes[o]}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      {outcome === 'rescheduled' && (
+      <div role="group" aria-labelledby="breaker-question" className="flex flex-col gap-2">
+        <p id="breaker-question" className={`${label} text-lg`}>
+          {text.reflect.question}
+        </p>
+        {OUTCOMES.map((o) => (
+          <button
+            key={o}
+            type="button"
+            disabled={saving}
+            aria-expanded={o === 'rescheduled' ? later : undefined}
+            onClick={() => (o === 'rescheduled' ? setLater(true) : void save(o))}
+            className={`${toggle(o === 'rescheduled' && later)} min-h-12 w-full justify-start! rounded-2xl! text-start`}
+          >
+            {text.reflect.outcomes[o]}
+          </button>
+        ))}
+      </div>
+      {later && (
         <div className="flex flex-col gap-2">
           <label htmlFor="breaker-when" className={label}>
             {text.reflect.when}
           </label>
-          <input
-            id="breaker-when"
-            type="datetime-local"
-            min={toLocalInput(new Date())}
-            value={when}
-            onChange={(e) => setWhen(e.target.value)}
-            className={`${field} sm:w-72`}
-          />
+          <div className="flex flex-wrap gap-2">
+            <input
+              id="breaker-when"
+              type="datetime-local"
+              min={toLocalInput(new Date())}
+              value={when}
+              onChange={(e) => {
+                setWhen(e.target.value);
+                setError('');
+              }}
+              aria-invalid={error ? true : undefined}
+              className={`${field} sm:w-72`}
+            />
+            <button type="button" disabled={saving} onClick={() => void save('rescheduled')} className={`${btnPrimary} min-h-12 px-8`}>
+              {saving ? text.reflect.saving : text.reflect.save}
+            </button>
+          </div>
         </div>
       )}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="breaker-note" className={label}>
-          {text.reflect.noteLabel}
-        </label>
-        <textarea
-          id="breaker-note"
-          rows={3}
-          maxLength={LIMITS.long}
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          className={field}
-        />
-      </div>
       {error && (
         <p role="alert" className="font-medium text-(--danger)">
           {error}
         </p>
       )}
-      <button type="button" disabled={saving} onClick={() => void save()} className={`${btnPrimary} min-h-12 self-start px-8`}>
-        {saving ? text.reflect.saving : text.reflect.save}
-      </button>
     </section>
   );
 }
@@ -1110,7 +767,7 @@ function After({
       bodyText = a.progressBody;
       actions = (
         <>
-          <button type="button" disabled={busy} onClick={() => onStart(draftFrom(session, 5, { plannedMinutes: 10 }))} className={btnPrimary}>
+          <button type="button" disabled={busy} onClick={() => onStart(draftFrom(session, { plannedMinutes: 10 }))} className={btnPrimary}>
             {a.keepGoing}
           </button>
           {home(a.pause)}
@@ -1131,7 +788,7 @@ function After({
           {smallerStep && (
             <button
               type="button"
-              onClick={() => onContinue(draftFrom(session, 5, { action: smallerStep, plannedMinutes: 2 }))}
+              onClick={() => onContinue(draftFrom(session, { action: smallerStep, plannedMinutes: 2 }))}
               className={btnPrimary}
             >
               {a.trySmaller}
@@ -1151,7 +808,7 @@ function After({
         <>
           <button
             type="button"
-            onClick={() => onContinue(draftFrom(session, 5, { plan: a.interruptedPlan }))}
+            onClick={() => onContinue(draftFrom(session, { plan: a.interruptedPlan }))}
             className={btnPrimary}
           >
             {a.again}
@@ -1177,7 +834,7 @@ function After({
           {next && (
             <button
               type="button"
-              onClick={() => onContinue(draftFrom(session, 5, { action: next, plan: session.plan ?? '' }))}
+              onClick={() => onContinue(draftFrom(session, { action: next, plan: session.plan ?? '' }))}
               className={btnPrimary}
             >
               {a.next}
