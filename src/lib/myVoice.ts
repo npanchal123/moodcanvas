@@ -41,6 +41,86 @@ export async function deleteRecording(id: string): Promise<void> {
   await db.ownRecordings.delete(id);
 }
 
+/**
+ * Reading a whole visualization aloud in one go: the microphone stays open, and each line is its own recording,
+ * saved when the reader moves on to the next. `start` must run from a tap.
+ */
+export function useReadAlong(lines: string[]) {
+  const [state, setState] = useState<RecorderState>(() => (canRecord() ? 'idle' : 'unsupported'));
+  const [index, setIndex] = useState(0);
+  const stream = useRef<MediaStream | null>(null);
+  const recorder = useRef<MediaRecorder | null>(null);
+  const saving = useRef<Promise<void>[]>([]);
+
+  const release = () => {
+    stream.current?.getTracks().forEach((track) => track.stop());
+    stream.current = null;
+  };
+
+  useEffect(
+    () => () => {
+      recorder.current?.stop();
+      release();
+    },
+    [],
+  );
+
+  /** Records line `i`; its clip is saved when the recorder stops (unless `keep` is false). */
+  function record(i: number) {
+    const r = new MediaRecorder(stream.current!);
+    const chunks: Blob[] = [];
+    let keep = true;
+    r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
+    r.onstop = () => {
+      if (!keep || !chunks.length) return;
+      saving.current.push(saveClip(lines[i], new Blob(chunks, { type: r.mimeType || 'audio/webm' })));
+    };
+    recorder.current = Object.assign(r, { discard: () => (keep = false) });
+    r.start(250);
+    setIndex(i);
+  }
+
+  async function start(from = 0): Promise<boolean> {
+    if (!canRecord()) {
+      setState('unsupported');
+      return false;
+    }
+    try {
+      stream.current = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    } catch {
+      setState('denied');
+      return false;
+    }
+    setState('recording');
+    record(from);
+    return true;
+  }
+
+  /** Keeps the current line and moves on; after the last line, finishes. Resolves when everything is saved. */
+  async function next(): Promise<boolean> {
+    recorder.current?.stop();
+    if (index + 1 < lines.length) {
+      record(index + 1);
+      return false;
+    }
+    release();
+    setState('idle');
+    await Promise.all(saving.current);
+    return true;
+  }
+
+  /** Stops without keeping the line being read; lines already read stay saved. */
+  async function stop(): Promise<void> {
+    (recorder.current as (MediaRecorder & { discard?: () => void }) | null)?.discard?.();
+    recorder.current?.stop();
+    release();
+    setState('idle');
+    await Promise.all(saving.current);
+  }
+
+  return { state, index, start, next, stop };
+}
+
 export type RecorderState = 'idle' | 'recording' | 'denied' | 'unsupported';
 
 export function canRecord(): boolean {

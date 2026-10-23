@@ -2,7 +2,16 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDateTime, useI18n } from '../i18n';
 import { db } from '../lib/db';
-import { clipId, deleteClip, deleteRecording, saveClip, saveRecording, useRecorder, type RecorderState } from '../lib/myVoice';
+import {
+  clipId,
+  deleteClip,
+  deleteRecording,
+  saveClip,
+  saveRecording,
+  useReadAlong,
+  useRecorder,
+  type RecorderState,
+} from '../lib/myVoice';
 import { formatClock } from '../lib/session';
 import type { OwnRecording } from '../lib/types';
 import { btnGhost, btnPrimary, btnSecondary, card } from './ui';
@@ -217,8 +226,9 @@ export function LineRecorder({ lines, onDone }: { lines: string[]; onDone: () =>
 
   return (
     <div className="flex flex-col gap-4">
+      <ReadAlong lines={lines} onFinished={onDone} />
+      <h3 className="mt-2 text-lg font-bold">{v.orLineByLine}</h3>
       <p className="text-(--muted)">{v.linesBody}</p>
-      <p className="text-sm text-(--muted)">{v.privacy}</p>
       <p aria-live="polite" className="font-semibold">
         {v.progress(count, lines.length)}
       </p>
@@ -270,6 +280,60 @@ export function LineRecorder({ lines, onDone }: { lines: string[]; onDone: () =>
       <button type="button" disabled={recorder.state === 'recording'} onClick={onDone} className={`${btnPrimary} self-start`}>
         {v.finish}
       </button>
+    </div>
+  );
+}
+
+/**
+ * Reading a whole visualization aloud in one go, like a teleprompter: one line at a time in large text, the next
+ * one waiting below. The microphone stays open; each line is kept as the reader moves on.
+ */
+function ReadAlong({ lines, onFinished }: { lines: string[]; onFinished: () => void }) {
+  const { t } = useI18n();
+  const v = t.voice;
+  const r = useReadAlong(lines);
+  const reading = r.state === 'recording';
+  const last = r.index === lines.length - 1;
+
+  async function next() {
+    if (await r.next()) onFinished();
+  }
+
+  return (
+    <div className="flex flex-col gap-4 rounded-3xl border-2 border-(--accent) bg-(--accent-soft) p-4 sm:p-5">
+      {!reading ? (
+        <>
+          <div>
+            <h3 className="text-lg font-bold">{v.readAlong}</h3>
+            <p className="text-(--muted)">{v.readAlongBody}</p>
+            <p className="text-sm text-(--muted)">{v.privacy}</p>
+          </div>
+          <button type="button" onClick={() => void r.start()} className={`${btnPrimary} min-h-14 self-start px-8 text-lg`}>
+            <span aria-hidden="true">🎙️</span>
+            {v.startReading}
+          </button>
+          <RecorderProblem state={r.state} />
+        </>
+      ) : (
+        <>
+          <p className="flex items-center gap-2 text-sm font-semibold text-(--accent)">
+            <span aria-hidden="true" className="h-2.5 w-2.5 rounded-full bg-(--danger)" />
+            <span aria-live="polite">{v.lineOf(r.index + 1, lines.length)}</span>
+          </p>
+          {r.index > 0 && <p className="text-sm text-(--muted) line-clamp-2">{lines[r.index - 1]}</p>}
+          <p className="display text-2xl leading-relaxed font-bold sm:text-3xl">{lines[r.index]}</p>
+          {!last && <p className="text-(--muted) line-clamp-2">{lines[r.index + 1]}</p>}
+          <div className="flex flex-wrap items-center gap-2">
+            <button type="button" onClick={() => void next()} className={`${btnPrimary} min-h-14 px-8 text-lg`}>
+              {last ? v.finishReading : v.nextLine}
+              {!last && <span aria-hidden="true" className="rtl:-scale-x-100">→</span>}
+            </button>
+            <button type="button" onClick={() => void r.stop()} className={btnGhost}>
+              {v.stopReading}
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }

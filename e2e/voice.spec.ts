@@ -44,7 +44,7 @@ test('read a visualization’s lines in your own voice, then play it with your v
   await page.getByRole('button', { name: 'Start Clear Sky' }).click();
   await page.getByRole('button', { name: '3 min' }).click();
   await expect(page.getByLabel('Use my recorded voice')).toBeHidden();
-  await page.getByRole('button', { name: 'Record in my voice' }).click();
+  await page.getByRole('button', { name: 'Read it in my voice' }).click();
 
   await expect(page.getByRole('heading', { name: 'Record this visualization in your voice' })).toBeFocused();
   const progress = page.getByText(/lines recorded$/);
@@ -72,9 +72,42 @@ test('read a visualization’s lines in your own voice, then play it with your v
   // The same words in another session reuse the recording; removing it takes it away everywhere.
   await page.getByRole('button', { name: 'Back to practices' }).click();
   await page.getByRole('button', { name: 'Start Clear Sky' }).click();
-  await page.getByRole('button', { name: 'Record in my voice' }).click();
+  await page.getByRole('button', { name: 'Read it in my voice' }).click();
   await page.getByRole('button', { name: 'Remove: Line 1' }).click();
   await expect(progress).toHaveText(/^0 of \d+ lines recorded$/);
   await page.getByRole('button', { name: 'Done' }).click();
   await expect(page.getByLabel('Use my recorded voice')).toBeHidden();
+});
+
+test('create a visualization, read it aloud once like a teleprompter, and it plays in your voice', async ({ page }) => {
+  test.setTimeout(90_000);
+  await skipOnboarding(page);
+  await page.getByLabel('What’s on your mind, and what would you like to imagine?').fill('Take me to a quiet beach');
+  await page.getByRole('button', { name: 'Create my visualization' }).click();
+  await page.getByRole('button', { name: '2 min', exact: true }).click();
+
+  // The start screen offers your own voice first.
+  await expect(page.getByText('Hear this in your own voice')).toBeVisible();
+  await expect(page.getByText(/^Read it aloud once, about \d+ min/)).toBeVisible();
+  await page.getByRole('button', { name: 'Read it in my voice' }).click();
+
+  await page.getByRole('button', { name: 'Start reading' }).click();
+  const position = page.getByText(/^Line \d+ of \d+$/);
+  await expect(position).toHaveText(/^Line 1 of \d+$/);
+  const total = Number((await position.innerText()).match(/of (\d+)/)![1]);
+  await expectNoA11yViolations(page, 'teleprompter');
+  for (let i = 1; i < total; i++) {
+    await page.waitForTimeout(250);
+    await page.getByRole('button', { name: 'Next line' }).click();
+    await expect(position).toHaveText(`Line ${i + 1} of ${total}`);
+  }
+  await page.waitForTimeout(250);
+  await page.getByRole('button', { name: 'Finish' }).click();
+
+  // Every line is now in your voice, and it plays that way.
+  await expect(page.getByText('This visualization is in your voice.')).toBeVisible();
+  await expect(page.getByText(`${total} of ${total} lines in your voice`)).toBeVisible();
+  await page.getByLabel('Background sound').uncheck();
+  await page.getByRole('button', { name: 'Begin' }).click();
+  await expect(page.getByText('Your own voice')).toBeVisible();
 });

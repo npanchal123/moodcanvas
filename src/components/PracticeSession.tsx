@@ -155,6 +155,28 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
 
       {intro}
 
+      {mineCount < lines.length ? (
+        <div className="flex flex-wrap items-center gap-3 rounded-2xl border-2 border-(--accent) bg-(--accent-soft) p-4">
+          <span aria-hidden="true" className="btn-glow flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xl">
+            🎙️
+          </span>
+          <div className="min-w-48 flex-1">
+            <p className="font-bold">{t.voice.readyCta}</p>
+            <p className="text-sm text-(--muted)">{t.voice.readyCtaBody(readingMinutes(lines))}</p>
+          </div>
+          <button type="button" onClick={() => setStage('record')} className={btnPrimary}>
+            {t.voice.readyButton}
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-semibold text-(--accent)">✓ {t.voice.allMine}</p>
+          <button type="button" onClick={() => setStage('record')} className={`${btnGhost} text-sm`}>
+            {t.voice.reRecord}
+          </button>
+        </div>
+      )}
+
       {lengths.length > 1 && (
         <div role="group" aria-labelledby="length-label">
           <p id="length-label" className="mb-2 font-medium">
@@ -213,10 +235,6 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
             </span>
           </label>
         )}
-        <button type="button" onClick={() => setStage('record')} className={`${btnSecondary} self-start`}>
-          <span aria-hidden="true">🎙️</span>
-          {t.voice.recordLines}
-        </button>
         {voice && deviceVoiceAvailable() && (
           <div role="group" aria-labelledby="speed-label" className="flex flex-wrap items-center gap-2">
             <span id="speed-label" className="font-medium">
@@ -253,6 +271,11 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
       {library && <SaveToLibrary practice={practice} minutes={minutes} details={library} />}
     </section>
   );
+}
+
+/** Roughly how long reading every line aloud takes, a little slower than the device voice. */
+function readingMinutes(lines: string[]): number {
+  return Math.max(1, Math.ceil(lines.reduce((sum, text) => sum + estimateSpeechSeconds(text, 0.8), 0) / 60));
 }
 
 /**
