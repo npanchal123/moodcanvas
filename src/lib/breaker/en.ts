@@ -466,6 +466,19 @@ export const en = {
     },
   },
 
+  tracker: {
+    title: 'Monthly trackers',
+    body: 'For things you’d like to do often. Tick a day whenever you do it. No streaks, no pressure.',
+    add: 'Add a tracker',
+    placeholder: 'Something to do often…',
+    ideaList: ['Drink enough water', 'Move my body', 'Read a little', 'Sleep on time', 'Write in my journal', 'No phone in bed'],
+    count: (ticked: number, days: number) => `${ticked} of ${days} days`,
+    remove: 'Remove tracker',
+    removeConfirm: 'Remove this tracker and all its ticked days?',
+    full: 'You’re tracking five things. Remove one to add another.',
+    empty: 'Nothing tracked yet. Add something small you’d like to do often.',
+  },
+
   categoryNames: {
     code: 'Coding',
     job: 'Job search',

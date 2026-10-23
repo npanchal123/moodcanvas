@@ -449,6 +449,19 @@ export const es: BreakerText = {
     },
   },
 
+  tracker: {
+    title: 'Seguimiento mensual',
+    body: 'Para lo que te gustaría hacer a menudo. Marca un día cada vez que lo hagas. Sin rachas, sin presión.',
+    add: 'Añadir un seguimiento',
+    placeholder: 'Algo para hacer a menudo…',
+    ideaList: ['Beber suficiente agua', 'Mover el cuerpo', 'Leer un poco', 'Dormir a mi hora', 'Escribir un diario', 'Sin móvil en la cama'],
+    count: (ticked, days) => `${ticked} de ${days} días`,
+    remove: 'Quitar seguimiento',
+    removeConfirm: '¿Quitar este seguimiento y todos sus días marcados?',
+    full: 'Ya sigues cinco cosas. Quita una para añadir otra.',
+    empty: 'Aún no sigues nada. Añade algo pequeño que te gustaría hacer a menudo.',
+  },
+
   categoryNames: {
     code: 'Programación',
     job: 'Búsqueda de empleo',

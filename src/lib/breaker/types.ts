@@ -119,3 +119,5 @@ export const ENERGY_LEVELS = ['low', 'medium', 'high'] as const;
 export type Energy = (typeof ENERGY_LEVELS)[number];
 /** At most this many commitments a day: enough to matter, few enough to finish. */
 export const MAX_COMMITMENTS = 3;
+/** At most this many monthly trackers, so the page stays light. */
+export const MAX_TRACKERS = 5;

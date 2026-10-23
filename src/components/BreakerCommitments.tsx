@@ -4,6 +4,7 @@ import { useI18n } from '../i18n';
 import {
   commitmentMonth,
   monthGrid,
+  weekStart,
   ENERGY_LEVELS,
   LIMITS,
   localDate,
@@ -18,6 +19,7 @@ import { buildCommitmentIcs, isTime, setCommitmentReminder } from '../lib/commit
 import { db } from '../lib/db';
 import { downloadBlob } from '../lib/export';
 import type { Commitment } from '../lib/types';
+import { BreakerTrackers } from './BreakerTrackers';
 import { btnGhost, btnSecondary, card, toggle } from './ui';
 
 const NONE: Commitment[] = [];
@@ -189,6 +191,8 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
           </div>
         )}
       </section>
+
+      <BreakerTrackers text={text} month={month} animate={animate} />
 
       <section aria-labelledby="week-heading" className="flex flex-col gap-3">
         <div>
@@ -554,19 +558,6 @@ function ReminderEditor({ item, text, id }: { item: Commitment; text: BreakerTex
       )}
     </div>
   );
-}
-
-/** The first day of the week where the person lives (1 Monday … 7 Sunday), where the browser can say. */
-function weekStart(lang: string): number {
-  try {
-    const locale = new Intl.Locale(lang) as Intl.Locale & {
-      getWeekInfo?: () => { firstDay: number };
-      weekInfo?: { firstDay: number };
-    };
-    return locale.getWeekInfo?.().firstDay ?? locale.weekInfo?.firstDay ?? 1;
-  } catch {
-    return 1;
-  }
 }
 
 const DOT: Record<CommitmentStatus, string> = {

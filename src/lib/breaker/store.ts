@@ -1,5 +1,5 @@
 import { db, getMeta, setMeta } from '../db';
-import type { BreakerSession, Commitment, SavedPractice, SavedScript } from '../types';
+import type { BreakerSession, Commitment, SavedPractice, SavedScript, Tracker } from '../types';
 import { clip, focusedSeconds, LIMITS } from '.';
 import type { BreakerDraft, BreakerOutcome, CommitmentStatus, Energy } from './types';
 
@@ -211,4 +211,34 @@ export async function getEnergy(date: string): Promise<Energy | undefined> {
 
 export async function setEnergy(date: string, energy: Energy): Promise<void> {
   await setMeta(`energy:${date}`, energy);
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Monthly trackers: something to do often, ticked off day by day.
+
+export async function addTracker(title: string, now = Date.now()): Promise<Tracker> {
+  const tracker: Tracker = {
+    id: crypto.randomUUID(),
+    title: clip(title, LIMITS.short) ?? '',
+    createdAt: new Date(now).toISOString(),
+  };
+  await db.trackers.add(tracker);
+  return tracker;
+}
+
+/** Ticks a day, or unticks it if it was ticked. */
+export async function toggleTick(trackerId: string, date: string): Promise<void> {
+  const id = `${trackerId}:${date}`;
+  await db.transaction('rw', db.trackerTicks, async () => {
+    if (await db.trackerTicks.get(id)) await db.trackerTicks.delete(id);
+    else await db.trackerTicks.add({ id, trackerId, date });
+  });
+}
+
+/** Removes a tracker and every day ticked on it. */
+export async function deleteTracker(id: string): Promise<void> {
+  await db.transaction('rw', db.trackers, db.trackerTicks, async () => {
+    await db.trackerTicks.where('trackerId').equals(id).delete();
+    await db.trackers.delete(id);
+  });
 }

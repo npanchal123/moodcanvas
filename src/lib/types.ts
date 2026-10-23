@@ -158,3 +158,18 @@ export interface Commitment {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Something to do often, with a month grid to tick off each day it's done. Kept on this device only. */
+export interface Tracker {
+  id: string;
+  title: string;
+  createdAt: string;
+}
+
+/** One ticked day on a tracker. The id is "trackerId:YYYY-MM-DD", so a day can only be ticked once. */
+export interface TrackerTick {
+  id: string;
+  trackerId: string;
+  /** Local date, YYYY-MM-DD. */
+  date: string;
+}

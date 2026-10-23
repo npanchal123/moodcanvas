@@ -449,6 +449,19 @@ export const fr: BreakerText = {
     },
   },
 
+  tracker: {
+    title: 'Suivis du mois',
+    body: 'Pour ce que vous aimeriez faire souvent. Cochez un jour à chaque fois. Pas de séries, pas de pression.',
+    add: 'Ajouter un suivi',
+    placeholder: 'Une chose à faire souvent…',
+    ideaList: ['Boire assez d’eau', 'Bouger', 'Lire un peu', 'Me coucher à l’heure', 'Écrire un journal', 'Pas de téléphone au lit'],
+    count: (ticked, days) => `${ticked} jours sur ${days}`,
+    remove: 'Supprimer le suivi',
+    removeConfirm: 'Supprimer ce suivi et tous ses jours cochés ?',
+    full: 'Vous suivez déjà cinq choses. Supprimez-en une pour en ajouter une autre.',
+    empty: 'Rien n’est suivi pour l’instant. Ajoutez une petite chose à faire souvent.',
+  },
+
   categoryNames: {
     code: 'Programmation',
     job: 'Recherche d’emploi',

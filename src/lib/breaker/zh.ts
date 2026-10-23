@@ -445,6 +445,19 @@ export const zh: BreakerText = {
     },
   },
 
+  tracker: {
+    title: '每月打卡',
+    body: '记录你想经常做的事。哪天做了就勾一下。不计连续天数，没有压力。',
+    add: '添加打卡项',
+    placeholder: '想经常做的一件事…',
+    ideaList: ['喝够水', '动一动身体', '读一点书', '按时睡觉', '写日记', '睡前不玩手机'],
+    count: (ticked, days) => `${days} 天中打卡 ${ticked} 天`,
+    remove: '删除打卡项',
+    removeConfirm: '删除这个打卡项及其所有打卡记录？',
+    full: '你已经在记录五件事了。删除一个才能再添加。',
+    empty: '还没有打卡项。添加一件你想经常做的小事吧。',
+  },
+
   categoryNames: {
     code: '编程',
     job: '求职',

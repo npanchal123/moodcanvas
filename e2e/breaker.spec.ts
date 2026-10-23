@@ -97,7 +97,7 @@ test('the whole journey: understand, visualize, act, reflect, and find it in the
   await expect(page.getByText('Saved to your Library.')).toBeVisible();
 
   // Journal: the session, its reflection and its visualization.
-  await page.getByRole('button', { name: 'Journal' }).click();
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
   const journal = page.getByRole('region', { name: 'Unstuck sessions' });
   await expect(journal).toContainText(VIDEO);
   await expect(journal).toContainText('Ready to take action · Confident');
@@ -133,7 +133,7 @@ test('the whole journey: understand, visualize, act, reflect, and find it in the
   await expect(page.getByLabel('Your small step')).toHaveValue('Watch one 5-minute editing tutorial');
 
   // Deleting removes it from storage, not only from the screen.
-  await page.getByRole('button', { name: 'Journal' }).click();
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
   page.once('dialog', (dialog) => void dialog.accept());
   await journal.getByRole('button', { name: 'Delete' }).click();
   await expect(journal).toContainText('No Unstuck sessions yet.');
@@ -169,7 +169,7 @@ test('works with minimal input, leaving the visualization early and skipping the
   await page.getByRole('button', { name: 'Save session' }).click();
   await expect(page.getByText('Saved to your Journal.')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Journal' }).click();
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
   const journal = page.getByRole('region', { name: 'Unstuck sessions' });
   await expect(journal).toContainText('I can’t stop overthinking.');
   await expect(journal).toContainText('No action this time');
@@ -205,7 +205,7 @@ test('answers survive a reload; a running timer survives switching pages', async
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await page.getByRole('timer').waitFor();
 
-  await page.getByRole('button', { name: 'Journal' }).click();
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
   await page.reload();
   await page.getByRole('button', { name: 'Unstuck' }).click();
   await expect(page.getByText('You have a focus session open.')).toBeVisible();
@@ -247,7 +247,7 @@ test('scheduling for later, then a returning welcome that picks it back up', asy
   await expect(page.getByRole('heading', { name: 'Nicely done.' })).toBeVisible();
   await expect(page.getByText('Nice work. You followed through on a step that mattered to you.')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Journal' }).click();
+  await page.getByRole('button', { name: 'Journal', exact: true }).click();
   await expect(page.getByRole('region', { name: 'Unstuck sessions' }).locator('dl').first()).toContainText(
     'Picked up after postponing1',
   );
@@ -280,7 +280,7 @@ test('daily commitments: a quick checklist, up to three, sized by energy, with a
   await page.getByRole('button', { name: 'Drink a glass of water' }).click();
   await expect(page.getByRole('checkbox')).toHaveCount(3);
   await expect(page.getByLabel('Add a commitment')).toBeHidden();
-  await expect(page.getByText('Need ideas? Tap one')).toBeHidden();
+  await expect(page.getByRole('region', { name: 'Today’s commitments' }).getByText('Need ideas? Tap one')).toBeHidden();
 
   // Tick one off; the ring and the line under it follow.
   const bank = page.getByRole('checkbox', { name: 'Reply to the bank email' });
@@ -331,6 +331,49 @@ test('daily commitments: a quick checklist, up to three, sized by energy, with a
   await page.getByRole('button', { name: 'More options: Drink a glass of water' }).click();
   await page.getByRole('button', { name: 'Remove: Drink a glass of water' }).click();
   await expect(page.getByLabel('Add a commitment')).toBeVisible();
+});
+
+test('monthly trackers: tick the days something was done on its own month grid', async ({ page }) => {
+  await page.clock.install({ time: new Date(2026, 9, 23, 12, 0) });
+  await skipOnboarding(page);
+  await openUnstuck(page);
+  await page.getByRole('button', { name: 'Daily commitments' }).click();
+  const trackers = page.getByRole('region', { name: 'Monthly trackers' });
+  await expect(trackers).toContainText('Nothing tracked yet.');
+
+  await trackers.getByLabel('Add a tracker').fill('Run 2 km');
+  await trackers.getByLabel('Add a tracker').press('Enter');
+  await trackers.getByRole('button', { name: 'Read a little' }).click();
+  const run = trackers.getByRole('table', { name: 'Run 2 km' });
+  await expect(run).toBeVisible();
+  await expect(trackers.getByRole('table', { name: 'Read a little' })).toBeVisible();
+
+  // Tick three days; the future can't be ticked yet.
+  for (const day of ['Thursday, October 1', 'Friday, October 2', 'Friday, October 23']) {
+    await run.getByRole('checkbox', { name: `Run 2 km, ${day}`, exact: true }).click();
+  }
+  await expect(run.getByRole('checkbox', { name: 'Run 2 km, Friday, October 23' })).toHaveAttribute('aria-checked', 'true');
+  await expect(run.getByRole('checkbox', { name: 'Run 2 km, Saturday, October 24' })).toBeDisabled();
+  await expect(trackers.getByText('3 of 23 days')).toBeVisible();
+  await expectNoA11yViolations(page, 'trackers');
+
+  // Untick one; ticks belong to their own tracker and month.
+  await run.getByRole('checkbox', { name: 'Run 2 km, Friday, October 2', exact: true }).click();
+  await expect(trackers.getByText('2 of 23 days')).toBeVisible();
+  await expect(trackers.getByText('0 of 23 days')).toBeVisible();
+  await page.getByRole('button', { name: 'Previous month' }).click();
+  await expect(trackers.getByText('0 of 30 days')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Next month' }).click();
+
+  // Saved: still there after a reload.
+  await page.reload();
+  await page.getByRole('button', { name: 'Unstuck' }).click();
+  await page.getByRole('button', { name: 'Daily commitments' }).click();
+  await expect(trackers.getByText('2 of 23 days')).toBeVisible();
+
+  page.once('dialog', (dialog) => void dialog.accept());
+  await trackers.getByRole('button', { name: 'Remove tracker: Run 2 km' }).click();
+  await expect(trackers.getByRole('table', { name: 'Run 2 km' })).toBeHidden();
 });
 
 test('a commitment reminder pops up at the chosen time, on any page, and can be snoozed or done', async ({ page, context }) => {
@@ -407,7 +450,7 @@ for (const scheme of ['light', 'dark'] as const) {
     await page.getByRole('checkbox', { name: 'Reply to one email' }).click();
     await page.getByRole('button', { name: 'More options: Reply to one email' }).click();
     await expectNoA11yViolations(page, 'commitments');
-    await page.getByRole('button', { name: 'Journal' }).click();
+    await page.getByRole('button', { name: 'Journal', exact: true }).click();
     await expectNoA11yViolations(page, 'journal');
   });
 }

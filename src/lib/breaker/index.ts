@@ -392,3 +392,16 @@ export function monthGrid(month: Date, firstDay = 1): (Date | null)[][] {
   while (cells.length % 7) cells.push(null);
   return Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
 }
+
+/** The first day of the week where the person lives (1 Monday … 7 Sunday), where the browser can say. */
+export function weekStart(lang: string): number {
+  try {
+    const locale = new Intl.Locale(lang) as Intl.Locale & {
+      getWeekInfo?: () => { firstDay: number };
+      weekInfo?: { firstDay: number };
+    };
+    return locale.getWeekInfo?.().firstDay ?? locale.weekInfo?.firstDay ?? 1;
+  } catch {
+    return 1;
+  }
+}
