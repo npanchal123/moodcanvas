@@ -9,15 +9,18 @@ export const PRACTICE_IDS = [
 ] as const;
 export type PracticeId = (typeof PRACTICE_IDS)[number];
 
+/** Lengths of the library practices. */
 export const LENGTHS = [3, 5, 10] as const;
-export type Minutes = (typeof LENGTHS)[number];
+/** Lengths of visualizations composed from someone's words; 5 is the default. */
+export const COMPOSED_LENGTHS = [2, 5, 10, 15] as const;
+export type Minutes = 2 | 3 | 5 | 10 | 15;
 
 /** One spoken step of a practice, followed by a silence to imagine in. */
 export interface Segment {
   /** Stable across languages; names the audio file. */
   id: string;
   text: string;
-  /** Shortest version this step appears in: 3 = every version, 10 = only the 10-minute one. */
+  /** Shortest version this step appears in: 3 = every version (2 minutes too), 15 = only the 15-minute one. */
   tier: Minutes;
   /** Relative length of the silence after this step. Silences are stretched to fill the chosen length. */
   pause: number;

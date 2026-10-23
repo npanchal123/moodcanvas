@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { useI18n } from '../i18n';
-import { COMPOSE_CONTENT, GOAL_ICONS, GOAL_IDS, SCENE_IDS, SCENE_LOOK, type Composed, type GoalId, type SceneId } from '../lib/compose';
+import {
+  COMPOSE_CONTENT,
+  GOAL_ICONS,
+  GOAL_IDS,
+  MODE_ICONS,
+  MODE_IDS,
+  recommendMode,
+  SCENE_IDS,
+  SCENE_LOOK,
+  type Composed,
+  type GoalId,
+  type ModeId,
+  type SceneId,
+} from '../lib/compose';
 import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
 import { EmotionBloom } from './EmotionBloom';
@@ -13,9 +26,25 @@ export interface Draft {
   text: string;
   scene: SceneId | null;
   goal: GoalId | null;
+  /** Chosen by the person; null to let Viz it suggest one from the words (or none, for a restful session). */
+  mode: ModeId | null;
 }
 
-export const EMPTY_DRAFT: Draft = { text: '', scene: null, goal: null };
+export const EMPTY_DRAFT: Draft = { text: '', scene: null, goal: null, mode: null };
+
+/** The mode and feeling that suit each idea, in the order of `t.create.ideas`. */
+const IDEA_SETTINGS: { mode: ModeId | null; goal: GoalId }[] = [
+  { mode: null, goal: 'calm' },
+  { mode: 'future', goal: 'confidence' },
+  { mode: 'process', goal: 'focus' },
+  { mode: 'obstacle', goal: 'confidence' },
+  { mode: null, goal: 'joy' },
+  { mode: null, goal: 'sleep' },
+  { mode: null, goal: 'joy' },
+  { mode: 'process', goal: 'focus' },
+  { mode: 'future', goal: 'energy' },
+  { mode: 'obstacle', goal: 'calm' },
+];
 
 interface Props {
   draft: Draft;
@@ -33,6 +62,15 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const set = (changes: Partial<Draft>) => onDraftChange({ ...draft, ...changes });
+  const suggested = draft.mode ? null : draft.goal === 'sleep' ? null : recommendMode(draft.text);
+
+  /** Fills in an idea, with a mode and feeling that suit it; asks first if it would replace their own words. */
+  function applyIdea(index: number) {
+    const idea = t.create.ideas[index];
+    if (draft.text.trim() && draft.text !== idea.text && !window.confirm(t.create.replaceConfirm)) return;
+    set({ text: idea.text, ...IDEA_SETTINGS[index] });
+    document.getElementById(FEELING_INPUT_ID)?.focus();
+  }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -45,6 +83,9 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
     setBusy(true);
     try {
       await onCreate();
+    } catch {
+      // Their words stay in the form; nothing technical is shown.
+      setError(t.create.createError);
     } finally {
       setBusy(false);
     }
@@ -83,21 +124,63 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
           />
           <details>
             <summary className="cursor-pointer py-2 text-sm font-semibold text-(--accent)">{t.create.examplesLabel}</summary>
-            <ul className="flex flex-col gap-2 pt-1">
-              {t.create.examples.map((example) => (
-                <li key={example}>
+            <ul className="flex flex-wrap gap-2 pt-1">
+              {t.create.ideas.map((idea, i) => (
+                <li key={idea.label}>
                   <button
                     type="button"
-                    onClick={() => set({ text: example })}
-                    className="min-h-11 rounded-2xl border border-(--border) bg-(--surface-strong) px-4 py-2 text-start text-sm italic hover:border-(--accent)"
+                    onClick={() => applyIdea(i)}
+                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-dashed border-(--accent) bg-(--accent-soft) px-3.5 py-1 text-start text-sm font-semibold hover:bg-(--surface-alt)"
                   >
-                    “{example}”
+                    <span aria-hidden="true">✨</span>
+                    <span>{idea.label}</span>
                   </button>
                 </li>
               ))}
             </ul>
           </details>
         </div>
+
+        <fieldset aria-describedby="mode-hint">
+          <legend className="mb-1 font-semibold">{t.create.modeLegend}</legend>
+          <p id="mode-hint" className="mb-3 text-sm text-(--muted)">
+            {t.create.modeHint}
+          </p>
+          <div className="grid gap-2 sm:grid-cols-3">
+            {MODE_IDS.map((id) => {
+              const pressed = draft.mode === id;
+              const mode = content.modes[id];
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  aria-pressed={pressed}
+                  onClick={() => set({ mode: pressed ? null : id })}
+                  className={`relative flex flex-col items-start gap-1 rounded-2xl border p-3 text-start transition-colors ${
+                    pressed
+                      ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)'
+                      : suggested === id
+                        ? 'border-dashed border-(--accent) bg-(--surface-strong) hover:bg-(--surface-alt)'
+                        : 'border-(--border) bg-(--surface-strong) hover:bg-(--surface-alt)'
+                  }`}
+                >
+                  <span className="flex items-center gap-2 font-bold">
+                    <span aria-hidden="true">{MODE_ICONS[id]}</span>
+                    {mode.name}
+                    {pressed && <span aria-hidden="true">✓</span>}
+                  </span>
+                  <span className="text-sm text-(--muted)">{mode.description}</span>
+                  {suggested === id && (
+                    <span className="rounded-full bg-(--accent) px-2 py-0.5 text-xs font-bold text-(--on-accent)">{t.create.suggested}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+          <p aria-live="polite" className="mt-2 min-h-5 text-sm text-(--muted)">
+            {suggested ? t.create.suggestedWhy(content.modes[suggested].name, content.modes[suggested].why) : ''}
+          </p>
+        </fieldset>
 
         <fieldset>
           <legend className="mb-3 font-semibold">{t.create.sceneLegend}</legend>
@@ -201,6 +284,7 @@ export function CreatedIntro({ text, result, composed }: { text: string; result:
     `${SCENE_LOOK[composed.scene ?? 'anywhere'].icon} ${t.create.place(composed.place ?? content.scenes[composed.scene!].place)}`,
     `${GOAL_ICONS[composed.goal]} ${t.create.goal(content.goals[composed.goal].name)}`,
     composed.topic && `💭 ${t.create.about(content.topics[composed.topic].phrase)}`,
+    composed.mode && `${MODE_ICONS[composed.mode]} ${t.create.mode(content.modes[composed.mode].name)}`,
   ].filter((chip): chip is string => Boolean(chip));
 
   return (

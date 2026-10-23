@@ -5,7 +5,7 @@ import { weeklyReflection } from '../lib/reflection';
 import { entriesWithin, frequency, streak } from '../lib/stats';
 import { displayEmotions, effectiveIntensity } from '../lib/summary';
 import type { BreakerDraft } from '../lib/breaker/types';
-import type { BreakerSession, EmotionEntry, PracticeLog } from '../lib/types';
+import type { BreakerSession, EmotionEntry, PracticeLog, VisualizeRequest } from '../lib/types';
 import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, type PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { FrequencyChart } from './FrequencyChart';
@@ -24,6 +24,7 @@ interface Props {
   onContinueUnstuck: (draft: BreakerDraft) => void;
   onOpenUnstuck: () => void;
   onPlayUnstuck: (session: BreakerSession) => void;
+  onCreateAgain: (request: VisualizeRequest) => void;
 }
 
 const LOG_LIMIT = 20;
@@ -34,7 +35,7 @@ function isPracticeId(id: string): id is PracticeId {
 }
 
 /** Default export so App can load it lazily. */
-export default function History({ entries, logs, animate, onContinueUnstuck, onOpenUnstuck, onPlayUnstuck }: Props) {
+export default function History({ entries, logs, animate, onContinueUnstuck, onOpenUnstuck, onPlayUnstuck, onCreateAgain }: Props) {
   const { t, locale } = useI18n();
   const [days, setDays] = useState<(typeof RANGES)[number]>(7);
   const [tag, setTag] = useState('');
@@ -172,7 +173,13 @@ export default function History({ entries, logs, animate, onContinueUnstuck, onO
                       <> · {t.practice.change(t.emotions[l.before.emotion].name, l.before.intensity, l.after)}</>
                     )}
                     {l.felt && <> · {t.practice.felt[l.felt]}</>}
+                    {l.feelings?.length ? <> · {l.feelings.map((w) => t.practice.feelWords[w] ?? w).join(', ')}</> : null}
                   </p>
+                  {l.request && (
+                    <button type="button" onClick={() => onCreateAgain(l.request!)} className={`${btnGhost} mt-1 min-h-10 px-3 text-sm`}>
+                      {t.history.again}
+                    </button>
+                  )}
                 </li>
               );
             })}

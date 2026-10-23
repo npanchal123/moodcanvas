@@ -118,9 +118,6 @@ export const en = {
     early: 'You left the visualization early. That’s fine.',
   },
 
-  /** Spoken near the start of every Unstuck visualization, so it works for people who don’t picture things. */
-  imagery:
-    'If images come naturally to you, let them form. If you don’t see a picture in your mind, simply follow the words and notice the sensations or ideas they suggest.',
 
   /** Spoken before the closing: a realistic rehearsal of a small step. Never a promise that it will all work out. */
   rehearsal: {
@@ -382,6 +379,7 @@ export const en = {
     saved: 'Saved to your Library.',
     saveFailed: 'That didn’t save. Please try again.',
     favorite: 'Favorite',
+    recreate: 'Edit and create again',
     play: 'Play',
     useAction: 'Use this step in Unstuck',
     action: 'Small step',

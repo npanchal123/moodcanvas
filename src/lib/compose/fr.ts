@@ -28,10 +28,88 @@ export const fr: ComposeContent = {
       ? `Vous m’avez dit ressentir ${PARTITIVE[feeling.noun] ?? feeling.noun}${topic ? ` concernant ${topic}` : ''}. C’est compréhensible. Pendant les prochaines minutes, prenons-en soin ensemble.`
       : 'Merci de prendre ce temps pour vous. Pendant les prochaines minutes, vous n’avez rien d’autre à faire.',
   arrival: [
-    { tier: 3, pause: 1, text: 'Installez-vous confortablement, et fermez les yeux si cela vous convient. Vous pouvez les ouvrir à tout moment.' },
+    { tier: 3, pause: 1, text: 'Installez-vous confortablement. Vous pouvez fermer les yeux si cela vous convient, ou les garder ouverts et poser doucement le regard sur un point.' },
     { tier: 3, pause: 3, breath: true, text: 'Inspirez lentement… et expirez, un peu plus longtemps que l’inspiration.' },
     { tier: 5, pause: 3, breath: true, text: 'Encore une fois. Inspirez… et une longue expiration, tranquille. Laissez vos épaules se relâcher.' },
   ],
+  imagery: { tier: 3, pause: 1, text: 'Si des images vous viennent naturellement, imaginez le lieu autour de vous. Sinon, suivez simplement les mots, remarquez les sensations qu’ils évoquent, ou réfléchissez aux idées.' },
+  modes: {
+    future: {
+      name: 'Vision d’avenir',
+      description: 'Imaginez un avenir qui compte, vers lequel vous aimeriez avancer.',
+      why: 'Vous avez évoqué quelque chose que vous espérez pour plus tard.',
+      focus: 'l’avenir que vous souhaitez',
+      keywords: ['avenir', 'futur', 'un jour', 'dans quelques années', 'rêve', 'rêves', 'devenir', 'nouveau chapitre', 'nouvelle étape', 'objectif', 'objectifs', 'ma vie'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Laissez maintenant le temps avancer un peu, jusqu’à un jour où vous travaillez depuis un moment vers {focus}.' },
+          { tier: 5, pause: 3, text: 'Remarquez où vous êtes ce jour-là. Que voyez-vous autour de vous ? À quoi ressemble la lumière ?' },
+          { tier: 10, pause: 3, text: 'Remarquez votre façon d’être ici. Pas parfaite, juste un peu plus stable, un peu plus vous-même.' },
+          { tier: 15, pause: 4, text: 'Voyez un moment ordinaire de cette journée : ce que font vos mains, ce qui est proche, les sons autour de vous.' },
+          { tier: 3, pause: 3, text: 'Cet avenir n’est pas promis. Il naît de petits choix. Remarquez un choix que vous pourriez faire bientôt et qui va dans ce sens.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imaginez un jour, dans quelque temps, où {focus} semble un peu plus proche qu’aujourd’hui.' },
+          { tier: 5, pause: 3, text: 'Laissez les détails venir lentement : le lieu, le moment de la journée, la température de l’air.' },
+          { tier: 10, pause: 3, text: 'Remarquez comment cette version de vous passe le début de la journée. Quelles petites habitudes ont rendu cela possible ?' },
+          { tier: 15, pause: 4, text: 'Restez avec un moment calme de cette scène. Remarquez ce qu’il a de précieux, plutôt que d’impressionnant.' },
+          { tier: 3, pause: 3, text: 'Rien n’est garanti ici, et c’est très bien. Remarquez un petit pas, à votre portée, qui mène dans cette direction.' },
+        ],
+      ],
+    },
+    process: {
+      name: 'Visualisation du processus',
+      description: 'Répétez les étapes qui mènent vers ce que vous voulez.',
+      why: 'Vous avez parlé de vous préparer à quelque chose ou de vous entraîner.',
+      focus: 'la tâche devant vous',
+      keywords: ['préparer', 'préparation', 'entraîner', 'entraînement', 'pratiquer', 'match', 'présentation', 'discours', 'entretien', 'routine', 'apprendre', 'étape par étape'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Imaginez-vous maintenant en train de vous préparer pour {focus}. Pas encore le résultat, juste le début.' },
+          { tier: 5, pause: 3, text: 'Voyez-vous mettre les choses en place : ce que vous vérifiez, ce que vous prenez, où vous vous placez.' },
+          { tier: 10, pause: 3, text: 'Commencez la première partie. Remarquez votre attention sur cette seule étape, sa sensation, son rythme.' },
+          { tier: 15, pause: 4, text: 'À un moment, l’esprit s’égare. Remarquez-le, et revenez doucement à la petite action suivante.' },
+          { tier: 3, pause: 3, text: 'Passez à l’étape suivante, puis à la suivante, à un rythme régulier. Chacune faite avec soin suffit pour l’instant.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imaginez les instants juste avant {focus}. Remarquez où vous êtes et ce que vous vous apprêtez à faire.' },
+          { tier: 5, pause: 3, text: 'Imaginez la première action utile. Sentez-vous la faire lentement, avec soin, avec toute votre attention.' },
+          { tier: 10, pause: 3, text: 'Un peu d’incertitude apparaît. Vous continuez quand même, en vous concentrant sur ce que vous pouvez faire maintenant.' },
+          { tier: 15, pause: 4, text: 'Voyez-vous faire une courte pause, ajuster un petit détail, puis continuer. Se préparer, c’est une suite de petits ajustements.' },
+          { tier: 3, pause: 3, text: 'Remarquez comment les étapes s’enchaînent. Inutile de voir tout le chemin pour faire le pas suivant.' },
+        ],
+      ],
+    },
+    obstacle: {
+      name: 'Répétition d’obstacle',
+      description: 'Entraînez-vous à répondre calmement à une difficulté prévisible.',
+      why: 'Vous avez évoqué une inquiétude ou une difficulté à venir.',
+      focus: 'la difficulté à venir',
+      keywords: ['stress', 'trac', 'erreur', 'erreurs', 'critique', 'critiques', 'pression', 'conversation difficile', 'panique', 'et si', 'peur de'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Imaginez maintenant {focus}, et un moment où quelque chose ne se passe pas comme prévu.' },
+          { tier: 5, pause: 3, text: 'Remarquez ce qui se passe dans votre corps. Peut-être que le cœur bat plus vite, ou que les pensées s’accélèrent. C’est une réaction normale.' },
+          { tier: 10, pause: 3, text: 'Voyez-vous faire une pause. Une respiration lente, ou simplement sentir vos pieds au sol. Pas besoin d’être calme pour bien réagir.' },
+          { tier: 15, pause: 4, text: 'Choisissez une prochaine action utile : quelque chose à dire, un pas à faire, une question à poser.' },
+          { tier: 3, pause: 3, text: 'Puis revenez à ce qui compte. La difficulté était réelle, et vous avez continué.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imaginez {focus} tel que cela pourrait vraiment se dérouler, y compris un moment difficile.' },
+          { tier: 5, pause: 3, text: 'Remarquez les premiers signes de difficulté sans les juger : tension, doute ou flot de pensées.' },
+          { tier: 10, pause: 3, text: 'Imaginez-vous le nommer en silence : voilà le moment difficile. Puis accordez-vous un instant.' },
+          { tier: 15, pause: 4, text: 'Imaginez une réponse constructive : ralentir, demander un instant, ou vous concentrer sur la prochaine étape.' },
+          { tier: 3, pause: 3, text: 'Voyez-vous retrouver votre équilibre, pas parfaitement, mais assez pour continuer. Remarquez ce qui a aidé.' },
+        ],
+      ],
+    },
+  },
+  integrate: {
+    future: { tier: 3, pause: 2, text: 'Avant de revenir, remarquez une qualité de cet avenir que vous pourriez apporter dans votre journée.' },
+    process: { tier: 3, pause: 2, text: 'Avant de revenir, choisissez une action de cette répétition que vous aimeriez emporter dans votre journée.' },
+    obstacle: { tier: 3, pause: 2, text: 'Avant de revenir, remarquez une réaction dont vous aimeriez vous souvenir si ce moment arrive.' },
+    rest: { tier: 3, pause: 2, text: 'Avant de revenir, remarquez ce qui vous a marqué pendant ce moment. Rien à en faire de particulier.' },
+  },
   closing: [
     { tier: 5, pause: 3, text: 'Regardez une dernière fois autour de vous. Vous pouvez revenir ici quand vous en avez besoin, simplement en vous en souvenant.' },
     { tier: 3, pause: 1, text: 'Prenez une respiration plus profonde. Sentez votre corps là où vous êtes, bougez les doigts, et quand vous voulez, ouvrez les yeux.' },
@@ -304,5 +382,7 @@ export const fr: ComposeContent = {
     money: { phrase: 'l’argent', keywords: ['argent', 'loyer', 'pret', 'dette', 'dettes', 'factures', 'salaire'] },
     future: { phrase: 'l’avenir', keywords: ['avenir', 'futur', 'incertain'] },
     exercise: { phrase: 'votre entraînement', keywords: ['sport', 'entrainement', 'salle de sport', 'course', 'yoga'] },
+    sport: { phrase: 'le match', keywords: ['match', 'jeu', 'cricket', 'football', 'tennis', 'tournoi', 'course', 'compétition'] },
+    performance: { phrase: 'votre grand moment', keywords: ['présentation', 'discours', 'exposé', 'audition', 'scène', 'spectacle', 'concert'] },
   },
 };

@@ -6,7 +6,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('composes a personal visualization from the person’s words, with a before/after comparison', async ({ page }) => {
-  await page.clock.install(); // Lets the test skip through the 3 minutes.
+  await page.clock.install(); // Lets the test skip through the session.
   await skipOnboarding(page);
   await create(page, 'I’m anxious about my exam tomorrow. Take me to my grandma’s garden in Shimla');
 
@@ -17,14 +17,14 @@ test('composes a personal visualization from the person’s words, with a before
   await page.getByText('Read the script').click();
   await expect(page.getByText('You told me you’re feeling anxious about the exam', { exact: false })).toBeVisible();
 
-  await page.getByRole('button', { name: '3 min' }).click();
+  await page.getByRole('button', { name: '2 min' }).click();
   await page.getByLabel('Voice guide').uncheck();
   await page.getByLabel('Background sound').uncheck();
   await page.getByRole('button', { name: 'Begin' }).click();
   await expect(page.getByText(/You told me you’re feeling anxious about the exam/)).toBeVisible();
   await page.getByRole('button', { name: 'Pause' }).click();
   await page.getByRole('button', { name: 'Resume' }).click();
-  await page.clock.runFor('04:00');
+  await page.clock.runFor('06:00');
 
   await expect(page.getByRole('heading', { name: 'Well done' })).toBeFocused();
   await expect(page.getByText(/Before, your anxiety was \d+ out of 100/)).toBeVisible();
@@ -36,7 +36,7 @@ test('composes a personal visualization from the person’s words, with a before
   await expect(page.getByText('Saved to your Library.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Journal' }).click();
-  await expect(page.getByRole('region', { name: 'Practice log' })).toContainText('Your grandma’s garden in Shimla · 3 min');
+  await expect(page.getByRole('region', { name: 'Practice log' })).toContainText('Your grandma’s garden in Shimla · 2 min');
 });
 
 test('places and goals can be picked without writing anything', async ({ page }) => {
@@ -65,11 +65,17 @@ test('the site name leads back to the front page', async ({ page }) => {
   await expect(page.getByRole('button', { name: 'Visualize' })).toHaveAttribute('aria-current', 'page');
 });
 
-test('an example fills the box', async ({ page }) => {
+test('an idea fills the box, with a fitting feeling, and asks before replacing words', async ({ page }) => {
   await skipOnboarding(page);
+  await page.getByLabel(FEELING_LABEL).fill('My own words');
   await page.getByText('Need an idea? Try one:').click();
-  await page.getByRole('button', { name: /I can’t sleep, my mind keeps racing about work/ }).click();
-  await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('I can’t sleep, my mind keeps racing about work.');
+  page.once('dialog', (d) => void d.dismiss());
+  await page.getByRole('button', { name: 'Prepare for restful sleep' }).click();
+  await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('My own words');
+  page.once('dialog', (d) => void d.accept());
+  await page.getByRole('button', { name: 'Prepare for restful sleep' }).click();
+  await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('Help me unwind and get ready for restful sleep.');
+  await expect(page.getByRole('button', { name: /Sleep/ })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Create my visualization' }).click();
   await expect(page.getByText('Focus: Sleep')).toBeVisible();
   await expect(page.getByRole('heading', { name: 'Starry Night' })).toBeVisible();

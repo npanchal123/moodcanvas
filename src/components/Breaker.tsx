@@ -42,7 +42,7 @@ import { db } from '../lib/db';
 import type { EmotionLabel } from '../lib/emotions';
 import { formatClock } from '../lib/session';
 import type { BreakerSession } from '../lib/types';
-import { LENGTHS, type Playable } from '../practices';
+import { COMPOSED_LENGTHS, type Playable } from '../practices';
 import { SaveToLibrary } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 import { SceneTiles } from './Visualize';
@@ -615,7 +615,7 @@ function UnstuckPractice({
     () => composeUnstuck(text, t, locale, { task, situations, feelings, scene }, feeling),
     [text, t, locale, task, situations, feelings, scene, feeling],
   );
-  const playable: Playable = { id: 'custom', icon: composed.icon, hues: composed.hues, lengths: LENGTHS, script: composed.script };
+  const playable: Playable = { id: 'custom', icon: composed.icon, hues: composed.hues, lengths: COMPOSED_LENGTHS, script: composed.script };
   return (
     <PracticeSession
       key={composed.script.title}
@@ -1326,7 +1326,7 @@ function JournalForm({ session, text }: { session: BreakerSession; text: Breaker
       </div>
       {composed && (
         <SaveToLibrary
-          practice={{ id: 'custom', icon: composed.icon, hues: composed.hues, lengths: LENGTHS, script: composed.script }}
+          practice={{ id: 'custom', icon: composed.icon, hues: composed.hues, lengths: COMPOSED_LENGTHS, script: composed.script }}
           minutes={5}
           details={{
             scene: composed.scene,

@@ -103,8 +103,6 @@ export const fr: BreakerText = {
     early: 'La visualisation a été quittée avant la fin. Ce n’est pas grave.',
   },
 
-  imagery:
-    'Si des images viennent naturellement, laissez-les se former. Si aucune image n’apparaît, suivez simplement les mots et remarquez les sensations ou les idées qu’ils évoquent.',
 
   rehearsal: {
     begin: [
@@ -365,6 +363,7 @@ export const fr: BreakerText = {
     saved: 'Enregistrée dans votre bibliothèque.',
     saveFailed: 'L’enregistrement a échoué. Veuillez réessayer.',
     favorite: 'Favori',
+    recreate: 'Modifier et recréer',
     play: 'Écouter',
     useAction: 'Utiliser ce pas dans « Se débloquer »',
     action: 'Petit pas',

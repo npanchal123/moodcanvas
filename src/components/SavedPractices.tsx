@@ -5,8 +5,8 @@ import { BREAKER_TEXT } from '../lib/breaker';
 import { deleteSavedPractice, setFavorite } from '../lib/breaker/store';
 import { COMPOSE_CONTENT, GOAL_IDS, SCENE_IDS, type GoalId, type SceneId } from '../lib/compose';
 import { db } from '../lib/db';
-import type { SavedPractice } from '../lib/types';
-import { LENGTHS } from '../practices';
+import type { SavedPractice, VisualizeRequest } from '../lib/types';
+import { COMPOSED_LENGTHS } from '../practices';
 import { ScriptText } from './BreakerProgress';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox } from './ui';
 
@@ -17,10 +17,12 @@ interface Props {
   onPlay: (saved: SavedPractice) => void;
   /** Opens Unstuck with the small step that was saved alongside a visualization. */
   onUseAction: (action: string) => void;
+  /** Opens the front page with what it was made from, to change and make again. */
+  onCreateAgain: (request: VisualizeRequest) => void;
 }
 
 /** Visualizations saved to the Library, with filters. Kept on this device. */
-export function SavedPractices({ onPlay, onUseAction }: Props) {
+export function SavedPractices({ onPlay, onUseAction, onCreateAgain }: Props) {
   const { locale } = useI18n();
   const l = BREAKER_TEXT[locale].library;
   const content = COMPOSE_CONTENT[locale];
@@ -82,7 +84,7 @@ export function SavedPractices({ onPlay, onUseAction }: Props) {
               {l.length}
               <select value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} className={select}>
                 <option value={0}>{l.any}</option>
-                {LENGTHS.map((m) => (
+                {COMPOSED_LENGTHS.map((m) => (
                   <option key={m} value={m}>
                     {BREAKER_TEXT[locale].mins(m)}
                   </option>
@@ -142,6 +144,11 @@ export function SavedPractices({ onPlay, onUseAction }: Props) {
                       <span aria-hidden="true">▶</span>
                       {l.play}
                     </button>
+                    {s.request && (
+                      <button type="button" onClick={() => onCreateAgain(s.request!)} className={btnSecondary}>
+                        {l.recreate}
+                      </button>
+                    )}
                     {s.action && (
                       <button type="button" onClick={() => onUseAction(s.action!)} className={btnSecondary}>
                         {l.useAction}

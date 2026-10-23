@@ -62,7 +62,7 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
       await page.getByRole('button', { name: 'Pause' }).waitFor();
       await expectNoA11yViolations(page, 'practice playing');
       await page.getByRole('button', { name: 'End' }).click();
-      await page.getByRole('button', { name: 'Better' }).waitFor();
+      await page.getByRole('button', { name: 'Calmer' }).waitFor();
       await expectNoA11yViolations(page, 'practice after');
     });
 

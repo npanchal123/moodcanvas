@@ -114,12 +114,12 @@ function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | undef
   return voices.find((v) => /natural|enhanced|premium/i.test(v.name)) ?? voices.find((v) => v.localService) ?? voices[0];
 }
 
-function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthesisVoice | undefined): Narrator {
+function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthesisVoice | undefined, rate = 1): Narrator {
   const lang = LOCALES[locale].htmlLang;
   let interrupted = false;
   return {
     kind: 'device',
-    durations: segments.map((s) => estimateSpeechSeconds(s.text, DEVICE_RATE)),
+    durations: segments.map((s) => estimateSpeechSeconds(s.text, DEVICE_RATE * rate)),
     say: (index) =>
       new Promise((resolve) => {
         interrupted = false;
@@ -128,7 +128,7 @@ function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthe
         sentences.forEach((sentence, i) => {
           const utterance = new SpeechSynthesisUtterance(sentence.trim());
           utterance.lang = lang;
-          utterance.rate = DEVICE_RATE;
+          utterance.rate = DEVICE_RATE * rate;
           if (voice) utterance.voice = voice;
           if (i === sentences.length - 1) {
             utterance.onend = () => resolve(interrupted ? 'interrupted' : 'done');
@@ -150,10 +150,10 @@ function deviceNarrator(locale: Locale, segments: Segment[], voice: SpeechSynthe
   };
 }
 
-function silentNarrator(segments: Segment[]): Narrator {
+function silentNarrator(segments: Segment[], rate = 1): Narrator {
   return {
     kind: 'silent',
-    durations: segments.map((s) => estimateSpeechSeconds(s.text)),
+    durations: segments.map((s) => estimateSpeechSeconds(s.text, rate)),
     say: () => Promise.resolve('done'),
     pause: () => {},
     resume: () => {},
@@ -166,15 +166,17 @@ export async function createNarrator(
   practiceId: string,
   segments: Segment[],
   voice: boolean,
+  /** 1 is the normal pace; 0.8 slower, 1.15 faster. Recordings play at their own pace. */
+  rate = 1,
 ): Promise<Narrator> {
-  if (!voice) return silentNarrator(segments);
+  if (!voice) return silentNarrator(segments, rate);
   const recorded = await recordedNarrator(locale, practiceId, segments);
   if (recorded) return recorded;
-  if (!deviceVoiceAvailable()) return silentNarrator(segments);
+  if (!deviceVoiceAvailable()) return silentNarrator(segments, rate);
   const voices = await voicesFor(LOCALES[locale].htmlLang);
   // Without a voice for the language, the browser would read the words with the wrong accent or not at all.
-  if (voices.length === 0) return { ...silentNarrator(segments), missingVoice: true };
-  return deviceNarrator(locale, segments, pickVoice(voices));
+  if (voices.length === 0) return { ...silentNarrator(segments, rate), missingVoice: true };
+  return deviceNarrator(locale, segments, pickVoice(voices), rate);
 }
 
 /** A quiet, slowly swelling wash of filtered noise, like distant waves. Returns a function that fades it out. */

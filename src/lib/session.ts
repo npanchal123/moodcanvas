@@ -1,8 +1,11 @@
 import type { Minutes, PracticeScript, Segment } from '../practices';
 
-/** The steps of a practice that belong in the chosen length. */
-export function segmentsFor(script: PracticeScript, minutes: Minutes): Segment[] {
-  return script.segments.filter((s) => s.tier <= minutes);
+/**
+ * The steps of a practice that belong in the chosen length. The 2-minute version has the same steps as the 3-minute
+ * one with shorter silences; leaving breathing out drops the steps that guide the breath.
+ */
+export function segmentsFor(script: PracticeScript, minutes: Minutes, breathing = true): Segment[] {
+  return script.segments.filter((s) => s.tier <= Math.max(minutes, 3) && (breathing || !s.breath));
 }
 
 /**

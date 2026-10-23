@@ -100,7 +100,6 @@ export const zh: BreakerText = {
     early: '你提前离开了这段引导。没关系。',
   },
 
-  imagery: '如果画面自然出现，就让它们浮现。如果脑海里没有画面，只需跟着这些话语，留意它们带来的感觉或想法。',
 
   rehearsal: {
     begin: [
@@ -361,6 +360,7 @@ export const zh: BreakerText = {
     saved: '已保存到你的资料库。',
     saveFailed: '没有保存成功。请再试一次。',
     favorite: '收藏',
+    recreate: '修改后重新生成',
     play: '播放',
     useAction: '在“开始行动”中使用这个步骤',
     action: '小步骤',

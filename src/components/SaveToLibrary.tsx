@@ -3,6 +3,7 @@ import { useI18n } from '../i18n';
 import { BREAKER_TEXT, toSavedScript, type FeelingId } from '../lib/breaker';
 import { savePractice } from '../lib/breaker/store';
 import type { GoalId, SceneId } from '../lib/compose';
+import type { VisualizeRequest } from '../lib/types';
 import type { Playable } from '../practices';
 import { btnSecondary } from './ui';
 
@@ -12,6 +13,8 @@ export interface LibraryDetails {
   goal: GoalId;
   feeling?: FeelingId;
   action?: string;
+  /** What it was made from, so it can be made again with changes. */
+  request?: VisualizeRequest;
 }
 
 /** Saves a composed visualization to the Library. It says it's saved only once it has been. */
@@ -24,7 +27,7 @@ export function SaveToLibrary({ practice, minutes, details }: { practice: Playab
     if (state === 'saving' || state === 'saved') return;
     setState('saving');
     try {
-      await savePractice({ script: toSavedScript({ ...practice, script: practice.script }), minutes, ...details });
+      await savePractice({ script: toSavedScript(practice), minutes, ...details });
       setState('saved');
     } catch {
       setState('failed');

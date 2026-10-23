@@ -1,7 +1,7 @@
 import { useI18n } from '../i18n';
 import { dayKey } from '../lib/stats';
 import { beforeFrom, displayEmotions } from '../lib/summary';
-import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice } from '../lib/types';
+import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from '../lib/types';
 import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, practiceFor, type PracticeId } from '../practices';
 import { SavedPractices } from './SavedPractices';
 import { btnPrimary, btnSecondary, card } from './ui';
@@ -12,10 +12,11 @@ interface Props {
   onOpen: (id: PracticeId, before?: PracticeBefore) => void;
   onPlaySaved: (saved: SavedPractice) => void;
   onUseAction: (action: string) => void;
+  onCreateAgain: (request: VisualizeRequest) => void;
 }
 
 /** Default export so App can load it lazily. */
-export default function PracticeLibrary({ entries, logs, onOpen, onPlaySaved, onUseAction }: Props) {
+export default function PracticeLibrary({ entries, logs, onOpen, onPlaySaved, onUseAction, onCreateAgain }: Props) {
   const { t, locale } = useI18n();
   const content = PRACTICE_CONTENT[locale];
   const latest = entries[0];
@@ -74,7 +75,7 @@ export default function PracticeLibrary({ entries, logs, onOpen, onPlaySaved, on
         </section>
       )}
 
-      <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} />
+      <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} onCreateAgain={onCreateAgain} />
 
       <section aria-labelledby="library-heading">
         <h2 id="library-heading" className="mb-3 text-xl font-semibold">

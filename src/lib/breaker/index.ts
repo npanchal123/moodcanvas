@@ -1,9 +1,9 @@
 import type { Locale } from '../../i18n';
 import type { Messages } from '../../i18n/en';
-import type { Segment } from '../../practices';
-import { compose, COMPOSE_CONTENT, mentions, type Composed } from '../compose';
+import { compose, mentions, type Composed } from '../compose';
 import type { GoalId } from '../compose/types';
 import type { EmotionLabel } from '../emotions';
+import type { Minutes } from '../../practices';
 import type { BreakerSession, Commitment, SavedScript } from '../types';
 import { ar } from './ar';
 import { bn } from './bn';
@@ -185,7 +185,7 @@ export function rehearsalFor(situations: readonly SituationId[], feelings: reado
   return REHEARSAL_FOR[primary];
 }
 
-const REHEARSAL_TIERS = [3, 5, 10, 3] as const;
+const REHEARSAL_TIERS = [3, 5, 10, 3] as const satisfies readonly Minutes[];
 
 /**
  * A guided visualization for the Unstuck journey. It's the same composer as the front page (place, technique for
@@ -199,31 +199,28 @@ export function composeUnstuck(
   draft: Pick<BreakerDraft, 'task' | 'situations' | 'feelings' | 'scene'>,
   feeling: EmotionLabel | null,
 ): Composed {
-  const composed = compose(
-    { text: draft.task, locale, feeling, scene: draft.scene, goal: GOAL_FOR_FEELING[draft.feelings[0] ?? 'calm'] },
-    t,
-  );
-  const segments = composed.script.segments;
-  const closing = COMPOSE_CONTENT[locale].closing.length;
-  const imagery: Segment = { id: '', tier: 3, pause: 1, text: text.imagery };
-  const rehearsal: Segment[] = text.rehearsal[rehearsalFor(draft.situations, draft.feelings)].map((line, i) => ({
-    id: '',
+  const rehearsal = text.rehearsal[rehearsalFor(draft.situations, draft.feelings)].map((line, i) => ({
     tier: REHEARSAL_TIERS[i] ?? 10,
     pause: i === 3 ? 3 : 2,
     text: line,
   }));
-  const all = [
-    segments[0],
-    imagery,
-    ...segments.slice(1, segments.length - closing),
-    ...rehearsal,
-    ...segments.slice(segments.length - closing),
-  ];
+  const composed = compose(
+    {
+      text: draft.task,
+      locale,
+      feeling,
+      scene: draft.scene,
+      goal: GOAL_FOR_FEELING[draft.feelings[0] ?? 'calm'],
+      // The rehearsal leads to a small step, so the ending asks what to carry into the day.
+      extra: { lines: rehearsal, ending: 'process' },
+    },
+    t,
+  );
   return {
     ...composed,
     script: {
       ...composed.script,
-      segments: all.map((s, i) => ({ ...s, id: `u${String(i + 1).padStart(2, '0')}` })),
+      segments: composed.script.segments.map((s, i) => ({ ...s, id: `u${String(i + 1).padStart(2, '0')}` })),
     },
   };
 }

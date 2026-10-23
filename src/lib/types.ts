@@ -1,5 +1,6 @@
 import type { BreakerOutcome, CommitmentStatus, FeelingId, ObstacleId, SituationId } from './breaker/types';
-import type { GoalId, SceneId } from './compose/types';
+import type { Minutes } from '../practices';
+import type { GoalId, ModeId, SceneId } from './compose/types';
 import type { EmotionLabel } from './emotions';
 
 export interface EmotionScore {
@@ -56,8 +57,12 @@ export interface PracticeLog {
   before?: PracticeBefore;
   /** 0–100: how strong the same feeling was afterwards. Only set when there was a "before". */
   after?: number;
-  /** Self-report when there was no check-in to compare with. */
+  /** Self-report when there was no check-in to compare with (older logs). */
   felt?: 'better' | 'same' | 'worse';
+  /** How they felt afterwards, in their own choice of words ("calmer", "clearer"…). A self-report, not a measure. */
+  feelings?: string[];
+  /** Composed practices: what they were made from, to make them again. */
+  request?: VisualizeRequest;
 }
 
 /**
@@ -122,7 +127,7 @@ export interface SavedScript {
   icon: string;
   hues: [string, string];
   /** Each step's text and the shortest length it belongs in (3, 5 or 10 minutes). */
-  segments: { text: string; tier: 3 | 5 | 10; pause: number; breath?: boolean }[];
+  segments: { text: string; tier: Minutes; pause: number; breath?: boolean }[];
 }
 
 /** A visualization saved to the Library. Kept on this device only. */
@@ -138,7 +143,17 @@ export interface SavedPractice {
   favorite: 0 | 1;
   /** The small step chosen alongside it, if any. */
   action?: string;
+  /** What it was made from, to make it again with changes. */
+  request?: VisualizeRequest;
   createdAt: string;
+}
+
+/** What a composed visualization was made from: the person's words and choices. Kept on this device only. */
+export interface VisualizeRequest {
+  text: string;
+  scene: SceneId | null;
+  goal: GoalId | null;
+  mode: ModeId | null;
 }
 
 /** A daily commitment: one small thing planned for a day. Kept on this device only. */

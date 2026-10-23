@@ -11,10 +11,22 @@ import { hi } from './hi';
 import { pt } from './pt';
 import { ru } from './ru';
 import { zh } from './zh';
-import { GOAL_IDS, SCENE_IDS, TOPIC_IDS, type ComposeContent, type GoalId, type Line, type SceneId, type TopicId } from './types';
+import { textHash } from '../session';
+import {
+  GOAL_IDS,
+  MODE_IDS,
+  SCENE_IDS,
+  TOPIC_IDS,
+  type ComposeContent,
+  type GoalId,
+  type Line,
+  type ModeId,
+  type SceneId,
+  type TopicId,
+} from './types';
 
-export { GOAL_IDS, SCENE_IDS } from './types';
-export type { GoalId, SceneId, TopicId } from './types';
+export { GOAL_IDS, MODE_IDS, SCENE_IDS } from './types';
+export type { GoalId, ModeId, SceneId, TopicId } from './types';
 
 export const COMPOSE_CONTENT: Record<Locale, ComposeContent> = { en, hi, es, zh, ar, fr, bn, pt, ru };
 
@@ -31,6 +43,8 @@ export const SCENE_LOOK: Record<SceneId | 'anywhere', { icon: string; hues: [str
   anywhere: { icon: '✨', hues: ['#ddd6fe', '#6d28d9'] },
 };
 
+export const MODE_ICONS: Record<ModeId, string> = { future: '🌅', process: '🧭', obstacle: '🛡️' };
+
 export const GOAL_ICONS: Record<GoalId, string> = {
   calm: '🌊', letgo: '🍃', kindness: '💗', sleep: '😴', confidence: '💪', energy: '⚡', joy: '🌟', focus: '🎯',
 };
@@ -38,6 +52,8 @@ export const GOAL_ICONS: Record<GoalId, string> = {
 const GOAL_FOR_FEELING: Record<EmotionLabel, GoalId> = {
   fear: 'calm', sadness: 'kindness', anger: 'letgo', disgust: 'letgo', joy: 'joy', calm: 'calm', surprise: 'focus',
 };
+
+const GOAL_FOR_MODE: Record<ModeId, GoalId> = { future: 'confidence', process: 'focus', obstacle: 'confidence' };
 
 const SCENE_FOR_GOAL: Record<GoalId, SceneId> = {
   calm: 'beach', letgo: 'river', kindness: 'garden', sleep: 'stars', confidence: 'mountain', energy: 'forest',
@@ -129,6 +145,15 @@ const ALL = Object.values(COMPOSE_CONTENT);
 const sceneKeywords = (id: SceneId) => ALL.flatMap((c) => c.scenes[id].keywords);
 const goalKeywords = (id: GoalId) => ALL.flatMap((c) => c.goals[id].keywords);
 const topicKeywords = (id: TopicId) => ALL.flatMap((c) => c.topics[id].keywords);
+const modeKeywords = (id: ModeId) => ALL.flatMap((c) => c.modes[id].keywords);
+
+/**
+ * The kind of visualization someone's words point to, if any: a future to work toward, the steps toward something,
+ * or a challenge to rehearse. The earliest clue wins, in any language. Restful requests point to none.
+ */
+export function recommendMode(text: string): ModeId | null {
+  return text.trim() ? earliest(normalize(text), MODE_IDS, modeKeywords) : null;
+}
 
 const isLatin = (s: string) => /\p{Script=Latin}/u.test(s) && !/\p{Script=Devanagari}/u.test(s);
 
@@ -140,6 +165,10 @@ export interface ComposeRequest {
   /** Chosen by the person; otherwise worked out from the text. */
   scene?: SceneId | null;
   goal?: GoalId | null;
+  /** Chosen by the person; null for none; left out to suggest one from the text. */
+  mode?: ModeId | null;
+  /** Lines spoken in place of a mode's part, e.g. Unstuck's small-step rehearsal, and the ending to go with them. */
+  extra?: { lines: Line[]; ending: ModeId | 'rest' };
 }
 
 export interface Composed {
@@ -152,6 +181,9 @@ export interface Composed {
   topic: TopicId | null;
   /** The person's own words for the place, when they gave one. */
   place: string | null;
+  /** The mode used, if any, and whether it was suggested rather than chosen. */
+  mode: ModeId | null;
+  suggested: boolean;
 }
 
 function fill(line: Line, tokens: Record<string, string>, id: string): Segment {
@@ -160,7 +192,7 @@ function fill(line: Line, tokens: Record<string, string>, id: string): Segment {
     tier: line.tier,
     pause: line.pause,
     breath: line.breath,
-    text: line.text.replace(/\{(place|topic|carrier)\}/g, (_, key: string) => tokens[key]),
+    text: line.text.replace(/\{(place|topic|carrier|focus)\}/g, (_, key: string) => tokens[key]),
   };
 }
 
@@ -186,10 +218,16 @@ export function compose(request: ComposeRequest, t: Messages): Composed {
   // A Hinglish place ("pahado") read by a Hindi voice sounds odd; the scene's own Devanagari words are better.
   if (place && scene && request.locale === 'hi' && isLatin(place)) place = null;
 
+  const named = request.goal ?? earliest(goalText, GOAL_IDS, goalKeywords);
+  // A mode only when asked for or when the words point to one; sleep stays restful unless one was chosen.
+  const suggestedMode = request.mode === undefined && named !== 'sleep' ? recommendMode(request.text) : null;
+  const mode = request.extra ? null : request.mode !== undefined ? request.mode : suggestedMode;
+  // Nothing named: a hard feeling comes first (anxious about an exam still wants calm); otherwise the mode's own
+  // fits better than a general calm (preparing for a match wants focus).
+  const settled = !request.feeling || request.feeling === 'joy' || request.feeling === 'calm';
   const goal: GoalId =
-    request.goal ??
-    earliest(goalText, GOAL_IDS, goalKeywords) ??
-    (request.feeling ? GOAL_FOR_FEELING[request.feeling] : 'calm');
+    named ??
+    (mode && settled ? GOAL_FOR_MODE[mode] : request.feeling ? GOAL_FOR_FEELING[request.feeling] : 'calm');
   const topic = earliest(text, TOPIC_IDS, topicKeywords);
   const sceneId: SceneId | null = scene ?? (place ? null : SCENE_FOR_GOAL[goal]);
 
@@ -198,15 +236,24 @@ export function compose(request: ComposeRequest, t: Messages): Composed {
     place: place ?? sceneContent?.place ?? '',
     topic: topic ? content.topics[topic].phrase : content.defaultTopic,
     carrier: sceneContent?.carrier ?? content.scenes[SCENE_FOR_GOAL[goal]].carrier,
+    focus: topic ? content.topics[topic].phrase : mode ? content.modes[mode].focus : content.defaultTopic,
   };
+  // Which wording of the mode's part: fixed for the same words, different across requests.
+  const variants = mode ? content.modes[mode].variants : [];
+  const variant = variants.length ? variants[parseInt(textHash(`${request.text}|${mode}`), 16) % variants.length] : [];
+  const middle = request.extra?.lines ?? variant;
+  const ending = request.extra?.ending ?? mode ?? 'rest';
   const feeling = request.feeling ? t.emotions[request.feeling] : null;
   const mirror: Line = { tier: 3, pause: 1, text: content.mirror(feeling, topic ? tokens.topic : null) };
 
   const lines = [
     mirror,
+    content.imagery,
     ...content.arrival,
     ...(sceneContent ? sceneContent.lines : content.anyPlace),
     ...content.goals[goal].lines,
+    ...middle,
+    content.integrate[ending],
     ...content.closing,
   ];
   const look = SCENE_LOOK[sceneId ?? 'anywhere'];
@@ -228,5 +275,7 @@ export function compose(request: ComposeRequest, t: Messages): Composed {
     goal,
     topic,
     place,
+    mode,
+    suggested: mode != null && mode === suggestedMode && request.mode === undefined,
   };
 }

@@ -104,8 +104,6 @@ export const pt: BreakerText = {
     early: 'A visualização foi encerrada antes do fim. Tudo bem.',
   },
 
-  imagery:
-    'Se as imagens surgirem naturalmente, deixe que se formem. Se nenhuma imagem aparecer na mente, apenas acompanhe as palavras e perceba as sensações ou ideias que elas sugerem.',
 
   rehearsal: {
     begin: [
@@ -366,6 +364,7 @@ export const pt: BreakerText = {
     saved: 'Salva na sua biblioteca.',
     saveFailed: 'Não foi salvo. Tente de novo.',
     favorite: 'Favorita',
+    recreate: 'Editar e criar de novo',
     play: 'Ouvir',
     useAction: 'Usar este passo em Desempacar',
     action: 'Pequeno passo',

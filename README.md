@@ -18,25 +18,46 @@ The composer is in `src/lib/compose/`. It runs instantly and offline on the devi
   - **Place:** in the person's own words, from phrases like "take me to …", "I want to be at …", "… ले चलो" or
     "llévame a …". It's spoken back with "my" turned into "your".
   - **Goal:** calm down, let go, comfort, sleep, confidence, energy, savor joy or focus.
-  - **Topic:** exam, work, relationship, family, friends, health, money, future or exercise.
+  - **Topic:** exam, work, relationship, family, friends, health, money, future, exercise, sport or performance.
+  - **Mode:** future vision, process visualization or obstacle rehearsal, from clues like "five years from now",
+    "prepare for my match" or "nervous" / "what if I mess up". It's shown as a suggestion with a short reason;
+    the person can pick another, or none. Without clues (or for sleep) the session stays simply restful.
   - Keywords from every language are checked, so Hinglish works with the English interface. The script is
     always written in the interface language.
-- **The person can also pick a place and a goal** from the buttons. Their choice wins over what was read.
+- **The person can also pick a place, a goal and a mode** from the buttons. Their choice wins over what was read.
+- **Ideas:** ten starting points ("Prepare for an important challenge", "Prepare for restful sleep"…) fill in the
+  words, a mode and a goal. They ask before replacing anything already written. The form's words and choices
+  survive a reload (this tab's session storage only).
 - **How the script is built:**
   1. A line that reflects back what they said ("You told me you're feeling anxious about the exam…")
-  2. Settling in and breathing
-  3. Arriving at the place: one of 9 scenes, or any place they named
-  4. The goal's technique, personalized with their topic ("If a thought about the exam drifts in, let a wave
+  2. A line for people who picture things and people who don't ("If not, simply follow the words…")
+  3. Settling in, with eyes closed or open, and breathing (which can be switched off)
+  4. Arriving at the place: one of 9 scenes, or any place they named
+  5. The goal's technique, personalized with their topic ("If a thought about the exam drifts in, let a wave
      carry it away")
-  5. A closing that returns them to the room
+  6. The mode's part, about their topic (`{focus}`: "the game", or the mode's own words): a believable future
+     scene that ends on one choice within their control; the steps of preparing and returning attention; or a
+     realistic setback, a pause and a constructive response. Each mode has two wordings, picked from the words,
+     so different requests sound different and the same request sounds the same.
+  7. An ending that fits: one quality, action or response to carry into the day, or simply what stood out
+  8. A closing that returns them to the room
 - **Defaults** when nothing is said:
   - The feeling picks the goal: anxious → calm down, sad → comfort, angry → let go.
+  - With no hard feeling, the mode picks the goal: preparing for something → focus; future vision and obstacle
+    rehearsal → confidence. Anxious about an exam still gets calm down, with the rehearsal alongside.
   - The goal picks the scene: calm down → beach, let go → river, sleep → starry night.
-- **Lengths:** lines are tiered like the library practices, so every visualization plays at 3, 5 or 10 minutes.
+- **Lengths:** 2, 5 (the default), 10 or 15 minutes. Longer versions add lines, not only silence; the player
+  shows an estimate first, since real speech varies. The voice speed (slower, normal, faster) changes both.
+- **Afterwards:** an optional "How are you feeling now?" (calmer, clearer, more focused… or about the same),
+  saved to the practice log in the Journal as a self-report. "Save to my Library" works before or after a session;
+  saved visualizations and Journal entries keep what they were made from, for "Create again" with changes.
+- **No AI:** all of this is rule-based on the device. An AI writer would need a server endpoint (the Claude
+  `/api/analyze` server isn't deployed on GitHub Pages) and a notice before sending anyone's words.
 - **Tests:** `compose.test.ts` checks real requests in every language. It also checks that every
   combination of scene, goal, language and length is complete and leaves at least a third of its time quiet.
 - **Adding a scene or goal:** add its lines to every language file in `src/lib/compose/`. Write lines
-  that work alongside any other scene or goal, and use only the `{place}`, `{topic}` and `{carrier}` tokens.
+  that work alongside any other scene or goal, and use only the `{place}`, `{topic}`, `{carrier}` and `{focus}`
+  tokens. Put `{focus}` where no case ending or contraction has to change it (often after a colon).
 - **Journal tags:** the check-in is saved with a tag for its topic, so Journal insights keep working.
 
 ## Unstuck: from feeling stuck to one small step

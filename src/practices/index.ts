@@ -11,7 +11,7 @@ import { ru } from './ru';
 import { zh } from './zh';
 import { PRACTICE_IDS, type Minutes, type PracticeContent, type PracticeId, type PracticeScript } from './types';
 
-export { LENGTHS, PRACTICE_IDS } from './types';
+export { COMPOSED_LENGTHS, LENGTHS, PRACTICE_IDS } from './types';
 export type { Lesson, Minutes, PracticeId, PracticeScript, Segment } from './types';
 
 export const PRACTICE_CONTENT: Record<Locale, PracticeContent> = { en, hi, es, zh, ar, fr, bn, pt, ru };

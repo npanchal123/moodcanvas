@@ -151,7 +151,7 @@ describe('understanding what has someone stuck', () => {
 });
 
 describe('composeUnstuck', () => {
-  it.each(Object.keys(BREAKER_TEXT) as (keyof typeof BREAKER_TEXT)[])('%s: imagery after the opening, rehearsal before the closing', (locale) => {
+  it.each(Object.keys(BREAKER_TEXT) as (keyof typeof BREAKER_TEXT)[])('%s: imagery after the opening, rehearsal before the ending', (locale) => {
     const text = BREAKER_TEXT[locale];
     const composed = composeUnstuck(
       text,
@@ -162,8 +162,10 @@ describe('composeUnstuck', () => {
     );
     const lines = composed.script.segments.map((s) => s.text);
     const closing = COMPOSE_CONTENT[locale].closing.length;
-    expect(lines[1]).toBe(text.imagery);
-    expect(lines.slice(-closing - 4, -closing)).toEqual(text.rehearsal.begin);
+    expect(lines[1]).toBe(COMPOSE_CONTENT[locale].imagery.text);
+    // The rehearsal, then a line about what to carry into the day, then the closing.
+    expect(lines.slice(-closing - 5, -closing - 1)).toEqual(text.rehearsal.begin);
+    expect(lines[lines.length - closing - 1]).toBe(COMPOSE_CONTENT[locale].integrate.process.text);
     expect(composed.goal).toBe('energy');
     expect(composed.scene).toBe('forest');
     expect(new Set(composed.script.segments.map((s) => s.id)).size).toBe(lines.length);

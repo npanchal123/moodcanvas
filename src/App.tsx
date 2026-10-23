@@ -11,15 +11,15 @@ import { useAuth, useSync } from './lib/account';
 import { analyzeWithAI } from './lib/aiAnalyzer';
 import { analyze, type AnalysisResult } from './lib/analyzer';
 import { EMPTY_BREAKER_DRAFT, type BreakerDraft } from './lib/breaker/types';
-import { DATA_CLEARED, useSessionDraft } from './lib/draftStorage';
+import { DATA_CLEARED, useSessionDraft, useStoredDraft, VISUALIZE_DRAFT_KEY } from './lib/draftStorage';
 import { compose, TOPIC_TAGS, type GoalId } from './lib/compose';
 import { useCommitmentReminders } from './lib/commitmentReminders';
 import { db } from './lib/db';
 import { addEntry } from './lib/entries';
 import { usePersistentFlag, usePersistentState, usePrefersReducedMotion } from './lib/hooks';
 import { DEFAULT_REMINDER, isReminderSettings, useReminder } from './lib/reminders';
-import type { BreakerSession, EmotionEntry, PracticeBefore, PracticeLog, SavedPractice } from './lib/types';
-import { LENGTHS, libraryPlayable, type PracticeId, type Playable } from './practices';
+import type { BreakerSession, EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from './lib/types';
+import { COMPOSED_LENGTHS, libraryPlayable, type PracticeId, type Playable } from './practices';
 
 // The library, journal, settings and the player load on first use, keeping the first paint small.
 const History = lazy(() => import('./components/History'));
@@ -45,6 +45,13 @@ interface ActivePractice {
   intro?: ReactNode;
   /** Set for a composed practice that hasn't been saved to the Library yet. */
   library?: LibraryDetails;
+  /** What a composed practice was made from, to make it again. */
+  request?: VisualizeRequest;
+}
+
+function isDraft(value: unknown): value is Draft {
+  const d = value as Draft;
+  return typeof d === 'object' && d !== null && typeof d.text === 'string';
 }
 
 export default function App() {
@@ -52,7 +59,7 @@ export default function App() {
   const [view, setView] = useState<View>(() => (location.hash === PRIVACY_HASH ? 'privacy' : 'today'));
   const [crisis, setCrisis] = useState<'detected' | 'asked' | null>(null);
   const [practice, setPractice] = useState<ActivePractice | null>(null);
-  const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
+  const [draft, setDraft] = useStoredDraft<Draft>(VISUALIZE_DRAFT_KEY, EMPTY_DRAFT, isDraft);
   const [breakerDraft, setBreakerDraft] = useSessionDraft();
   const [calm, setCalm] = usePersistentFlag('moodcanvas.calmMode', false);
   const [onboarded, setOnboarded] = usePersistentFlag('moodcanvas.onboarded', false);
@@ -81,7 +88,7 @@ export default function App() {
     }
     window.addEventListener(DATA_CLEARED, cleared);
     return () => window.removeEventListener(DATA_CLEARED, cleared);
-  }, [setBreakerDraft]);
+  }, [setBreakerDraft, setDraft]);
 
   useEffect(() => {
     function onHashChange() {
@@ -108,15 +115,24 @@ export default function App() {
     window.scrollTo(0, 0);
   }
 
+  /** Opens the front page with an earlier visualization's words and choices, to change and make again. */
+  function createAgain(request: VisualizeRequest) {
+    goTo('today');
+    setDraft({ text: request.text, scene: request.scene, goal: request.goal, mode: request.mode });
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => document.getElementById(FEELING_INPUT_ID)?.focus());
+  }
+
   /** Plays a visualization from its saved words: one kept in the Library or with an Unstuck session. */
-  function playSaved(saved: Pick<SavedPractice, 'script'>) {
+  function playSaved(saved: Pick<SavedPractice, 'script' | 'request'>) {
     const { script } = saved;
     setPractice({
+      request: saved.request,
       playable: {
         id: 'custom',
         icon: script.icon,
         hues: script.hues,
-        lengths: LENGTHS,
+        lengths: COMPOSED_LENGTHS,
         script: {
           title: script.title,
           summary: script.summary,
@@ -193,7 +209,7 @@ export default function App() {
     // otherwise make a clear "anxious" look like a low-confidence reading.
     const feeling = result?.emotions[0];
     const composed = compose(
-      { text, locale, feeling: feeling?.label ?? null, scene: draft.scene, goal: draft.goal },
+      { text, locale, feeling: feeling?.label ?? null, scene: draft.scene, goal: draft.goal, mode: draft.mode ?? undefined },
       t,
     );
 
@@ -216,9 +232,10 @@ export default function App() {
     }
 
     setPractice({
-      playable: { id: 'custom', icon: composed.icon, hues: composed.hues, lengths: LENGTHS, script: composed.script },
+      playable: { id: 'custom', icon: composed.icon, hues: composed.hues, lengths: COMPOSED_LENGTHS, script: composed.script },
       before,
-      library: { scene: composed.scene, goal: composed.goal },
+      library: { scene: composed.scene, goal: composed.goal, request: { ...draft, text, mode: composed.mode } },
+      request: { ...draft, text, mode: composed.mode },
       intro: (
         <>
           <CreatedIntro text={text} result={result} composed={composed} />
@@ -248,6 +265,7 @@ export default function App() {
       before={practice.before}
       intro={practice.intro}
       library={practice.library}
+      request={practice.request}
       animate={animate}
       onBack={() => setPractice(null)}
       onCheckIn={newVisualization}
@@ -351,6 +369,7 @@ export default function App() {
                 logs={logs}
                 onOpen={openLibraryPractice}
                 onPlaySaved={playSaved}
+                onCreateAgain={createAgain}
                 onUseAction={(action) => openUnstuck({ ...EMPTY_BREAKER_DRAFT, step: 3, task: action, action })}
               />
             ))}
@@ -379,6 +398,7 @@ export default function App() {
                 onContinueUnstuck={openUnstuck}
                 onOpenUnstuck={() => openUnstuck()}
                 onPlayUnstuck={(s) => void playUnstuck(s)}
+                onCreateAgain={createAgain}
               />
             ))}
           {view === 'settings' && (

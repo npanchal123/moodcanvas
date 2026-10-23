@@ -103,8 +103,6 @@ export const es: BreakerText = {
     early: 'Saliste de la visualización antes de tiempo. No pasa nada.',
   },
 
-  imagery:
-    'Si las imágenes surgen con naturalidad, deja que se formen. Si no ves ninguna imagen en tu mente, simplemente sigue las palabras y nota las sensaciones o ideas que te sugieren.',
 
   rehearsal: {
     begin: [
@@ -365,6 +363,7 @@ export const es: BreakerText = {
     saved: 'Guardada en tu biblioteca.',
     saveFailed: 'No se guardó. Inténtalo de nuevo.',
     favorite: 'Favorita',
+    recreate: 'Editar y crear de nuevo',
     play: 'Reproducir',
     useAction: 'Usar este paso en Empezar',
     action: 'Pequeño paso',

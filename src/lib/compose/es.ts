@@ -16,10 +16,88 @@ export const es: ComposeContent = {
       ? `Me contaste que sientes ${feeling.noun}${topic ? ` por ${topic}` : ''}. Tiene sentido. Durante los próximos minutos, vamos a cuidarlo juntos.`
       : 'Gracias por tomarte este tiempo para ti. Durante los próximos minutos, no tienes que hacer nada más.',
   arrival: [
-    { tier: 3, pause: 1, text: 'Ponte cómodo o cómoda, y cierra los ojos si te parece bien. Puedes abrirlos en cualquier momento.' },
+    { tier: 3, pause: 1, text: 'Busca una postura cómoda. Puedes cerrar los ojos si te parece bien, o dejarlos abiertos y apoyar la mirada suavemente en un punto.' },
     { tier: 3, pause: 3, breath: true, text: 'Inhala despacio… y exhala, un poco más largo que la inhalación.' },
     { tier: 5, pause: 3, breath: true, text: 'Otra vez. Inhala… y una exhalación larga y tranquila. Deja que tus hombros se suelten.' },
   ],
+  imagery: { tier: 3, pause: 1, text: 'Si las escenas te surgen con naturalidad, imagina el lugar a tu alrededor. Si no, simplemente sigue las palabras, nota las sensaciones que sugieren o reflexiona sobre las ideas.' },
+  modes: {
+    future: {
+      name: 'Visión de futuro',
+      description: 'Imagina un futuro significativo hacia el que quieras avanzar.',
+      why: 'Mencionaste algo que esperas para más adelante.',
+      focus: 'el futuro que quieres',
+      keywords: ['futuro', 'algún día', 'dentro de unos años', 'sueño', 'sueños', 'llegar a ser', 'nueva etapa', 'nuevo capítulo', 'meta', 'metas', 'mi vida'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Ahora deja que el tiempo avance un poco, hasta un día en que lleves un tiempo trabajando hacia {focus}.' },
+          { tier: 5, pause: 3, text: 'Fíjate en dónde estás ese día. ¿Qué ves a tu alrededor? ¿Cómo es la luz?' },
+          { tier: 10, pause: 3, text: 'Nota cómo te desenvuelves aquí. Sin perfección, solo con algo más de calma, algo más de ti.' },
+          { tier: 15, pause: 4, text: 'Observa un momento corriente de ese día: qué hacen tus manos, qué hay cerca, qué sonidos te rodean.' },
+          { tier: 3, pause: 3, text: 'Este futuro no está garantizado. Crece a partir de pequeñas decisiones. Fíjate en una que podrías tomar pronto y que apunte hacia él.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imagina un día dentro de un tiempo, cuando {focus} se sienta un poco más cerca que hoy.' },
+          { tier: 5, pause: 3, text: 'Deja que los detalles lleguen despacio: el lugar, la hora del día, la temperatura del aire.' },
+          { tier: 10, pause: 3, text: 'Fíjate en cómo pasa esta versión de ti la primera parte del día. ¿Qué pequeños hábitos te ayudaron a llegar aquí?' },
+          { tier: 15, pause: 4, text: 'Quédate con un momento tranquilo de esa escena. Nota lo que tiene de significativo, más que de impresionante.' },
+          { tier: 3, pause: 3, text: 'Nada de esto está garantizado, y está bien. Fíjate en un pequeño paso, a tu alcance, que lleve en esa dirección.' },
+        ],
+      ],
+    },
+    process: {
+      name: 'Visualización del proceso',
+      description: 'Ensaya los pasos que llevan hacia lo que quieres.',
+      why: 'Mencionaste prepararte para algo o practicarlo.',
+      focus: 'la tarea que tienes delante',
+      keywords: ['preparar', 'prepararme', 'preparación', 'practicar', 'práctica', 'partido', 'presentación', 'discurso', 'entrevista', 'rutina', 'entrenar', 'aprender', 'paso a paso'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Ahora imagínate preparándote para {focus}. Todavía no el resultado, solo el comienzo.' },
+          { tier: 5, pause: 3, text: 'Mírate organizando las cosas: lo que revisas, lo que tomas, dónde te colocas.' },
+          { tier: 10, pause: 3, text: 'Empieza la primera parte. Nota tu atención solo en este paso, cómo se siente, su ritmo.' },
+          { tier: 15, pause: 4, text: 'En algún momento, la mente se distrae. Nótalo y vuelve con suavidad a la siguiente acción pequeña.' },
+          { tier: 3, pause: 3, text: 'Pasa al siguiente paso, y al siguiente, a un ritmo constante. Cada uno hecho con cuidado es suficiente por ahora.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imagina los momentos justo antes. Por delante tienes {focus}. Nota dónde estás y lo que vas a hacer.' },
+          { tier: 5, pause: 3, text: 'Imagina la primera acción útil. Siente cómo la haces despacio, con cuidado y con toda tu atención.' },
+          { tier: 10, pause: 3, text: 'Aparece algo de incertidumbre. Sigues adelante igualmente, centrándote en lo que puedes hacer ahora.' },
+          { tier: 15, pause: 4, text: 'Mírate parar un instante, ajustar una cosa pequeña y continuar. Prepararse es una serie de pequeños ajustes.' },
+          { tier: 3, pause: 3, text: 'Nota cómo los pasos se apoyan unos en otros. No necesitas ver todo el camino para dar el siguiente paso.' },
+        ],
+      ],
+    },
+    obstacle: {
+      name: 'Ensayo de obstáculos',
+      description: 'Practica responder con calma a un reto que ves venir.',
+      why: 'Mencionaste una preocupación o un reto que podrías encontrar.',
+      focus: 'el reto que viene',
+      keywords: ['nervios', 'nervioso', 'nerviosa', 'error', 'errores', 'crítica', 'críticas', 'presión', 'conversación difícil', 'pánico', 'y si', 'miedo a'],
+      variants: [
+        [
+          { tier: 3, pause: 2, text: 'Ahora imagina {focus}, y un momento en el que algo no sale según lo previsto.' },
+          { tier: 5, pause: 3, text: 'Nota lo que pasa en tu cuerpo. Quizá el corazón late más rápido, o los pensamientos se aceleran. Es una respuesta normal.' },
+          { tier: 10, pause: 3, text: 'Mírate hacer una pausa. Una respiración lenta, o simplemente sentir los pies en el suelo. No hace falta sentir calma para responder bien.' },
+          { tier: 15, pause: 4, text: 'Elige una siguiente acción útil: algo que podrías decir, un paso que podrías dar, una pregunta que podrías hacer.' },
+          { tier: 3, pause: 3, text: 'Luego vuelve a lo que importa. La dificultad era real, y seguiste adelante.' },
+        ],
+        [
+          { tier: 3, pause: 2, text: 'Imagina {focus} tal como podría suceder de verdad, incluido un momento difícil.' },
+          { tier: 5, pause: 3, text: 'Nota las primeras señales de dificultad sin juzgarlas: tensión, duda o un torbellino de pensamientos.' },
+          { tier: 10, pause: 3, text: 'Imagina que te dices en voz baja: esta es la parte difícil. Y luego te das un momento.' },
+          { tier: 15, pause: 4, text: 'Imagina una respuesta constructiva: ir más despacio, pedir un momento o centrarte en el siguiente paso.' },
+          { tier: 3, pause: 3, text: 'Mírate recuperar el equilibrio, no a la perfección, pero lo suficiente para seguir. Nota lo que te ayudó.' },
+        ],
+      ],
+    },
+  },
+  integrate: {
+    future: { tier: 3, pause: 2, text: 'Antes de volver, fíjate en una cualidad de ese futuro que podrías traer al día de hoy.' },
+    process: { tier: 3, pause: 2, text: 'Antes de volver, elige una acción de este ensayo que te gustaría llevar contigo hoy.' },
+    obstacle: { tier: 3, pause: 2, text: 'Antes de volver, fíjate en una respuesta que te gustaría recordar si llega ese momento.' },
+    rest: { tier: 3, pause: 2, text: 'Antes de volver, nota lo que más te llamó la atención de este rato. No necesitas hacer nada con ello.' },
+  },
   closing: [
     { tier: 5, pause: 3, text: 'Mira a tu alrededor una vez más. Puedes volver aquí cuando lo necesites, solo con recordarlo.' },
     { tier: 3, pause: 1, text: 'Respira un poco más hondo. Siente tu cuerpo donde estás, mueve los dedos y, cuando quieras, abre los ojos.' },
@@ -289,5 +367,7 @@ export const es: ComposeContent = {
     money: { phrase: 'el dinero', keywords: ['dinero', 'deuda', 'deudas', 'alquiler', 'sueldo'] },
     future: { phrase: 'el futuro', keywords: ['futuro'] },
     exercise: { phrase: 'tu ejercicio', keywords: ['ejercicio', 'gimnasio', 'entrenamiento', 'yoga'] },
+    sport: { phrase: 'el partido', keywords: ['partido', 'juego', 'críquet', 'fútbol', 'tenis', 'torneo', 'carrera', 'competición'] },
+    performance: { phrase: 'tu gran momento', keywords: ['presentación', 'discurso', 'charla', 'audición', 'escenario', 'actuación', 'concierto'] },
   },
 };
