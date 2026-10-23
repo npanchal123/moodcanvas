@@ -371,6 +371,35 @@ textarea::placeholder {
   }
 }
 
+/* Ticking off a daily commitment: the check pops in, and sparkles drift up once everything is done. */
+.check-pop {
+  animation: check-pop 380ms cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+@keyframes check-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+}
+.sparkle {
+  animation: sparkle 1.4s ease-out both;
+}
+@keyframes sparkle {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.6);
+  }
+  30% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-36px) scale(1.1);
+  }
+}
+
 /* Calm mode and the OS setting both switch motion off. */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -140,7 +140,7 @@ export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSup
 
   let body: ReactNode;
   if (tab === 'commitments') {
-    body = <BreakerCommitments text={text} />;
+    body = <BreakerCommitments text={text} animate={animate} />;
   } else if (screen.kind === 'timer') {
     body = (
       <Timer

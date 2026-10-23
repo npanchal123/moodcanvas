@@ -381,7 +381,7 @@ export const zh: BreakerText = {
   commitments: {
     title: '今天的小约定',
     body: '一天最多三件小事。保持轻松：它们是为了被完成的。',
-    energy: '你今天精力如何？',
+    energy: '今天你的电量还有多少？',
     energyOptional: '可选。只会影响建议的大小。',
     energyLevels: { low: '较低', medium: '一般', high: '充沛' },
     energyTips: {
@@ -391,9 +391,6 @@ export const zh: BreakerText = {
     },
     date: '日期',
     add: '添加一个约定',
-    titleLabel: '你要做什么？',
-    titlePlaceholder: '例如：回复一封邮件',
-    description: '详情（可选）',
     minutes: '大约多长时间？',
     need: '请先写几个字。',
     full: '这一天已经有三件了。完成或移除一件后才能再添加。',
@@ -421,6 +418,13 @@ export const zh: BreakerText = {
       days: '有行动的天数',
     },
     topKinds: '最常见的类型',
+    quickAdd: '加一件小事…',
+    addButton: '添加',
+    ideas: '需要灵感？点一个',
+    ideaList: ['喝一杯水', '回复一条消息', '散步 10 分钟', '整理一个台面', '读 5 页书', '拉伸 2 分钟'],
+    progress: (done, total) => `已完成 ${done}/${total}`,
+    vibe: { none: '选一件吧，小事也算数。', some: '在前进了，保持轻松。', all: '全部完成，这就是说到做到 ✨' },
+    more: '更多选项',
   },
 
   categoryNames: {

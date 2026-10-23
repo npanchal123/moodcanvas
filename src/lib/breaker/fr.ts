@@ -385,7 +385,7 @@ export const fr: BreakerText = {
   commitments: {
     title: 'Engagements du jour',
     body: 'Jusqu’à trois petites choses pour une journée. Gardez-les légères : elles sont faites pour être terminées.',
-    energy: 'Combien d’énergie avez-vous aujourd’hui ?',
+    energy: 'Votre batterie, aujourd’hui ?',
     energyOptional: 'Facultatif. Cela change seulement la taille suggérée.',
     energyLevels: { low: 'Peu', medium: 'Moyenne', high: 'Beaucoup' },
     energyTips: {
@@ -395,9 +395,6 @@ export const fr: BreakerText = {
     },
     date: 'Date',
     add: 'Ajouter un engagement',
-    titleLabel: 'Qu’allez-vous faire ?',
-    titlePlaceholder: 'ex. : répondre à un e-mail',
-    description: 'Détails (facultatif)',
     minutes: 'Combien de temps environ ?',
     need: 'Écrivez d’abord quelques mots.',
     full: 'Il y en a déjà trois pour ce jour. Terminez-en ou retirez-en un pour en ajouter un autre.',
@@ -425,6 +422,13 @@ export const fr: BreakerText = {
       days: 'Jours avec une action',
     },
     topKinds: 'Types les plus fréquents',
+    quickAdd: 'Ajoutez une petite chose…',
+    addButton: 'Ajouter',
+    ideas: 'Besoin d’idées ? Touchez-en une',
+    ideaList: ['Boire un verre d’eau', 'Répondre à un message', 'Marcher 10 minutes', 'Ranger une surface', 'Lire 5 pages', 'S’étirer 2 minutes'],
+    progress: (done, total) => `${done} sur ${total} faites`,
+    vibe: { none: 'Choisissez-en une. Le petit compte aussi.', some: 'Ça avance. Gardez ça léger.', all: 'Tout est fait. Voilà du vrai suivi ✨' },
+    more: 'Plus d’options',
   },
 
   categoryNames: {

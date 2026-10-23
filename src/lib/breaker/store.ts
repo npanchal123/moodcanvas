@@ -189,12 +189,13 @@ export async function addCommitment(
 
 export async function updateCommitment(
   id: string,
-  changes: { status?: CommitmentStatus; title?: string; description?: string; reflection?: string },
+  changes: { status?: CommitmentStatus; title?: string; description?: string; reflection?: string; minutes?: number },
   now = Date.now(),
 ): Promise<void> {
   const update: Partial<Commitment> = { updatedAt: new Date(now).toISOString() };
   if (changes.status) update.status = changes.status;
   if (changes.title !== undefined) update.title = clip(changes.title, LIMITS.short) ?? '';
+  if (changes.minutes !== undefined) update.minutes = Math.min(LIMITS.minutes, Math.max(1, Math.round(changes.minutes)));
   if (changes.description !== undefined) update.description = clip(changes.description, LIMITS.long);
   if (changes.reflection !== undefined) update.reflection = clip(changes.reflection, LIMITS.long);
   await db.commitments.update(id, update);

@@ -385,7 +385,7 @@ export const es: BreakerText = {
   commitments: {
     title: 'Compromisos de hoy',
     body: 'Hasta tres cosas pequeñas para un día. Que sean ligeras: están para terminarse.',
-    energy: '¿Cuánta energía tienes hoy?',
+    energy: '¿Cómo va tu batería hoy?',
     energyOptional: 'Opcional. Solo cambia el tamaño sugerido.',
     energyLevels: { low: 'Poca', medium: 'Media', high: 'Mucha' },
     energyTips: {
@@ -395,9 +395,6 @@ export const es: BreakerText = {
     },
     date: 'Fecha',
     add: 'Añadir un compromiso',
-    titleLabel: '¿Qué vas a hacer?',
-    titlePlaceholder: 'p. ej., responder a un correo',
-    description: 'Detalles (opcional)',
     minutes: '¿Cuánto tiempo, más o menos?',
     need: 'Escribe primero unas palabras.',
     full: 'Ya hay tres para este día. Termina o quita uno para añadir otro.',
@@ -425,6 +422,13 @@ export const es: BreakerText = {
       days: 'Días con alguna acción',
     },
     topKinds: 'Tipos más frecuentes',
+    quickAdd: 'Añade algo pequeño…',
+    addButton: 'Añadir',
+    ideas: '¿Ideas? Toca una',
+    ideaList: ['Beber un vaso de agua', 'Responder un mensaje', 'Caminar 10 minutos', 'Ordenar una superficie', 'Leer 5 páginas', 'Estirar 2 minutos'],
+    progress: (done, total) => `${done} de ${total} hechas`,
+    vibe: { none: 'Elige una. Lo pequeño cuenta.', some: 'Vas avanzando. Mantenlo ligero.', all: 'Todo hecho. Eso es cumplir de verdad ✨' },
+    more: 'Más opciones',
   },
 
   categoryNames: {

@@ -257,42 +257,63 @@ test('scheduling for later, then a returning welcome that picks it back up', asy
   await expect(page.getByRole('region', { name: /Welcome back/ })).toBeHidden();
 });
 
-test('daily commitments: up to three, sized by energy, with a week of recorded counts', async ({ page }) => {
+test('daily commitments: a quick checklist, up to three, sized by energy, with a week of recorded counts', async ({ page }) => {
   await skipOnboarding(page);
   await openUnstuck(page);
   await page.getByRole('button', { name: 'Daily commitments' }).click();
-  await page.getByRole('button', { name: 'Low', exact: true }).click();
+  await page.getByRole('button', { name: /Low/ }).click();
   await expect(page.getByText(/Low-energy days count too/)).toBeVisible();
-  await expect(page.getByRole('button', { name: '5 min', exact: true })).toHaveAttribute('aria-pressed', 'true');
 
-  await page.getByRole('button', { name: 'Add a commitment' }).click();
+  // Add by typing and pressing Enter; an empty line gets a gentle prompt.
+  const input = page.getByLabel('Add a commitment');
+  await input.press('Enter');
   await expect(page.getByRole('alert')).toHaveText('Write a few words first.');
-  for (const title of ['Reply to the bank email', 'Study chapter 3', 'Go for a short walk']) {
-    await page.getByLabel('What will you do?').fill(title);
-    await page.getByRole('button', { name: 'Add a commitment' }).click();
-    await expect(page.getByRole('heading', { name: title })).toBeVisible();
-  }
-  await expect(page.getByText('That’s three for this day.', { exact: false })).toBeVisible();
+  await input.fill('Reply to the bank email');
+  await input.press('Enter');
+  await expect(page.getByRole('checkbox', { name: 'Reply to the bank email' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'About how long? 5 min' })).toBeVisible();
+  await page.getByLabel('Add a commitment').fill('Study chapter 3');
+  await page.getByRole('button', { name: 'Add', exact: true }).click();
 
-  const bank = page.getByRole('listitem').filter({ hasText: 'Reply to the bank email' });
-  await bank.getByRole('button', { name: 'Completed', exact: true }).click();
-  await bank.getByLabel('Reflection (optional)').fill('Easier than it looked');
-  await bank.getByRole('button', { name: 'Save reflection' }).click();
-  await expect(bank.getByText('Saved.')).toBeVisible();
-  const study = page.getByRole('listitem').filter({ hasText: 'Study chapter 3' });
-  await study.getByRole('button', { name: 'Partially completed' }).click();
-  await study.getByRole('button', { name: 'Make it smaller' }).click();
-  await expect(page.getByRole('heading', { name: 'Open the relevant chapter and read the first page.' })).toBeVisible();
+  // Or by tapping an idea.
+  await page.getByRole('button', { name: 'Drink a glass of water' }).click();
+  await expect(page.getByRole('checkbox')).toHaveCount(3);
+  await expect(page.getByLabel('Add a commitment')).toBeHidden();
+  await expect(page.getByText('Need ideas? Tap one')).toBeHidden();
+
+  // Tick one off; the ring and the line under it follow.
+  const bank = page.getByRole('checkbox', { name: 'Reply to the bank email' });
+  await bank.click();
+  await expect(bank).toHaveAttribute('aria-checked', 'true');
+  await expect(page.getByText('1 of 3 done')).toBeVisible();
+  await expect(page.getByText('You’re moving. Keep it light.')).toBeVisible();
+
+  // Less common choices live behind "More options".
+  await page.getByRole('button', { name: 'More options: Reply to the bank email' }).click();
+  await page.getByLabel('Reflection (optional)').fill('Easier than it looked');
+  await page.getByRole('button', { name: 'Save reflection' }).click();
+  await expect(page.getByText('Saved.')).toBeVisible();
+  await page.getByRole('button', { name: 'More options: Study chapter 3' }).click();
+  await page.getByRole('group', { name: 'Status: Study chapter 3' }).getByRole('button', { name: 'Partially completed' }).click();
+  await page.getByRole('button', { name: 'Make it smaller' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Open the relevant chapter and read the first page.' })).toBeVisible();
+
+  // Ticking a second one, and the length can be changed with a tap.
+  await page.getByRole('checkbox', { name: 'Drink a glass of water' }).click();
+  await page.getByRole('checkbox', { name: 'Open the relevant chapter and read the first page.' }).click();
+  await expect(page.getByText('All done. That’s real follow-through ✨')).toBeVisible();
+  await page.getByRole('checkbox', { name: 'Drink a glass of water' }).click();
+  await expect(page.getByText('2 of 3 done')).toBeVisible();
 
   const week = page.getByRole('region', { name: 'Last 7 days' });
   await expect(week).toContainText('Commitments made3');
-  await expect(week).toContainText('Completed1');
-  await expect(week).toContainText('Partly completed1');
+  await expect(week).toContainText('Completed2');
   await expect(week).toContainText('Days you took action1');
 
   page.once('dialog', (dialog) => void dialog.accept());
-  await page.getByRole('listitem').filter({ hasText: 'Go for a short walk' }).getByRole('button', { name: 'Remove' }).click();
-  await expect(page.getByRole('heading', { name: 'Add a commitment' })).toBeVisible();
+  await page.getByRole('button', { name: 'More options: Drink a glass of water' }).click();
+  await page.getByRole('button', { name: 'Remove: Drink a glass of water' }).click();
+  await expect(page.getByLabel('Add a commitment')).toBeVisible();
 });
 
 for (const scheme of ['light', 'dark'] as const) {
@@ -322,8 +343,10 @@ for (const scheme of ['light', 'dark'] as const) {
     await expect(page.getByText('You can pause without judging yourself.', { exact: false })).toBeVisible();
     await expectNoA11yViolations(page, 'after');
     await page.getByRole('button', { name: 'Daily commitments' }).click();
-    await page.getByLabel('What will you do?').fill('Reply to one email');
-    await page.getByRole('button', { name: 'Add a commitment' }).click();
+    await page.getByLabel('Add a commitment').fill('Reply to one email');
+    await page.getByRole('button', { name: 'Add', exact: true }).click();
+    await page.getByRole('checkbox', { name: 'Reply to one email' }).click();
+    await page.getByRole('button', { name: 'More options: Reply to one email' }).click();
     await expectNoA11yViolations(page, 'commitments');
     await page.getByRole('button', { name: 'Journal' }).click();
     await expectNoA11yViolations(page, 'journal');

@@ -78,7 +78,7 @@ principle: imagine a better experience, then take one small step toward it. The 
   an old one, and deleting (removed from IndexedDB, not just hidden).
 - **Library:** "Save to my Library" after any composed visualization (front page or Unstuck). "My visualizations"
   filters by feeling, place, length and date, marks favourites, plays them again, and reuses a saved step.
-- **Daily commitments:** up to three small things a day, each with an optional description, length, status (not
+- **Daily commitments:** a quick checklist: type a line and press Enter, or tap an idea, then tap the circle to tick it off (a ring and a friendly line show the day's progress). Up to three a day, each with a length (tap to change) and, under "More options", other statuses (not
   started, in progress, completed, partially completed, skipped), optional reflection and "make it smaller".
   An optional energy check (low, medium, high) only changes the suggested length. The last seven days are
   counted from what was recorded: commitments made, completed, partly completed, days with action, and the most

@@ -402,7 +402,7 @@ export const en = {
   commitments: {
     title: 'Today’s commitments',
     body: 'Up to three small things for a day. Keep them light: these are meant to be finished.',
-    energy: 'How much energy do you have today?',
+    energy: 'How’s your battery today?',
     energyOptional: 'Optional. It only changes the suggested size.',
     energyLevels: { low: 'Low', medium: 'Medium', high: 'High' } as Record<Energy, string>,
     energyTips: {
@@ -412,9 +412,6 @@ export const en = {
     } as Record<Energy, string>,
     date: 'Date',
     add: 'Add a commitment',
-    titleLabel: 'What will you do?',
-    titlePlaceholder: 'e.g. Reply to one email',
-    description: 'Details (optional)',
     minutes: 'About how long?',
     need: 'Write a few words first.',
     full: 'That’s three for this day. Finish or remove one to add another.',
@@ -442,6 +439,13 @@ export const en = {
       days: 'Days you took action',
     },
     topKinds: 'Most common kinds',
+    quickAdd: 'Add something small…',
+    addButton: 'Add',
+    ideas: 'Need ideas? Tap one',
+    ideaList: ['Drink a glass of water', 'Reply to one message', '10-minute walk', 'Tidy one surface', 'Read 5 pages', 'Stretch for 2 minutes'],
+    progress: (done: number, total: number) => `${done} of ${total} done`,
+    vibe: { none: 'Pick one. Tiny totally counts.', some: 'You’re moving. Keep it light.', all: 'All done. That’s real follow-through ✨' },
+    more: 'More options',
   },
 
   categoryNames: {
