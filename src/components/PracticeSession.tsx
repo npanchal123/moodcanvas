@@ -1,12 +1,15 @@
 import * as Slider from '@radix-ui/react-slider';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n';
 import { createNarrator, deviceVoiceAvailable, pauseAudio, resumeAudio, startAmbient, unlockAudio, type Narrator } from '../lib/audio';
-import { logPractice } from '../lib/db';
+import { db, logPractice } from '../lib/db';
+import { clipId, clipsFor } from '../lib/myVoice';
 import { usePersistentFlag, usePersistentState } from '../lib/hooks';
 import { estimateSpeechSeconds, formatClock, planPauses, segmentsFor } from '../lib/session';
 import type { PracticeBefore, PracticeLog, VisualizeRequest } from '../lib/types';
 import { COMPOSED_LENGTHS, LENGTHS, type Minutes, type Playable } from '../practices';
+import { LineRecorder } from './MyVoice';
 import { SaveToLibrary, type LibraryDetails } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 
@@ -32,7 +35,7 @@ type Speed = keyof typeof SPEEDS;
 const isSpeed = (value: unknown): value is Speed => typeof value === 'string' && value in SPEEDS;
 const FEEL_WORDS = ['calmer', 'clearer', 'focused', 'confident', 'hopeful', 'same', 'other'] as const;
 
-type Stage = 'ready' | 'playing' | 'after';
+type Stage = 'ready' | 'record' | 'playing' | 'after';
 
 const ALL_LENGTHS: readonly number[] = [...LENGTHS, ...COMPOSED_LENGTHS];
 const isMinutes = (value: unknown): value is Minutes => ALL_LENGTHS.includes(value as number);
@@ -47,6 +50,10 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
   const [voice, setVoice] = usePersistentFlag('moodcanvas.practiceVoice', true);
   const [breathing, setBreathing] = usePersistentFlag('moodcanvas.practiceBreathing', true);
   const [speed, setSpeed] = usePersistentState<Speed>('moodcanvas.practiceSpeed', 'normal', isSpeed);
+  const [useMine, setUseMine] = usePersistentFlag('moodcanvas.practiceMine', true);
+  const lines = segmentsFor(script, minutes, breathing).map((s) => s.text);
+  const mineCount =
+    useLiveQuery(async () => (await db.voiceClips.bulkGet(lines.map(clipId))).filter(Boolean).length, [lines.join('\n')]) ?? 0;
   const [sound, setSound] = usePersistentFlag('moodcanvas.practiceSound', true);
   const [stage, setStage] = useState<Stage>('ready');
   const [log, setLog] = useState<PracticeLog | null>(null);
@@ -97,6 +104,7 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
         minutes={minutes}
         breathing={breathing}
         rate={SPEEDS[speed]}
+        mine={useMine && mineCount > 0}
         voice={voice}
         sound={sound}
         animate={animate}
@@ -105,6 +113,20 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
         onFinish={finish}
         onRestart={() => setRun((r) => r + 1)}
       />
+    );
+  }
+
+  if (stage === 'record') {
+    return (
+      <section aria-labelledby="session-heading" className={`${card} mx-auto flex max-w-2xl flex-col gap-4`}>
+        <div>
+          <h2 id="session-heading" ref={headingRef} tabIndex={-1} className="text-2xl font-semibold">
+            {t.voice.linesTitle}
+          </h2>
+          <p className="text-(--muted)">{title}</p>
+        </div>
+        <LineRecorder lines={lines} onDone={() => setStage('ready')} />
+      </section>
     );
   }
 
@@ -180,6 +202,21 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
           <input type="checkbox" checked={breathing} onChange={(e) => setBreathing(e.target.checked)} className={checkbox} />
           {t.practice.breathLabel}
         </label>
+        {voice && mineCount > 0 && (
+          <label className="flex min-h-11 items-center gap-3">
+            <input type="checkbox" checked={useMine} onChange={(e) => setUseMine(e.target.checked)} className={checkbox} aria-describedby="mine-count" />
+            <span>
+              {t.voice.useMine}
+              <span id="mine-count" className="block text-sm text-(--muted)">
+                {t.voice.mineCount(mineCount, lines.length)}
+              </span>
+            </span>
+          </label>
+        )}
+        <button type="button" onClick={() => setStage('record')} className={`${btnSecondary} self-start`}>
+          <span aria-hidden="true">🎙️</span>
+          {t.voice.recordLines}
+        </button>
         {voice && deviceVoiceAvailable() && (
           <div role="group" aria-labelledby="speed-label" className="flex flex-wrap items-center gap-2">
             <span id="speed-label" className="font-medium">
@@ -276,6 +313,8 @@ interface PlayerProps {
   minutes: Minutes;
   breathing: boolean;
   rate: number;
+  /** Use the person's own recordings for the lines they recorded. */
+  mine: boolean;
   voice: boolean;
   sound: boolean;
   animate: boolean;
@@ -285,7 +324,7 @@ interface PlayerProps {
   onRestart: () => void;
 }
 
-function Player({ practice, minutes, breathing, rate, voice, sound, animate, title, headingRef, onFinish, onRestart }: PlayerProps) {
+function Player({ practice, minutes, breathing, rate, mine, voice, sound, animate, title, headingRef, onFinish, onRestart }: PlayerProps) {
   const { t, locale } = useI18n();
   const { script, hues } = practice;
   const segments = useMemo(() => segmentsFor(script, minutes, breathing), [script, minutes, breathing]);
@@ -307,7 +346,9 @@ function Player({ practice, minutes, breathing, rate, voice, sound, animate, tit
     let stopAmbient: (() => void) | null = null;
 
     void (async () => {
-      n = await createNarrator(locale, practice.id, segments, voice, rate);
+      const clips = mine ? await clipsFor(segments.map((s) => s.text)) : undefined;
+      if (run.stopped) return;
+      n = await createNarrator(locale, practice.id, segments, voice, rate, clips);
       if (run.stopped) return;
       const pauses = planPauses(segments, n.durations, minutes);
       setTotal([...n.durations, ...pauses].reduce((a, b) => a + b, 0));
@@ -342,7 +383,7 @@ function Player({ practice, minutes, breathing, rate, voice, sound, animate, tit
       stopAmbient?.();
       resumeAudio();
     };
-  }, [locale, practice.id, segments, voice, sound, minutes, rate]);
+  }, [locale, practice.id, segments, voice, sound, minutes, rate, mine]);
 
   // Count time only while actually playing.
   useEffect(() => {
@@ -381,7 +422,9 @@ function Player({ practice, minutes, breathing, rate, voice, sound, animate, tit
   const segment = segments[index];
   const breath = useBreath(breathing && Boolean(narrator) && !paused && phase === 'silence' && Boolean(segment.breath));
   const scale = !animate || !breath ? 1 : breath === 'in' ? 1.18 : 0.86;
-  const voiceNote = narrator?.missingVoice
+  const voiceNote = narrator?.kind === 'mine'
+    ? t.voice.mineNote
+    : narrator?.missingVoice
     ? t.practice.voiceMissing
     : narrator?.kind === 'recorded'
       ? t.practice.voiceRecorded

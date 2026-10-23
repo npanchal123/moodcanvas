@@ -193,3 +193,20 @@ export interface TrackerTick {
   /** Local date, YYYY-MM-DD. */
   date: string;
 }
+
+/** One line of a visualization read aloud in the person's own voice. The id is a hash of the line's words. */
+export interface VoiceClip {
+  id: string;
+  text: string;
+  blob: Blob;
+  createdAt: string;
+}
+
+/** A visualization the person recorded themselves, start to finish. Kept on this device only. */
+export interface OwnRecording {
+  id: string;
+  title: string;
+  blob: Blob;
+  seconds: number;
+  createdAt: string;
+}

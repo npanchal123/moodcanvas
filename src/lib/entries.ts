@@ -58,7 +58,7 @@ export async function deleteEntry(id: string): Promise<void> {
 
 export async function deleteAllEntries(): Promise<void> {
   const track = await tracksDeletions();
-  await db.transaction('rw', [db.entries, db.deletions, db.practices, db.breakerSessions, db.savedPractices, db.commitments, db.trackers, db.trackerTicks, db.meta], async () => {
+  await db.transaction('rw', [db.entries, db.deletions, db.practices, db.breakerSessions, db.savedPractices, db.commitments, db.trackers, db.trackerTicks, db.voiceClips, db.ownRecordings, db.meta], async () => {
     const ids = await db.entries.toCollection().primaryKeys();
     await db.entries.clear();
     await db.practices.clear();
@@ -67,6 +67,8 @@ export async function deleteAllEntries(): Promise<void> {
     await db.commitments.clear();
     await db.trackers.clear();
     await db.trackerTicks.clear();
+    await db.voiceClips.clear();
+    await db.ownRecordings.clear();
     // The energy answers for each day.
     await db.meta.where('key').startsWith('energy:').delete();
     if (track) {

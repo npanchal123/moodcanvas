@@ -51,6 +51,11 @@ The composer is in `src/lib/compose/`. It runs instantly and offline on the devi
 - **Afterwards:** an optional "How are you feeling now?" (calmer, clearer, more focused… or about the same),
   saved to the practice log in the Journal as a self-report. "Save to my Library" works before or after a session;
   saved visualizations and Journal entries keep what they were made from, for "Create again" with changes.
+- **Your own voice** (`src/lib/myVoice.ts`, `src/components/MyVoice.tsx`): record a whole visualization from the
+  front page (listen back, name it, keep it), or "Record in my voice" on any session's start screen to read its lines
+  aloud one at a time. A recorded line plays in place of the device voice wherever the same words appear; lines
+  left unrecorded use the device voice. Uses the browser's microphone (MediaRecorder); recordings stay in IndexedDB
+  (`voiceClips`, `ownRecordings`), are never uploaded, and "Delete all my data" removes them.
 - **No AI:** all of this is rule-based on the device. An AI writer would need a server endpoint (the Claude
   `/api/analyze` server isn't deployed on GitHub Pages) and a notice before sending anyone's words.
 - **Tests:** `compose.test.ts` checks real requests in every language. It also checks that every

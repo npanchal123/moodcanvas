@@ -11,7 +11,7 @@ import { audioFile, audioKey, estimateSpeechSeconds } from './session';
  * Everything plays through one AudioContext, so pausing it pauses voice and background together.
  */
 
-export type VoiceKind = 'recorded' | 'device' | 'silent';
+export type VoiceKind = 'recorded' | 'device' | 'silent' | 'mine';
 
 const DEVICE_RATE = 0.9;
 
@@ -95,6 +95,50 @@ async function recordedNarrator(locale: Locale, practiceId: string, segments: Se
   }
 }
 
+/**
+ * The person's own recorded voice for the lines they recorded; the other narrator (device voice or captions) reads
+ * the rest. Their recordings play through the same audio context, so pausing pauses them too.
+ */
+async function mineNarrator(clips: (Blob | undefined)[], rest: Narrator): Promise<Narrator> {
+  const ctx = context();
+  const buffers = await Promise.all(
+    clips.map(async (clip) => {
+      if (!clip) return null;
+      try {
+        return await ctx.decodeAudioData(await clip.arrayBuffer());
+      } catch {
+        return null; // A recording the browser can't read: that line falls back to the other voice.
+      }
+    }),
+  );
+  let playing: AudioBufferSourceNode | null = null;
+  let current = -1;
+  return {
+    kind: 'mine',
+    durations: buffers.map((b, i) => b?.duration ?? rest.durations[i]),
+    say: (index) => {
+      const buffer = buffers[index];
+      current = index;
+      if (!buffer) return rest.say(index);
+      return new Promise((resolve) => {
+        const source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.onended = () => resolve('done');
+        playing = source;
+        source.start();
+      });
+    },
+    pause: () => (buffers[current] ? void ctx.suspend() : rest.pause()),
+    resume: () => (buffers[current] ? void ctx.resume() : rest.resume()),
+    stop: () => {
+      playing?.stop();
+      playing = null;
+      rest.stop();
+    },
+  };
+}
+
 /** The device's voices for a language. Browsers load the list late, so wait briefly for it. */
 async function voicesFor(lang: string): Promise<SpeechSynthesisVoice[]> {
   // Voice tags vary in case and separator ("zh-CN", "zh_cn").
@@ -168,7 +212,10 @@ export async function createNarrator(
   voice: boolean,
   /** 1 is the normal pace; 0.8 slower, 1.15 faster. Recordings play at their own pace. */
   rate = 1,
+  /** The person's own recordings, line by line, to use where there are any. */
+  mine?: (Blob | undefined)[],
 ): Promise<Narrator> {
+  if (voice && mine?.some(Boolean)) return mineNarrator(mine, await createNarrator(locale, practiceId, segments, voice, rate));
   if (!voice) return silentNarrator(segments, rate);
   const recorded = await recordedNarrator(locale, practiceId, segments);
   if (recorded) return recorded;

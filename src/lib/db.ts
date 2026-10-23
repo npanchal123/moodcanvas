@@ -1,5 +1,15 @@
 import Dexie, { type EntityTable } from 'dexie';
-import type { BreakerSession, Commitment, EmotionEntry, PracticeLog, SavedPractice, Tracker, TrackerTick } from './types';
+import type {
+  BreakerSession,
+  Commitment,
+  EmotionEntry,
+  OwnRecording,
+  PracticeLog,
+  SavedPractice,
+  Tracker,
+  TrackerTick,
+  VoiceClip,
+} from './types';
 
 /** An entry deleted on this device that the server still needs to hear about. */
 export interface Deletion {
@@ -27,6 +37,8 @@ export const db = new Dexie('moodcanvas') as Dexie & {
   commitments: EntityTable<Commitment, 'id'>;
   trackers: EntityTable<Tracker, 'id'>;
   trackerTicks: EntityTable<TrackerTick, 'id'>;
+  voiceClips: EntityTable<VoiceClip, 'id'>;
+  ownRecordings: EntityTable<OwnRecording, 'id'>;
 };
 
 db.version(1).stores({
@@ -69,6 +81,12 @@ db.version(5).stores({
 db.version(6).stores({
   trackers: '&id, createdAt',
   trackerTicks: '&id, trackerId, date',
+});
+
+// v7: the person's own voice: lines read aloud, and whole recorded visualizations. Existing tables are unchanged.
+db.version(7).stores({
+  voiceClips: '&id',
+  ownRecordings: '&id, createdAt',
 });
 
 export async function logPractice(log: PracticeLog): Promise<void> {

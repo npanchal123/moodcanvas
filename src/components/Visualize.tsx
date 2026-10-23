@@ -21,6 +21,7 @@ import type { PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { LEARN_ID, LearnPath, useLearnProgress } from './LearnPath';
 import { ReadyMade } from './ReadyMade';
+import { OwnRecordings } from './MyVoice';
 import { SavedPractices } from './SavedPractices';
 import { btnPrimary, card, toggle } from './ui';
 
@@ -256,6 +257,8 @@ export function Visualize(props: Props) {
       <ReadyMade entries={entries} onOpen={onOpenPractice} />
 
       <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} onCreateAgain={onCreateAgain} />
+
+      <OwnRecordings />
 
     </div>
   );
