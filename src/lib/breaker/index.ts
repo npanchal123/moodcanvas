@@ -334,7 +334,7 @@ export function localDate(date = new Date()): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
-export interface CommitmentWeek {
+export interface CommitmentCounts {
   created: number;
   done: number;
   partial: number;
@@ -344,24 +344,51 @@ export interface CommitmentWeek {
   kinds: CategoryId[];
 }
 
-/** Counts for the seven days up to and including `today`, from recorded commitments only. */
-export function commitmentWeek(commitments: Commitment[], today = new Date()): CommitmentWeek {
-  const start = new Date(today);
-  start.setDate(start.getDate() - 6);
-  const from = localDate(start);
-  const to = localDate(today);
-  const week = commitments.filter((c) => c.date >= from && c.date <= to);
-  const acted = week.filter((c) => c.status === 'done' || c.status === 'partial' || c.status === 'doing');
+/** Counts for the dates from `from` to `to` (YYYY-MM-DD, inclusive), from recorded commitments only. */
+export function commitmentCounts(commitments: Commitment[], from: string, to: string): CommitmentCounts {
+  const range = commitments.filter((c) => c.date >= from && c.date <= to);
+  const acted = range.filter((c) => c.status === 'done' || c.status === 'partial' || c.status === 'doing');
   const counts = new Map<CategoryId, number>();
-  for (const c of week) {
+  for (const c of range) {
     const kind = categorize(c.title);
     if (kind !== 'general') counts.set(kind, (counts.get(kind) ?? 0) + 1);
   }
   return {
-    created: week.length,
-    done: week.filter((c) => c.status === 'done').length,
-    partial: week.filter((c) => c.status === 'partial').length,
+    created: range.length,
+    done: range.filter((c) => c.status === 'done').length,
+    partial: range.filter((c) => c.status === 'partial').length,
     days: new Set(acted.map((c) => c.date)).size,
     kinds: [...counts].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([kind]) => kind),
   };
+}
+
+/** Counts for the seven days up to and including `today`. */
+export function commitmentWeek(commitments: Commitment[], today = new Date()): CommitmentCounts {
+  const start = new Date(today);
+  start.setDate(start.getDate() - 6);
+  return commitmentCounts(commitments, localDate(start), localDate(today));
+}
+
+/** Counts for the calendar month containing `month`. */
+export function commitmentMonth(commitments: Commitment[], month: Date): CommitmentCounts {
+  const first = new Date(month.getFullYear(), month.getMonth(), 1);
+  const last = new Date(month.getFullYear(), month.getMonth() + 1, 0);
+  return commitmentCounts(commitments, localDate(first), localDate(last));
+}
+
+/**
+ * The days to show for a month, as weeks of seven, starting on `firstDay` (1 Monday … 7 Sunday). Days outside the
+ * month are null, so the grid lines up.
+ */
+export function monthGrid(month: Date, firstDay = 1): (Date | null)[][] {
+  const year = month.getFullYear();
+  const m = month.getMonth();
+  const lead = (new Date(year, m, 1).getDay() - (firstDay % 7) + 7) % 7;
+  const length = new Date(year, m + 1, 0).getDate();
+  const cells: (Date | null)[] = [
+    ...Array.from({ length: lead }, () => null),
+    ...Array.from({ length }, (_, i) => new Date(year, m, i + 1)),
+  ];
+  while (cells.length % 7) cells.push(null);
+  return Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
 }

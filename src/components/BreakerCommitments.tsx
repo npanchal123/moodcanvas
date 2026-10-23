@@ -2,7 +2,8 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
 import { useI18n } from '../i18n';
 import {
-  commitmentWeek,
+  commitmentMonth,
+  monthGrid,
   ENERGY_LEVELS,
   LIMITS,
   localDate,
@@ -36,10 +37,16 @@ const OTHER_STATUSES: CommitmentStatus[] = ['doing', 'partial', 'skipped', 'todo
  */
 export function BreakerCommitments({ text, animate }: { text: BreakerText; animate: boolean }) {
   const c = text.commitments;
+  const { t } = useI18n();
   const [date, setDate] = useState(() => localDate());
+  const [month, setMonth] = useState(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1));
   const all = useLiveQuery(() => db.commitments.toArray(), []) ?? NONE;
   const day = all.filter((x) => x.date === date).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-  const week = commitmentWeek(all);
+  const summary = commitmentMonth(all, month);
+  const monthName = new Intl.DateTimeFormat(t.htmlLang, { month: 'long', year: 'numeric' }).format(month);
+  const dayName = new Intl.DateTimeFormat(t.htmlLang, { weekday: 'long', day: 'numeric', month: 'long' }).format(
+    new Date(`${date}T12:00:00`),
+  );
   const [energy, setEnergyState] = useState<Energy | undefined>();
   const [error, setError] = useState('');
   const minutes = energy ? MINUTES_FOR[energy] : 10;
@@ -81,10 +88,10 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
   }
 
   const tiles: [string, number][] = [
-    [c.weekStats.created, week.created],
-    [c.weekStats.done, week.done],
-    [c.weekStats.partial, week.partial],
-    [c.weekStats.days, week.days],
+    [c.weekStats.created, summary.created],
+    [c.weekStats.done, summary.done],
+    [c.weekStats.partial, summary.partial],
+    [c.weekStats.days, summary.days],
   ];
   const ideas = c.ideaList.filter((idea) => !day.some((x) => x.title === idea));
 
@@ -98,17 +105,23 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
             </h2>
             <p className="text-(--muted)">{c.body}</p>
           </div>
-          <label className="flex items-center gap-2 text-sm font-semibold">
-            <span className="sr-only">{c.date}</span>
-            <span aria-hidden="true">📅</span>
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => e.target.value && setDate(e.target.value)}
-              className="field min-h-11 rounded-full border border-(--border) bg-(--surface-strong) px-3"
-            />
-          </label>
         </div>
+
+        <MonthCalendar
+          month={month}
+          selected={date}
+          commitments={all}
+          text={text}
+          onMonth={setMonth}
+          onSelect={(d) => {
+            setDate(d);
+            setError('');
+          }}
+        />
+
+        <h3 aria-live="polite" className="display text-xl font-extrabold">
+          {date === localDate() ? `${c.month.today} · ${dayName}` : dayName}
+        </h3>
 
         <div role="group" aria-labelledby="energy-label" className="flex flex-col gap-2">
           <p id="energy-label" className="font-semibold">
@@ -179,8 +192,8 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
 
       <section aria-labelledby="week-heading" className="flex flex-col gap-3">
         <div>
-          <h2 id="week-heading" className="text-xl font-semibold">
-            {c.week}
+          <h2 id="week-heading" className="text-xl font-semibold capitalize">
+            {c.month.summary(monthName)}
           </h2>
           <p className="text-sm text-(--muted)">{c.weekNote}</p>
         </div>
@@ -192,9 +205,9 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
             </div>
           ))}
         </dl>
-        {week.kinds.length > 0 && (
+        {summary.kinds.length > 0 && (
           <p className="text-(--muted)">
-            {c.topKinds}: {week.kinds.map((k) => text.categoryNames[k]).join(' · ')}
+            {c.topKinds}: {summary.kinds.map((k) => text.categoryNames[k]).join(' · ')}
           </p>
         )}
       </section>
@@ -263,8 +276,11 @@ function QuickAdd({
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (saving) return;
+    // Cleared straight away, so typing the next one right after Enter isn't wiped; put back if it didn't save.
+    const value = title;
     setSaving(true);
-    if (await onAdd(title)) setTitle('');
+    setTitle('');
+    if (!(await onAdd(value))) setTitle((now) => now || value);
     setSaving(false);
     document.getElementById('commitment-title')?.focus();
   }
@@ -534,6 +550,152 @@ function ReminderEditor({ item, text, id }: { item: Commitment; text: BreakerTex
         <button type="button" onClick={calendar} className={`${btnGhost} self-start text-sm`}>
           <span aria-hidden="true">📅</span>
           {r.calendar}
+        </button>
+      )}
+    </div>
+  );
+}
+
+/** The first day of the week where the person lives (1 Monday … 7 Sunday), where the browser can say. */
+function weekStart(lang: string): number {
+  try {
+    const locale = new Intl.Locale(lang) as Intl.Locale & {
+      getWeekInfo?: () => { firstDay: number };
+      weekInfo?: { firstDay: number };
+    };
+    return locale.getWeekInfo?.().firstDay ?? locale.weekInfo?.firstDay ?? 1;
+  } catch {
+    return 1;
+  }
+}
+
+const DOT: Record<CommitmentStatus, string> = {
+  done: 'bg-(--accent)',
+  partial: 'bg-(--accent) opacity-50',
+  doing: 'border-2 border-(--accent)',
+  todo: 'border-2 border-(--muted)',
+  skipped: 'bg-(--muted) opacity-40',
+};
+
+/**
+ * A month at a glance: each day shows a dot per commitment, filled once done. Tapping a day shows its checklist.
+ * A real table of buttons, so screen readers hear the weekday columns and each day's progress.
+ */
+function MonthCalendar({
+  month,
+  selected,
+  commitments,
+  text,
+  onMonth,
+  onSelect,
+}: {
+  month: Date;
+  selected: string;
+  commitments: Commitment[];
+  text: BreakerText;
+  onMonth: (month: Date) => void;
+  onSelect: (date: string) => void;
+}) {
+  const { t } = useI18n();
+  const c = text.commitments;
+  const m = c.month;
+  const first = weekStart(t.htmlLang);
+  const weeks = monthGrid(month, first);
+  const today = localDate();
+  const byDate = new Map<string, Commitment[]>();
+  for (const item of commitments) byDate.set(item.date, [...(byDate.get(item.date) ?? []), item]);
+  const title = new Intl.DateTimeFormat(t.htmlLang, { month: 'long', year: 'numeric' }).format(month);
+  const fullDate = new Intl.DateTimeFormat(t.htmlLang, { weekday: 'long', day: 'numeric', month: 'long' });
+  const longDay = new Intl.DateTimeFormat(t.htmlLang, { weekday: 'long' });
+  const narrowDay = new Intl.DateTimeFormat(t.htmlLang, { weekday: 'narrow' });
+  // 4 January 2021 was a Monday; the headers follow the person's first day of the week.
+  const weekdays = Array.from({ length: 7 }, (_, i) => new Date(2021, 0, 4 + ((first - 1 + i) % 7)));
+  const shift = (by: number) => onMonth(new Date(month.getFullYear(), month.getMonth() + by, 1));
+  const now = new Date();
+  const away = selected !== today || month.getMonth() !== now.getMonth() || month.getFullYear() !== now.getFullYear();
+  const arrow = 'flex h-11 w-11 items-center justify-center rounded-full text-2xl font-bold hover:bg-(--surface-strong)';
+
+  return (
+    <div className="rounded-3xl bg-(--surface-alt) p-2 sm:p-4">
+      <div className="mb-1 flex items-center justify-between gap-2">
+        <button type="button" onClick={() => shift(-1)} aria-label={m.prev} className={arrow}>
+          <span aria-hidden="true" className="rtl:-scale-x-100">‹</span>
+        </button>
+        <p id="month-title" aria-live="polite" className="display text-lg font-extrabold capitalize">
+          {title}
+        </p>
+        <button type="button" onClick={() => shift(1)} aria-label={m.next} className={arrow}>
+          <span aria-hidden="true" className="rtl:-scale-x-100">›</span>
+        </button>
+      </div>
+      <table aria-labelledby="month-title" className="w-full table-fixed border-separate border-spacing-0.5 sm:border-spacing-1">
+        <thead>
+          <tr>
+            {weekdays.map((d) => (
+              <th key={d.getDay()} scope="col" className="pb-1 text-xs font-semibold text-(--muted)">
+                <abbr title={longDay.format(d)} className="no-underline">
+                  {narrowDay.format(d)}
+                </abbr>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {weeks.map((week, w) => (
+            <tr key={w}>
+              {week.map((day, i) => {
+                if (!day) return <td key={i} />;
+                const key = localDate(day);
+                const items = [...(byDate.get(key) ?? [])].sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+                const done = items.filter((x) => x.status === 'done').length;
+                const isSelected = key === selected;
+                const isToday = key === today;
+                const allDone = items.length > 0 && done === items.length;
+                return (
+                  <td key={i} className="p-0">
+                    <button
+                      type="button"
+                      aria-pressed={isSelected}
+                      aria-current={isToday ? 'date' : undefined}
+                      aria-label={`${fullDate.format(day)}: ${items.length ? c.progress(done, items.length) : m.nothing}`}
+                      onClick={() => onSelect(key)}
+                      className={`flex h-12 w-full flex-col items-center justify-center gap-1 rounded-2xl text-sm font-bold transition-colors sm:h-14 ${
+                        isSelected
+                          ? 'btn-glow text-(--on-accent)'
+                          : allDone
+                            ? 'bg-(--accent-soft) hover:bg-(--surface-strong)'
+                            : 'hover:bg-(--surface-strong)'
+                      } ${isToday && !isSelected ? 'ring-2 ring-(--accent) ring-inset' : ''}`}
+                    >
+                      <span>{day.getDate()}</span>
+                      <span aria-hidden="true" className="flex h-1.5 gap-0.5">
+                        {items.slice(0, 3).map((x) => (
+                          <span
+                            key={x.id}
+                            className={`h-1.5 w-1.5 rounded-full ${
+                              isSelected ? (x.status === 'done' ? 'bg-(--on-accent)' : 'border border-(--on-accent)') : DOT[x.status]
+                            }`}
+                          />
+                        ))}
+                      </span>
+                    </button>
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {away && (
+        <button
+          type="button"
+          onClick={() => {
+            onMonth(new Date(now.getFullYear(), now.getMonth(), 1));
+            onSelect(today);
+          }}
+          className={`${btnGhost} mt-1 text-sm`}
+        >
+          {m.today}
         </button>
       )}
     </div>

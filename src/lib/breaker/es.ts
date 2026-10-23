@@ -429,6 +429,14 @@ export const es: BreakerText = {
     progress: (done, total) => `${done} de ${total} hechas`,
     vibe: { none: 'Elige una. Lo pequeño cuenta.', some: 'Vas avanzando. Mantenlo ligero.', all: 'Todo hecho. Eso es cumplir de verdad ✨' },
     more: 'Más opciones',
+    month: {
+      label: 'Tu mes',
+      prev: 'Mes anterior',
+      next: 'Mes siguiente',
+      today: 'Hoy',
+      nothing: 'Nada planeado',
+      summary: (month) => `En ${month}`,
+    },
     reminder: {
       label: 'Recuérdamelo a las',
       set: 'Poner recordatorio',

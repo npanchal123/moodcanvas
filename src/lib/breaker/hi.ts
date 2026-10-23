@@ -429,6 +429,14 @@ export const hi: BreakerText = {
     progress: (done, total) => `${total} में से ${done} पूरे`,
     vibe: { none: 'एक चुनें। छोटा भी पूरा गिना जाता है।', some: 'आप आगे बढ़ रहे हैं। इसे हल्का रखें।', all: 'सब पूरा। यही असली फ़ॉलो-थ्रू है ✨' },
     more: 'और विकल्प',
+    month: {
+      label: 'आपका महीना',
+      prev: 'पिछला महीना',
+      next: 'अगला महीना',
+      today: 'आज',
+      nothing: 'कुछ तय नहीं',
+      summary: (month) => `${month} में`,
+    },
     reminder: {
       label: 'मुझे याद दिलाएँ',
       set: 'रिमाइंडर लगाएँ',

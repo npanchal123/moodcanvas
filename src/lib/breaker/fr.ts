@@ -429,6 +429,14 @@ export const fr: BreakerText = {
     progress: (done, total) => `${done} sur ${total} faites`,
     vibe: { none: 'Choisissez-en une. Le petit compte aussi.', some: 'Ça avance. Gardez ça léger.', all: 'Tout est fait. Voilà du vrai suivi ✨' },
     more: 'Plus d’options',
+    month: {
+      label: 'Votre mois',
+      prev: 'Mois précédent',
+      next: 'Mois suivant',
+      today: 'Aujourd’hui',
+      nothing: 'Rien de prévu',
+      summary: (month) => `En ${month}`,
+    },
     reminder: {
       label: 'Me le rappeler à',
       set: 'Programmer le rappel',

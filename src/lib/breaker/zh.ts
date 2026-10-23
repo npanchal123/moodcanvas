@@ -425,6 +425,14 @@ export const zh: BreakerText = {
     progress: (done, total) => `已完成 ${done}/${total}`,
     vibe: { none: '选一件吧，小事也算数。', some: '在前进了，保持轻松。', all: '全部完成，这就是说到做到 ✨' },
     more: '更多选项',
+    month: {
+      label: '你的这个月',
+      prev: '上个月',
+      next: '下个月',
+      today: '今天',
+      nothing: '没有安排',
+      summary: (month) => `${month}`,
+    },
     reminder: {
       label: '提醒时间',
       set: '设置提醒',

@@ -7,10 +7,12 @@ import {
   breakerStats,
   categorize,
   CATEGORY_IDS,
+  commitmentMonth,
   commitmentWeek,
   composeUnstuck,
   draftFrom,
   FEELING_IDS,
+  monthGrid,
   focusedSeconds,
   followUpsFor,
   nextStep,
@@ -259,5 +261,35 @@ describe('commitmentWeek', () => {
       new Date(2026, 9, 23, 12),
     );
     expect(week).toEqual({ created: 4, done: 1, partial: 1, days: 2, kinds: ['admin', 'study', 'exercise'] });
+  });
+});
+
+describe('the month view', () => {
+  it('lays a month out in weeks, starting on the chosen weekday', () => {
+    // October 2026 starts on a Thursday and has 31 days.
+    const monday = monthGrid(new Date(2026, 9, 1), 1);
+    expect(monday[0].slice(0, 3)).toEqual([null, null, null]);
+    expect(monday[0][3]?.getDate()).toBe(1);
+    expect(monday.flat().filter(Boolean)).toHaveLength(31);
+    expect(monday.every((week) => week.length === 7)).toBe(true);
+    const sunday = monthGrid(new Date(2026, 9, 1), 7);
+    expect(sunday[0][4]?.getDate()).toBe(1);
+  });
+
+  it('counts only the month in view', () => {
+    const c = (date: string, status: Commitment['status']): Commitment => ({
+      id: date + status,
+      date,
+      title: 'Study chapter 3',
+      minutes: 5,
+      status,
+      createdAt: `${date}T09:00:00.000Z`,
+      updatedAt: `${date}T09:00:00.000Z`,
+    });
+    const month = commitmentMonth(
+      [c('2026-10-01', 'done'), c('2026-10-31', 'partial'), c('2026-09-30', 'done'), c('2026-11-01', 'done')],
+      new Date(2026, 9, 15),
+    );
+    expect(month).toEqual({ created: 2, done: 1, partial: 1, days: 2, kinds: ['study'] });
   });
 });

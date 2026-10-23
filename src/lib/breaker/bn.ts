@@ -426,6 +426,14 @@ export const bn: BreakerText = {
     progress: (done, total) => `${total}টার মধ্যে ${done}টা শেষ`,
     vibe: { none: 'একটা বেছে নিন। ছোটও গোনা হয়।', some: 'এগোচ্ছেন। হালকা রাখুন।', all: 'সব শেষ। এটাই আসল কথা রাখা ✨' },
     more: 'আরও বিকল্প',
+    month: {
+      label: 'আপনার মাস',
+      prev: 'আগের মাস',
+      next: 'পরের মাস',
+      today: 'আজ',
+      nothing: 'কিছু ঠিক করা নেই',
+      summary: (month) => `${month}-এ`,
+    },
     reminder: {
       label: 'মনে করিয়ে দিন',
       set: 'রিমাইন্ডার সেট করুন',

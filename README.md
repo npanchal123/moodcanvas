@@ -78,7 +78,7 @@ principle: imagine a better experience, then take one small step toward it. The 
   an old one, and deleting (removed from IndexedDB, not just hidden).
 - **Library:** "Save to my Library" after any composed visualization (front page or Unstuck). "My visualizations"
   filters by feeling, place, length and date, marks favourites, plays them again, and reuses a saved step.
-- **Daily commitments:** a quick checklist: type a line and press Enter, or tap an idea, then tap the circle to tick it off (a ring and a friendly line show the day's progress). Up to three a day, each with a length (tap to change) and, under "More options", other statuses (not
+- **Daily commitments:** a month calendar on top (a dot per commitment on each day, filled once done; tap a day to see or plan its list; arrows change month), then a quick checklist: type a line and press Enter, or tap an idea, then tap the circle to tick it off (a ring and a friendly line show the day's progress). Up to three a day, each with a length (tap to change) and, under "More options", other statuses (not
   started, in progress, completed, partially completed, skipped), optional reflection and "make it smaller".
   Each can have a reminder time (the bell): it pops up inside Viz it on any page, or as a system notification when
   the app is in a background tab, with "Mark done" and "Snooze 10 min". A web page can't notify when it's fully

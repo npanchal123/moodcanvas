@@ -306,10 +306,26 @@ test('daily commitments: a quick checklist, up to three, sized by energy, with a
   await page.getByRole('checkbox', { name: 'Drink a glass of water' }).click();
   await expect(page.getByText('2 of 3 done')).toBeVisible();
 
-  const week = page.getByRole('region', { name: 'Last 7 days' });
+  const week = page.getByRole('region', { name: /^In / });
   await expect(week).toContainText('Commitments made3');
   await expect(week).toContainText('Completed2');
   await expect(week).toContainText('Days you took action1');
+
+  // The month view: today shows its progress, another day has its own list.
+  const today = page.locator('button[aria-current="date"]');
+  await expect(today).toHaveAttribute('aria-label', /2 of 3 done$/);
+  await expect(today).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', { name: 'Next month' }).click();
+  const label = await page.getByRole('button', { name: /: Nothing planned$/ }).nth(14).getAttribute('aria-label');
+  const nextMonthDay = page.getByRole('button', { name: new RegExp(`^${label!.split(':')[0]}:`) });
+  await nextMonthDay.click();
+  await expect(nextMonthDay).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByRole('checkbox')).toHaveCount(0);
+  await page.getByLabel('Add a commitment').fill('Plan the weekend');
+  await page.getByLabel('Add a commitment').press('Enter');
+  await expect(nextMonthDay).toHaveAttribute('aria-label', /0 of 1 done$/);
+  await page.getByRole('button', { name: 'Today', exact: true }).click();
+  await expect(page.getByRole('checkbox')).toHaveCount(3);
 
   page.once('dialog', (dialog) => void dialog.accept());
   await page.getByRole('button', { name: 'More options: Drink a glass of water' }).click();

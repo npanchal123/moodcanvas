@@ -446,6 +446,14 @@ export const en = {
     progress: (done: number, total: number) => `${done} of ${total} done`,
     vibe: { none: 'Pick one. Tiny totally counts.', some: 'You’re moving. Keep it light.', all: 'All done. That’s real follow-through ✨' },
     more: 'More options',
+    month: {
+      label: 'Your month',
+      prev: 'Previous month',
+      next: 'Next month',
+      today: 'Today',
+      nothing: 'Nothing planned',
+      summary: (month: string) => `In ${month}`,
+    },
     reminder: {
       label: 'Remind me at',
       set: 'Set reminder',

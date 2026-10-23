@@ -430,6 +430,14 @@ export const ar: BreakerText = {
     progress: (done, total) => `${done} من ${total} مكتملة`,
     vibe: { none: 'اختيار واحد يكفي. الصغير له قيمته.', some: 'هناك تقدّم. لتبقَ الأمور خفيفة.', all: 'اكتمل كل شيء. هذا التزام حقيقي ✨' },
     more: 'خيارات أخرى',
+    month: {
+      label: 'شهرك',
+      prev: 'الشهر السابق',
+      next: 'الشهر التالي',
+      today: 'اليوم',
+      nothing: 'لا شيء مخطط',
+      summary: (month) => `في ${month}`,
+    },
     reminder: {
       label: 'التذكير في الساعة',
       set: 'ضبط التذكير',
