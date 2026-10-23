@@ -128,6 +128,50 @@ export const en = {
     learn: 'Learn the basics',
   },
 
+  learn: {
+    heroChip: 'New here? Start the beginner’s path',
+    eyebrow: 'Start here',
+    title: 'Learn to visualize in 5 small steps',
+    body: 'A short path for beginners, about 15 minutes in all. Take it at your own pace and stop whenever you like.',
+    progress: (done: number, total: number) => `${done} of ${total} done`,
+    steps: {
+      read: { title: 'Understand what visualization is', body: 'A one-minute read: what it is, and why it works even if you don’t “see” pictures.', action: 'Read it' },
+      first: { title: 'Your first try', body: 'A 3-minute exercise with a lemon. Nothing to get right; just notice what happens.', action: 'Start (3 min)' },
+      senses: { title: 'Wake up your senses', body: 'Five quick prompts, one for each sense. Notice which ones come easily to you.', action: 'Start the warm-up' },
+      guided: { title: 'A full guided session', body: 'Safe Place: a calm spot you build in your mind, with a voice guiding you.', action: 'Start Safe Place' },
+      own: { title: 'Make your own', body: 'Write a few words about how you feel or where you’d like to be. Viz it writes a session just for you.', action: 'Write mine' },
+    },
+    done: 'Done',
+    markDone: 'Mark as done',
+    completeTitle: 'Beginner’s path complete',
+    completeBody: 'You know the basics. Short sessions most days build the skill.',
+    revisit: 'Revisit the path',
+    hide: 'Hide',
+    senses: {
+      intro: 'Take a few seconds with each one. There’s no right answer.',
+      prompts: [
+        'See: picture a colour you love. Notice its shade, and whether it feels warm or cool.',
+        'Hear: imagine rain tapping on a window. Is it light, or heavy?',
+        'Touch: imagine warm sand under your feet, or a soft blanket in your hands.',
+        'Smell: imagine fresh coffee, or bread just out of the oven.',
+        'Taste: imagine biting into a slice of orange. Notice the juice and the sharpness.',
+      ],
+      next: 'Next',
+      finish: 'Finish',
+      step: (n: number, total: number) => `${n} of ${total}`,
+    },
+    tipsTitle: 'Tips for a good session',
+    tips: [
+      'Find a quiet spot where you won’t be interrupted for a few minutes.',
+      'Headphones help you hear the voice and shut out noise.',
+      'Close your eyes if it feels comfortable, or keep them open and soften your gaze.',
+      'Start short: 2 to 3 minutes is plenty while you learn.',
+      'A wandering mind is normal. Each time you come back, you’re practising.',
+      'Some senses come easier than others. Lean on the ones that work for you.',
+    ],
+    faqTitle: 'Common questions',
+  },
+
   practice: {
     // Library tab
     startHereTitle: 'New to visualization?',

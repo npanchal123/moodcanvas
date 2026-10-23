@@ -121,6 +121,50 @@ export const pt: Messages = {
     learn: 'Aprender o básico',
   },
 
+  learn: {
+    heroChip: 'Primeira vez? Comece a trilha para iniciantes',
+    eyebrow: 'Comece aqui',
+    title: 'Aprenda a visualizar em 5 pequenos passos',
+    body: 'Uma trilha curta para iniciantes, cerca de 15 minutos no total. No seu ritmo, e dá para parar quando quiser.',
+    progress: (done, total) => `${done} de ${total} feitos`,
+    steps: {
+      read: { title: 'Entenda o que é visualização', body: 'Uma leitura de um minuto: o que é, e por que funciona mesmo sem “ver” imagens.', action: 'Ler' },
+      first: { title: 'Sua primeira tentativa', body: 'Um exercício de 3 minutos com um limão. Nada a acertar; só perceba o que acontece.', action: 'Começar (3 min)' },
+      senses: { title: 'Desperte seus sentidos', body: 'Cinco orientações rápidas, uma para cada sentido. Perceba quais vêm com facilidade.', action: 'Começar o aquecimento' },
+      guided: { title: 'Uma sessão guiada completa', body: 'Lugar seguro: um lugar calmo que você constrói na mente, com uma voz guiando.', action: 'Começar Lugar seguro' },
+      own: { title: 'Crie a sua', body: 'Escreva algumas palavras sobre como você se sente ou onde gostaria de estar. O Viz it escreve uma sessão só para você.', action: 'Escrever a minha' },
+    },
+    done: 'Feito',
+    markDone: 'Marcar como feito',
+    completeTitle: 'Trilha para iniciantes concluída',
+    completeBody: 'Você já sabe o básico. Sessões curtas na maioria dos dias desenvolvem a habilidade.',
+    revisit: 'Rever a trilha',
+    hide: 'Ocultar',
+    senses: {
+      intro: 'Fique alguns segundos com cada uma. Não existe resposta certa.',
+      prompts: [
+        'Ver: imagine uma cor que você adora. Perceba o tom, e se ela parece quente ou fria.',
+        'Ouvir: imagine chuva batendo na janela. É fraca, ou forte?',
+        'Tocar: imagine areia morna sob os pés, ou um cobertor macio nas mãos.',
+        'Cheirar: imagine café fresquinho, ou pão saindo do forno.',
+        'Saborear: imagine morder um gomo de laranja. Perceba o suco e a acidez.',
+      ],
+      next: 'Próximo',
+      finish: 'Concluir',
+      step: (n, total) => `${n} de ${total}`,
+    },
+    tipsTitle: 'Dicas para uma boa sessão',
+    tips: [
+      'Encontre um lugar tranquilo onde ninguém interrompa por alguns minutos.',
+      'Fones de ouvido ajudam a ouvir a voz e abafar o barulho.',
+      'Feche os olhos se for confortável, ou deixe-os abertos com o olhar suave.',
+      'Comece curto: 2 a 3 minutos bastam enquanto você aprende.',
+      'A mente se distrair é normal. Cada volta é prática.',
+      'Alguns sentidos são mais fáceis que outros. Apoie-se nos que funcionam para você.',
+    ],
+    faqTitle: 'Perguntas frequentes',
+  },
+
   practice: {
     startHereTitle: 'Primeira vez com visualização?',
     startHereBody:

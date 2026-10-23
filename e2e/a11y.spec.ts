@@ -50,6 +50,7 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
     });
 
     test('ready-made visualizations, playing and after-check', async ({ page }) => {
+      test.setTimeout(60_000); // The front page is long now, so its scans take longer.
       await page.clock.install();
       await skipOnboarding(page);
       await page.getByRole('heading', { name: 'Or start with a ready-made visualization' }).waitFor();
@@ -77,6 +78,7 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
 }
 
 test('accessibility: Hindi', async ({ page }) => {
+  test.setTimeout(60_000); // The front page is long now, so its scans take longer.
   await calm(page);
   await page.addInitScript(() => localStorage.setItem('moodcanvas.locale', '"hi"'));
   await openApp(page);

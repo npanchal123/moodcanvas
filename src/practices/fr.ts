@@ -35,6 +35,27 @@ export const fr: PracticeContent = {
       ],
     },
     {
+      title: 'Est-ce grave de s’endormir ?',
+      body: [
+        'Non. Avec la fatigue, une séance calme peut mener au sommeil, et c’est très bien, surtout le soir.',
+        'Pour éviter de vous endormir, asseyez-vous bien droit et essayez une séance plus courte plus tôt dans la journée.',
+      ],
+    },
+    {
+      title: 'À quelle fréquence pratiquer ?',
+      body: [
+        'Quelques minutes la plupart des jours aident plus qu’une longue séance de temps en temps.',
+        'Beaucoup aiment une courte séance le matin ou avant de dormir. Trouvez un moment qui s’intègre à votre journée.',
+      ],
+    },
+    {
+      title: 'Et si des émotions fortes surgissent ?',
+      body: [
+        'Cela peut arriver, et c’est normal. Vous pouvez faire une pause, ouvrir les yeux ou passer à un lieu plus calme.',
+        'Si les émotions restent lourdes, en parler à une personne de confiance ou à un professionnel peut aider.',
+      ],
+    },
+    {
       title: 'Pratiquer en sécurité',
       body: [
         'Ne pratiquez pas en conduisant, ni pendant une activité qui demande votre attention.',

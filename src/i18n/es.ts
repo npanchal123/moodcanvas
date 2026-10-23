@@ -117,6 +117,50 @@ export const es: Messages = {
     learn: 'Aprende lo básico',
   },
 
+  learn: {
+    heroChip: '¿Primera vez? Empieza el camino para principiantes',
+    eyebrow: 'Empieza aquí',
+    title: 'Aprende a visualizar en 5 pasos pequeños',
+    body: 'Un camino corto para principiantes, unos 15 minutos en total. Ve a tu ritmo y para cuando quieras.',
+    progress: (done, total) => `${done} de ${total} hechos`,
+    steps: {
+      read: { title: 'Entiende qué es visualizar', body: 'Una lectura de un minuto: qué es, y por qué funciona aunque no “veas” imágenes.', action: 'Leer' },
+      first: { title: 'Tu primer intento', body: 'Un ejercicio de 3 minutos con un limón. No hay nada que hacer bien; solo nota lo que pasa.', action: 'Empezar (3 min)' },
+      senses: { title: 'Despierta tus sentidos', body: 'Cinco indicaciones rápidas, una por sentido. Nota cuáles te resultan fáciles.', action: 'Empezar el calentamiento' },
+      guided: { title: 'Una sesión guiada completa', body: 'Lugar seguro: un sitio tranquilo que construyes en tu mente, con una voz que te guía.', action: 'Empezar Lugar seguro' },
+      own: { title: 'Crea la tuya', body: 'Escribe unas palabras sobre cómo te sientes o dónde te gustaría estar. Viz it escribe una sesión solo para ti.', action: 'Escribir la mía' },
+    },
+    done: 'Hecho',
+    markDone: 'Marcar como hecho',
+    completeTitle: 'Camino para principiantes completado',
+    completeBody: 'Ya conoces lo básico. Sesiones cortas casi todos los días desarrollan la habilidad.',
+    revisit: 'Volver al camino',
+    hide: 'Ocultar',
+    senses: {
+      intro: 'Tómate unos segundos con cada una. No hay respuestas correctas.',
+      prompts: [
+        'Ver: imagina un color que te encante. Fíjate en su tono, y en si se siente cálido o frío.',
+        'Oír: imagina la lluvia golpeando una ventana. ¿Es suave o fuerte?',
+        'Tocar: imagina arena tibia bajo los pies, o una manta suave en las manos.',
+        'Oler: imagina café recién hecho, o pan recién salido del horno.',
+        'Saborear: imagina morder un gajo de naranja. Nota el jugo y la acidez.',
+      ],
+      next: 'Siguiente',
+      finish: 'Terminar',
+      step: (n, total) => `${n} de ${total}`,
+    },
+    tipsTitle: 'Consejos para una buena sesión',
+    tips: [
+      'Busca un lugar tranquilo donde nadie te interrumpa unos minutos.',
+      'Los auriculares ayudan a oír la voz y a aislar el ruido.',
+      'Cierra los ojos si te resulta cómodo, o déjalos abiertos con la mirada suave.',
+      'Empieza corto: 2 o 3 minutos bastan mientras aprendes.',
+      'Que la mente divague es normal. Cada vez que vuelves, estás practicando.',
+      'Algunos sentidos salen más fácil que otros. Apóyate en los que te funcionan.',
+    ],
+    faqTitle: 'Preguntas frecuentes',
+  },
+
   practice: {
     startHereTitle: '¿Es tu primera vez con la visualización?',
     startHereBody:

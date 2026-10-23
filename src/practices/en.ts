@@ -36,6 +36,27 @@ export const en: PracticeContent = {
       ],
     },
     {
+      title: 'Is it okay to fall asleep?',
+      body: [
+        'Yes. A calm session can lead to sleep when you’re tired, which is fine, especially at night.',
+        'If you want to stay awake, sit upright and try a shorter session earlier in the day.',
+      ],
+    },
+    {
+      title: 'How often should I practise?',
+      body: [
+        'A few minutes most days helps more than a long session once in a while.',
+        'Many people like a short session in the morning or before sleep. Find a time that fits your day.',
+      ],
+    },
+    {
+      title: 'What if strong feelings come up?',
+      body: [
+        'That can happen, and it’s okay. You can pause, open your eyes, or switch to a calmer place.',
+        'If feelings stay heavy, talking to someone you trust, or to a professional, can help.',
+      ],
+    },
+    {
       title: 'Staying safe',
       body: [
         'Don’t practice while driving or doing anything that needs your attention.',

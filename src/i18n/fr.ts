@@ -120,6 +120,50 @@ export const fr: Messages = {
     learn: 'Découvrir les bases',
   },
 
+  learn: {
+    heroChip: 'Première fois ? Commencez le parcours débutant',
+    eyebrow: 'Commencez ici',
+    title: 'Apprendre à visualiser en 5 petites étapes',
+    body: 'Un court parcours pour débuter, environ 15 minutes en tout. À votre rythme, et vous pouvez arrêter quand vous voulez.',
+    progress: (done, total) => `${done} sur ${total} faites`,
+    steps: {
+      read: { title: 'Comprendre ce qu’est la visualisation', body: 'Une minute de lecture : ce que c’est, et pourquoi cela marche même sans « voir » d’images.', action: 'Lire' },
+      first: { title: 'Votre premier essai', body: 'Un exercice de 3 minutes avec un citron. Rien à réussir ; remarquez simplement ce qui se passe.', action: 'Commencer (3 min)' },
+      senses: { title: 'Réveiller vos sens', body: 'Cinq consignes rapides, une par sens. Remarquez celles qui vous viennent facilement.', action: 'Commencer l’échauffement' },
+      guided: { title: 'Une séance guidée complète', body: 'Lieu sûr : un endroit calme construit en pensée, avec une voix pour vous guider.', action: 'Commencer Lieu sûr' },
+      own: { title: 'Créer la vôtre', body: 'Écrivez quelques mots sur ce que vous ressentez ou l’endroit où vous aimeriez être. Viz it écrit une séance rien que pour vous.', action: 'Écrire la mienne' },
+    },
+    done: 'Fait',
+    markDone: 'Marquer comme fait',
+    completeTitle: 'Parcours débutant terminé',
+    completeBody: 'Vous connaissez les bases. De courtes séances la plupart des jours développent la compétence.',
+    revisit: 'Revoir le parcours',
+    hide: 'Masquer',
+    senses: {
+      intro: 'Prenez quelques secondes pour chacune. Il n’y a pas de bonne réponse.',
+      prompts: [
+        'Voir : imaginez une couleur que vous aimez. Remarquez sa nuance, et si elle semble chaude ou froide.',
+        'Entendre : imaginez la pluie qui tape sur une vitre. Est-elle légère, ou forte ?',
+        'Toucher : imaginez du sable tiède sous vos pieds, ou une couverture douce entre vos mains.',
+        'Sentir : imaginez un café tout juste préparé, ou du pain qui sort du four.',
+        'Goûter : imaginez croquer un quartier d’orange. Remarquez le jus et l’acidité.',
+      ],
+      next: 'Suivant',
+      finish: 'Terminer',
+      step: (n, total) => `${n} sur ${total}`,
+    },
+    tipsTitle: 'Conseils pour une bonne séance',
+    tips: [
+      'Trouvez un endroit calme où personne ne vous dérangera pendant quelques minutes.',
+      'Un casque aide à entendre la voix et à couper le bruit.',
+      'Fermez les yeux si c’est confortable, ou gardez-les ouverts avec un regard doux.',
+      'Commencez court : 2 à 3 minutes suffisent pour apprendre.',
+      'Que l’esprit vagabonde est normal. Chaque retour est un entraînement.',
+      'Certains sens viennent plus facilement que d’autres. Appuyez-vous sur ceux qui marchent pour vous.',
+    ],
+    faqTitle: 'Questions fréquentes',
+  },
+
   practice: {
     startHereTitle: 'Nouveau dans la visualisation ?',
     startHereBody:

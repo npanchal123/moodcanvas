@@ -17,11 +17,12 @@ import {
 import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
 import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from '../lib/types';
-import { PRACTICE_CONTENT, type PracticeId } from '../practices';
+import type { PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
+import { LEARN_ID, LearnPath, useLearnProgress } from './LearnPath';
 import { ReadyMade } from './ReadyMade';
 import { SavedPractices } from './SavedPractices';
-import { btnPrimary, btnSecondary, card, toggle } from './ui';
+import { btnPrimary, card, toggle } from './ui';
 
 export const FEELING_INPUT_ID = 'feeling-input';
 const MAX_LENGTH = 500;
@@ -72,6 +73,7 @@ export function Visualize(props: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const set = (changes: Partial<Draft>) => onDraftChange({ ...draft, ...changes });
+  const learn = useLearnProgress(logs);
   const suggested = draft.mode ? null : draft.goal === 'sleep' ? null : recommendMode(draft.text);
 
   /** Fills in an idea, with a mode and feeling that suit it; asks first if it would replace their own words. */
@@ -110,6 +112,20 @@ export function Visualize(props: Props) {
           <span className="text-gradient">{t.create.heroTitle}</span>
         </h2>
         <p className="relative mt-3 max-w-xl text-lg text-(--muted)">{t.create.heroBody}</p>
+        {!learn.complete && (
+          <a
+            href={`#${LEARN_ID}`}
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById(LEARN_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            className="relative mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--accent) bg-(--accent-soft) px-4 font-semibold no-underline hover:bg-(--surface-alt)"
+          >
+            <span aria-hidden="true">🌱</span>
+            {t.learn.heroChip}
+            <span aria-hidden="true">↓</span>
+          </a>
+        )}
       </div>
 
       <form onSubmit={(e) => void submit(e)} className={`${card} fade-up flex flex-col gap-6`} noValidate>
@@ -227,39 +243,20 @@ export function Visualize(props: Props) {
         </button>
       </form>
 
+      <LearnPath
+        progress={learn}
+        onOpen={(id) => (id === 'first-visualization' ? onFirstPractice() : onOpenPractice(id))}
+        onCreateOwn={() => {
+          const input = document.getElementById(FEELING_INPUT_ID);
+          input?.scrollIntoView({ block: 'center' });
+          input?.focus();
+        }}
+      />
+
       <ReadyMade entries={entries} onOpen={onOpenPractice} />
 
       <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} onCreateAgain={onCreateAgain} />
 
-      <section aria-labelledby="new-here-heading" className={`${card} flex flex-col gap-4`}>
-        <div className="flex flex-col gap-1 text-center">
-          <h2 id="new-here-heading" className="text-xl font-semibold">
-            {t.create.newHereTitle}
-          </h2>
-          <p className="mx-auto max-w-xl text-(--muted)">{t.create.newHereBody}</p>
-        </div>
-        <div>
-          <h3 className="mb-1 font-semibold">{t.practice.basicsHeading}</h3>
-          <ul className="flex flex-col divide-y divide-(--border) rounded-2xl border border-(--border)">
-            {PRACTICE_CONTENT[locale].lessons.map((lesson, i) => (
-              <li key={lesson.title}>
-                <details open={logs.length === 0 && i === 0} className="px-4">
-                  <summary className="cursor-pointer py-3 font-medium">{lesson.title}</summary>
-                  {lesson.body.map((paragraph) => (
-                    <p key={paragraph} className="pb-3">
-                      {paragraph}
-                    </p>
-                  ))}
-                </details>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <button type="button" onClick={onFirstPractice} className={`${logs.length === 0 ? btnPrimary : btnSecondary} self-center`}>
-          <span aria-hidden="true">🍋</span>
-          {t.create.firstTry}
-        </button>
-      </section>
     </div>
   );
 }

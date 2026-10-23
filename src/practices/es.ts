@@ -32,6 +32,27 @@ export const es: PracticeContent = {
       ],
     },
     {
+      title: '¿Pasa algo si me duermo?',
+      body: [
+        'No. Si hay cansancio, una sesión tranquila puede llevar al sueño, y está bien, sobre todo de noche.',
+        'Para no dormirte, siéntate con la espalda recta y prueba una sesión más corta más temprano.',
+      ],
+    },
+    {
+      title: '¿Con qué frecuencia practicar?',
+      body: [
+        'Unos minutos casi todos los días ayudan más que una sesión larga de vez en cuando.',
+        'Mucha gente prefiere una sesión corta por la mañana o antes de dormir. Busca un momento que encaje en tu día.',
+      ],
+    },
+    {
+      title: '¿Y si aparecen emociones fuertes?',
+      body: [
+        'Puede pasar, y está bien. Puedes hacer una pausa, abrir los ojos o pasar a un lugar más tranquilo.',
+        'Si las emociones siguen pesando, hablar con alguien de confianza o con un profesional puede ayudar.',
+      ],
+    },
+    {
       title: 'Practicar con seguridad',
       body: [
         'No practiques mientras conduces ni mientras haces algo que necesite tu atención.',

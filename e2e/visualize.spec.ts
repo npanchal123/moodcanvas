@@ -129,7 +129,7 @@ test('ready-made visualizations, saved ones and the basics, all on the front pag
   await expect(page.getByRole('region', { name: 'My visualizations' })).toBeHidden();
   // No Library tab any more: everything is here.
   await expect(page.getByRole('navigation').getByRole('button', { name: 'Library' })).toBeHidden();
-  await expect(page.getByText('What if I can’t see pictures?')).toBeVisible();
+  await expect(page.locator('summary', { hasText: 'What if I can’t see pictures?' })).toBeVisible();
   await expectNoA11yViolations(page, 'front page with ready-made visualizations');
 
   // Plays right here, without leaving Visualize.
@@ -145,4 +145,62 @@ test('ready-made visualizations, saved ones and the basics, all on the front pag
   await expect(page.getByText('Saved to My visualizations.')).toBeVisible();
   await page.getByRole('button', { name: 'Back' }).click();
   await expect(page.getByRole('region', { name: 'My visualizations' })).toBeVisible();
+});
+
+test('the beginner’s path: five steps, ticked off as they’re done, then folded away', async ({ page }) => {
+  await page.clock.install();
+  await skipOnboarding(page);
+  const path = page.getByRole('region', { name: 'Learn to visualize in 5 small steps' });
+  await expect(path.getByRole('progressbar')).toHaveAttribute('aria-valuetext', '0 of 5 done');
+  await expectNoA11yViolations(page, 'beginner’s path');
+
+  // The hero links straight to it.
+  await page.getByRole('link', { name: /New here\? Start the beginner’s path/ }).click();
+  await expect(path).toBeInViewport();
+
+  // 1. The current step is open already: read, then mark it done.
+  await expect(path.getByText(/You can still visualize by imagining sounds/).first()).toBeVisible();
+  await path.getByRole('button', { name: 'Mark as done' }).click();
+  await expect(path.getByRole('progressbar')).toHaveAttribute('aria-valuetext', '1 of 5 done');
+
+  // 2. The first try ticks itself once played.
+  await path.getByRole('button', { name: 'Start (3 min)' }).click();
+  await page.getByLabel('Voice guide').uncheck();
+  await page.getByLabel('Background sound').uncheck();
+  await page.getByRole('button', { name: 'Begin' }).click();
+  await page.getByRole('button', { name: 'End', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to practices' }).click();
+  await expect(path.getByRole('progressbar')).toHaveAttribute('aria-valuetext', '2 of 5 done');
+
+  // 3. The senses warm-up, now the current step, one prompt at a time.
+  await expect(path.getByText(/See: picture a colour you love/)).toBeVisible();
+  for (let i = 0; i < 4; i++) await path.getByRole('button', { name: 'Next' }).click();
+  await expect(path.getByText(/Taste: imagine biting/)).toBeVisible();
+  await expectNoA11yViolations(page, 'senses warm-up');
+  await path.getByRole('button', { name: 'Finish' }).click();
+  await expect(path.getByRole('progressbar')).toHaveAttribute('aria-valuetext', '3 of 5 done');
+
+  // 4. A full guided session.
+  await path.getByRole('button', { name: 'Start Safe Place' }).click();
+  await page.getByRole('button', { name: 'Begin' }).click();
+  await page.getByRole('button', { name: 'End', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to practices' }).click();
+
+  // 5. Make your own: it takes you to the box.
+  await path.getByRole('button', { name: 'Write mine' }).click();
+  await expect(page.getByLabel(FEELING_LABEL)).toBeFocused();
+  await page.getByLabel(FEELING_LABEL).fill('Take me to a quiet beach');
+  await page.getByRole('button', { name: 'Create my visualization' }).click();
+  await page.getByRole('button', { name: 'Begin' }).click();
+  await page.getByRole('button', { name: 'End', exact: true }).click();
+  await page.getByRole('button', { name: 'Back to practices' }).click();
+
+  // Done: folded into one line, and the hero link goes away.
+  const done = page.getByRole('region', { name: 'Beginner’s path complete' });
+  await expect(done).toBeVisible();
+  await expect(page.getByRole('link', { name: /New here\?/ })).toBeHidden();
+  await done.getByRole('button', { name: 'Revisit the path' }).click();
+  await expect(page.getByRole('heading', { name: 'Tips for a good session' })).toBeVisible();
+  await page.getByText('Is it okay to fall asleep?').click();
+  await expect(page.getByText(/A calm session can lead to sleep/)).toBeVisible();
 });

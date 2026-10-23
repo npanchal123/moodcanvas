@@ -35,6 +35,27 @@ export const pt: PracticeContent = {
       ],
     },
     {
+      title: 'Tudo bem pegar no sono?',
+      body: [
+        'Sim. Com cansaço, uma sessão calma pode levar ao sono, e tudo bem, principalmente à noite.',
+        'Para não adormecer, sente-se com a coluna reta e tente uma sessão mais curta mais cedo no dia.',
+      ],
+    },
+    {
+      title: 'Com que frequência praticar?',
+      body: [
+        'Alguns minutos na maioria dos dias ajudam mais do que uma sessão longa de vez em quando.',
+        'Muita gente gosta de uma sessão curta pela manhã ou antes de dormir. Encontre um horário que combine com o seu dia.',
+      ],
+    },
+    {
+      title: 'E se surgirem emoções fortes?',
+      body: [
+        'Pode acontecer, e tudo bem. Você pode pausar, abrir os olhos ou ir para um lugar mais calmo.',
+        'Se as emoções continuarem pesadas, conversar com alguém de confiança ou com um profissional pode ajudar.',
+      ],
+    },
+    {
       title: 'Praticar com segurança',
       body: [
         'Não pratique enquanto dirige ou faz algo que exige atenção.',

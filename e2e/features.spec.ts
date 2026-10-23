@@ -188,14 +188,14 @@ test('the privacy page has its own link and skips onboarding', async ({ page }) 
 
 test('beginners can learn the basics and try a first practice', async ({ page }) => {
   await skipOnboarding(page);
-  await page.getByRole('button', { name: 'Try a 3-minute first visualization' }).click();
+  await page.getByRole('region', { name: 'Learn to visualize in 5 small steps' }).getByRole('button', { name: 'Start (3 min)' }).click();
   await expect(page.getByRole('heading', { name: 'Your first visualization' })).toBeVisible();
   // It has one length, so there's no length choice.
   await expect(page.getByText('How long?')).toBeHidden();
   await page.getByRole('button', { name: 'Back' }).click();
   // The basics are on the front page now.
-  await page.getByText('What if I can’t see pictures?').click();
-  await expect(page.getByText(/That’s very common/)).toBeVisible();
+  await page.locator('summary', { hasText: 'What if I can’t see pictures?' }).click();
+  await expect(page.getByText(/That’s very common/).last()).toBeVisible();
 });
 
 test('Hindi: a Hinglish request becomes a visualization spoken in Hindi', async ({ page }) => {
