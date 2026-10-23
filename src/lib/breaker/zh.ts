@@ -356,8 +356,8 @@ export const zh: BreakerText = {
   library: {
     title: '我的冥想引导',
     empty: '你保存的引导会出现在这里，随时可以再听。',
-    save: '保存到我的资料库',
-    saved: '已保存到你的资料库。',
+    save: '保存到我的冥想引导',
+    saved: '已保存到我的冥想引导。',
     saveFailed: '没有保存成功。请再试一次。',
     favorite: '收藏',
     recreate: '修改后重新生成',

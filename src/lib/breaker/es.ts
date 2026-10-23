@@ -359,8 +359,8 @@ export const es: BreakerText = {
   library: {
     title: 'Mis visualizaciones',
     empty: 'Las visualizaciones que guardes aparecerán aquí, listas para volver a reproducirse.',
-    save: 'Guardar en mi biblioteca',
-    saved: 'Guardada en tu biblioteca.',
+    save: 'Guardar en Mis visualizaciones',
+    saved: 'Guardada en Mis visualizaciones.',
     saveFailed: 'No se guardó. Inténtalo de nuevo.',
     favorite: 'Favorita',
     recreate: 'Editar y crear de nuevo',

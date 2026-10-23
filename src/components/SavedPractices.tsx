@@ -47,6 +47,9 @@ export function SavedPractices({ onPlay, onUseAction, onCreateAgain }: Props) {
     if (window.confirm(l.deleteConfirm)) await deleteSavedPractice(id);
   }
 
+  // On the front page this only appears once something has been saved.
+  if (saved.length === 0) return null;
+
   return (
     <section aria-labelledby="saved-heading" className={`${card} flex flex-col gap-4`}>
       <h2 id="saved-heading" className="text-xl font-semibold">

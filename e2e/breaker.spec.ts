@@ -38,7 +38,7 @@ async function playVisualization(page: Page, finish: 'end' | 'early' = 'end') {
   await page.getByRole('heading', { name: 'What’s one small thing you can do now?' }).waitFor();
 }
 
-test('the whole journey: understand, visualize, act, reflect, and find it in the Journal and Library', async ({ page }) => {
+test('the whole journey: understand, visualize, act, reflect, and find it in the Journal and My visualizations', async ({ page }) => {
   test.setTimeout(90_000); // The longest journey in the suite.
   await page.clock.install();
   await skipOnboarding(page);
@@ -104,8 +104,8 @@ test('the whole journey: understand, visualize, act, reflect, and find it in the
   await page.getByLabel(/Also keep the visualization’s words/).check();
   await page.getByRole('button', { name: 'Save session' }).click();
   await expect(page.getByText('Saved to your Journal.')).toBeVisible();
-  await page.getByRole('button', { name: 'Save to my Library' }).click();
-  await expect(page.getByText('Saved to your Library.')).toBeVisible();
+  await page.getByRole('button', { name: 'Save to My visualizations' }).click();
+  await expect(page.getByText('Saved to My visualizations.')).toBeVisible();
 
   // Journal: the session, its reflection and its visualization.
   await page.getByRole('button', { name: 'Journal', exact: true }).click();
@@ -126,8 +126,8 @@ test('the whole journey: understand, visualize, act, reflect, and find it in the
   await journal.getByText('Details').click();
   await expect(journal).toContainText('Starting was easy once the phone was away');
 
-  // Library: the saved visualization, as a favorite, played again.
-  await page.getByRole('button', { name: 'Library' }).click();
+  // My visualizations, on the front page: the saved one, as a favorite, played again.
+  await page.getByRole('navigation').getByRole('button', { name: 'Visualize' }).click();
   const saved = page.getByRole('region', { name: 'My visualizations' });
   await expect(saved).toContainText('Small step: Watch one 5-minute editing tutorial');
   const favorite = saved.getByRole('button', { name: /^Favorite/ });
@@ -438,7 +438,7 @@ test('a commitment reminder pops up at the chosen time, on any page, and can be 
   expect((await download).suggestedFilename()).toBe('vizit-commitment.ics');
 
   // It pops up on whatever page is open.
-  await page.getByRole('button', { name: 'Library' }).click();
+  await page.getByRole('navigation').getByRole('button', { name: 'Journal' }).click();
   const pop = page.getByRole('region', { name: 'Reminder: your commitment' });
   await expect(pop).toBeHidden();
   await page.clock.runFor('02:30');

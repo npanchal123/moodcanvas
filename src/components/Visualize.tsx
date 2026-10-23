@@ -16,10 +16,11 @@ import {
 } from '../lib/compose';
 import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
-import type { SavedPractice } from '../lib/types';
-import type { PracticeId } from '../practices';
+import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from '../lib/types';
+import { PRACTICE_CONTENT, type PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { ReadyMade } from './ReadyMade';
+import { SavedPractices } from './SavedPractices';
 import { btnPrimary, btnSecondary, card, toggle } from './ui';
 
 export const FEELING_INPUT_ID = 'feeling-input';
@@ -55,13 +56,17 @@ interface Props {
   onCreate: () => Promise<void>;
   aiEnabled: boolean;
   onFirstPractice: () => void;
-  onLearn: () => void;
-  onOpenPractice: (id: PracticeId) => void;
+  entries: EmotionEntry[];
+  logs: PracticeLog[];
+  onOpenPractice: (id: PracticeId, before?: PracticeBefore) => void;
   onPlaySaved: (saved: SavedPractice) => void;
+  onUseAction: (action: string) => void;
+  onCreateAgain: (request: VisualizeRequest) => void;
 }
 
 /** The front page: say how you feel and what you'd like to imagine, and get a visualization made for you. */
-export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPractice, onLearn, onOpenPractice, onPlaySaved }: Props) {
+export function Visualize(props: Props) {
+  const { draft, onDraftChange, onCreate, aiEnabled, onFirstPractice, entries, logs, onOpenPractice, onPlaySaved, onUseAction, onCreateAgain } = props;
   const { t, locale } = useI18n();
   const content = COMPOSE_CONTENT[locale];
   const [busy, setBusy] = useState(false);
@@ -222,22 +227,38 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
         </button>
       </form>
 
-      <ReadyMade onOpen={onOpenPractice} onPlaySaved={onPlaySaved} onSeeAll={onLearn} />
+      <ReadyMade entries={entries} onOpen={onOpenPractice} />
 
-      <section aria-labelledby="new-here-heading" className={`${card} flex flex-col items-center gap-3 text-center`}>
-        <h2 id="new-here-heading" className="text-xl font-semibold">
-          {t.create.newHereTitle}
-        </h2>
-        <p className="max-w-xl text-(--muted)">{t.create.newHereBody}</p>
-        <div className="flex flex-wrap justify-center gap-2">
-          <button type="button" onClick={onFirstPractice} className={btnSecondary}>
-            <span aria-hidden="true">🍋</span>
-            {t.create.firstTry}
-          </button>
-          <button type="button" onClick={onLearn} className={btnSecondary}>
-            {t.create.learn}
-          </button>
+      <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} onCreateAgain={onCreateAgain} />
+
+      <section aria-labelledby="new-here-heading" className={`${card} flex flex-col gap-4`}>
+        <div className="flex flex-col gap-1 text-center">
+          <h2 id="new-here-heading" className="text-xl font-semibold">
+            {t.create.newHereTitle}
+          </h2>
+          <p className="mx-auto max-w-xl text-(--muted)">{t.create.newHereBody}</p>
         </div>
+        <div>
+          <h3 className="mb-1 font-semibold">{t.practice.basicsHeading}</h3>
+          <ul className="flex flex-col divide-y divide-(--border) rounded-2xl border border-(--border)">
+            {PRACTICE_CONTENT[locale].lessons.map((lesson, i) => (
+              <li key={lesson.title}>
+                <details open={logs.length === 0 && i === 0} className="px-4">
+                  <summary className="cursor-pointer py-3 font-medium">{lesson.title}</summary>
+                  {lesson.body.map((paragraph) => (
+                    <p key={paragraph} className="pb-3">
+                      {paragraph}
+                    </p>
+                  ))}
+                </details>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <button type="button" onClick={onFirstPractice} className={`${logs.length === 0 ? btnPrimary : btnSecondary} self-center`}>
+          <span aria-hidden="true">🍋</span>
+          {t.create.firstTry}
+        </button>
       </section>
     </div>
   );

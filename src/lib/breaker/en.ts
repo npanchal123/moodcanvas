@@ -375,8 +375,8 @@ export const en = {
   library: {
     title: 'My visualizations',
     empty: 'Visualizations you save appear here, ready to play again.',
-    save: 'Save to my Library',
-    saved: 'Saved to your Library.',
+    save: 'Save to My visualizations',
+    saved: 'Saved to My visualizations.',
     saveFailed: 'That didn’t save. Please try again.',
     favorite: 'Favorite',
     recreate: 'Edit and create again',

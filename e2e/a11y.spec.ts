@@ -49,12 +49,11 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
       await expectNoA11yViolations(page, 'AI consent dialog');
     });
 
-    test('library, playing and after-check', async ({ page }) => {
+    test('ready-made visualizations, playing and after-check', async ({ page }) => {
       await page.clock.install();
       await skipOnboarding(page);
-      await page.getByRole('button', { name: 'Library', exact: true }).click();
-      await page.getByRole('heading', { name: 'All practices' }).waitFor();
-      await expectNoA11yViolations(page, 'library');
+      await page.getByRole('heading', { name: 'Or start with a ready-made visualization' }).waitFor();
+      await expectNoA11yViolations(page, 'ready-made visualizations');
       await page.getByRole('button', { name: 'Start Clear Sky' }).click();
       await page.getByLabel('Voice guide').uncheck();
       await page.getByLabel('Background sound').uncheck();
@@ -92,9 +91,9 @@ test('accessibility: Hindi', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'पहाड़ की चोटी' })).toBeVisible();
   await expect(page.getByText('भावना: डर / चिंता')).toBeVisible();
   await expectNoA11yViolations(page, 'Hindi composed visualization');
-  await page.getByRole('button', { name: 'लाइब्रेरी', exact: true }).click();
-  await page.getByRole('heading', { name: 'सभी अभ्यास' }).waitFor();
-  await expectNoA11yViolations(page, 'Hindi library');
+  await page.getByRole('button', { name: 'वापस' }).click();
+  await page.getByRole('heading', { name: 'या किसी तैयार विज़ुअलाइज़ेशन से शुरू करें' }).waitFor();
+  await expectNoA11yViolations(page, 'Hindi ready-made visualizations');
 });
 
 test('accessibility: Spanish', async ({ page }) => {

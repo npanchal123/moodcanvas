@@ -1,93 +1,44 @@
-import { useLiveQuery } from 'dexie-react-hooks';
 import { useI18n } from '../i18n';
-import { db } from '../lib/db';
-import type { SavedPractice } from '../lib/types';
-import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, type PracticeId } from '../practices';
-import { btnGhost, btnSecondary } from './ui';
+import { dayKey } from '../lib/stats';
+import { beforeFrom, displayEmotions } from '../lib/summary';
+import type { EmotionEntry, PracticeBefore } from '../lib/types';
+import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, practiceFor, type PracticeId } from '../practices';
+import { btnPrimary, btnSecondary } from './ui';
 
-const NONE: SavedPractice[] = [];
-/** Saved visualizations shown on the front page; the rest are in the Library. */
-const SAVED_LIMIT = 4;
-
-const cardClass =
-  'glass flex w-[78%] shrink-0 snap-start flex-col gap-2 rounded-3xl p-4 sm:w-auto';
+const cardClass = 'glass flex w-[78%] shrink-0 snap-start flex-col gap-2 rounded-3xl p-4 sm:w-auto';
 
 /**
- * The Library's guided visualizations on the front page, for anyone who would rather start from one than write:
- * a swipeable row on phones, a grid on wider screens. Saved ones come first when there are any.
+ * The guided visualizations, right on the front page: a swipeable row on phones, a grid on wider screens. When
+ * today's check-in suggests one, it comes first, and it compares the feeling before and after.
  */
-export function ReadyMade({
-  onOpen,
-  onPlaySaved,
-  onSeeAll,
-}: {
-  onOpen: (id: PracticeId) => void;
-  onPlaySaved: (saved: SavedPractice) => void;
-  onSeeAll: () => void;
-}) {
+export function ReadyMade({ entries, onOpen }: { entries: EmotionEntry[]; onOpen: (id: PracticeId, before?: PracticeBefore) => void }) {
   const { t, locale } = useI18n();
   const content = PRACTICE_CONTENT[locale];
-  const saved =
-    useLiveQuery(
-      async () =>
-        (await db.savedPractices.orderBy('createdAt').reverse().toArray())
-          .sort((a, b) => b.favorite - a.favorite)
-          .slice(0, SAVED_LIMIT),
-      [],
-    ) ?? NONE;
-  // The first-ever practice has its own button just below, for newcomers.
-  const ids = PRACTICE_IDS.filter((id) => id !== 'first-visualization');
-  const row = 'flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0';
+  const latest = entries[0];
+  const today = latest && dayKey(new Date(latest.createdAt)) === dayKey(new Date()) ? latest : undefined;
+  const suggested = today ? practiceFor(displayEmotions(today)[0].label) : undefined;
+  // The first-ever practice has its own button in "New to visualization?".
+  const ids = PRACTICE_IDS.filter((id) => id !== 'first-visualization').sort((a, b) => Number(b === suggested) - Number(a === suggested));
 
   return (
     <section aria-labelledby="ready-made-heading" className="fade-up flex flex-col gap-4">
-      <div className="flex flex-wrap items-end justify-between gap-2 px-1">
-        <div>
-          <h2 id="ready-made-heading" className="display text-2xl font-extrabold">
-            {t.create.readyTitle}
-          </h2>
-          <p className="text-(--muted)">{t.create.readyBody}</p>
-        </div>
-        <button type="button" onClick={onSeeAll} className={`${btnGhost} text-sm`}>
-          {t.create.seeAll}
-          <span aria-hidden="true" className="rtl:-scale-x-100">→</span>
-        </button>
+      <div className="px-1">
+        <h2 id="ready-made-heading" className="display text-2xl font-extrabold">
+          {t.create.readyTitle}
+        </h2>
+        <p className="text-(--muted)">{t.create.readyBody}</p>
       </div>
-
-      {saved.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h3 className="px-1 font-semibold">{t.create.savedTitle}</h3>
-          <ul className={row}>
-            {saved.map((s) => (
-              <li key={s.id} className={cardClass}>
-                <p className="flex items-start gap-2 font-bold">
-                  <span aria-hidden="true">{s.script.icon}</span>
-                  <span className="min-w-0 break-words">{s.script.title}</span>
-                  {s.favorite === 1 && <span aria-hidden="true">★</span>}
-                </p>
-                <p className="line-clamp-2 text-sm text-(--muted)">{s.script.summary}</p>
-                <button
-                  type="button"
-                  onClick={() => onPlaySaved(s)}
-                  aria-label={t.practice.openLabel(s.script.title)}
-                  className={`${btnSecondary} mt-auto self-start`}
-                >
-                  <span aria-hidden="true">▶</span>
-                  {t.practice.open}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+      {today && suggested && (
+        <p className="px-1 text-sm font-medium">{t.practice.suggestedBody(t.emotions[displayEmotions(today)[0].label].adjective)}</p>
       )}
-
-      <ul className={row}>
+      <ul className="flex snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
         {ids.map((id) => {
           const script = content.practices[id];
           const meta = PRACTICE_META[id];
           const [light, deep] = meta.hues;
+          const isSuggested = id === suggested;
           return (
-            <li key={id} className={cardClass}>
+            <li key={id} className={`${cardClass} ${isSuggested ? 'ring-2 ring-(--accent)' : ''}`}>
               <div className="flex items-center gap-3">
                 <span
                   aria-hidden="true"
@@ -96,7 +47,14 @@ export function ReadyMade({
                 >
                   {meta.icon}
                 </span>
-                <h3 className="font-bold">{script.title}</h3>
+                <div className="min-w-0">
+                  <h3 className="font-bold">{script.title}</h3>
+                  {isSuggested && (
+                    <span className="rounded-full bg-(--accent) px-2 py-0.5 text-xs font-bold text-(--on-accent)">
+                      {t.practice.suggestedHeading}
+                    </span>
+                  )}
+                </div>
               </div>
               <p className="line-clamp-3 text-sm">{script.summary}</p>
               <p className="text-xs text-(--muted)">
@@ -106,9 +64,9 @@ export function ReadyMade({
               </p>
               <button
                 type="button"
-                onClick={() => onOpen(id)}
+                onClick={() => onOpen(id, isSuggested && today ? beforeFrom(today) : undefined)}
                 aria-label={t.practice.openLabel(script.title)}
-                className={`${btnSecondary} mt-auto self-start`}
+                className={`${isSuggested ? btnPrimary : btnSecondary} mt-auto self-start`}
               >
                 <span aria-hidden="true">▶</span>
                 {t.practice.open}

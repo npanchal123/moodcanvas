@@ -360,8 +360,8 @@ export const pt: BreakerText = {
   library: {
     title: 'Minhas visualizações',
     empty: 'As visualizações que você salvar aparecem aqui, prontas para ouvir de novo.',
-    save: 'Salvar na minha biblioteca',
-    saved: 'Salva na sua biblioteca.',
+    save: 'Salvar em Minhas visualizações',
+    saved: 'Salva em Minhas visualizações.',
     saveFailed: 'Não foi salvo. Tente de novo.',
     favorite: 'Favorita',
     recreate: 'Editar e criar de novo',

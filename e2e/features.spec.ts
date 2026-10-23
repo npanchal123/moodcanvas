@@ -31,9 +31,9 @@ test('composes a personal visualization from the person’s words, with a before
   await page.getByRole('slider').press('Home');
   await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Fear / Anxiety:' })).toContainText('→ 0');
-  // A composed visualization can be kept in the Library.
-  await page.getByRole('button', { name: 'Save to my Library' }).click();
-  await expect(page.getByText('Saved to your Library.')).toBeVisible();
+  // A composed visualization can be kept in My visualizations.
+  await page.getByRole('button', { name: 'Save to My visualizations' }).click();
+  await expect(page.getByText('Saved to My visualizations.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Journal' }).click();
   await expect(page.getByRole('region', { name: 'Practice log' })).toContainText('Your grandma’s garden in Shimla · 2 min');
@@ -193,7 +193,7 @@ test('beginners can learn the basics and try a first practice', async ({ page })
   // It has one length, so there's no length choice.
   await expect(page.getByText('How long?')).toBeHidden();
   await page.getByRole('button', { name: 'Back' }).click();
-  await page.getByRole('button', { name: 'Library', exact: true }).click();
+  // The basics are on the front page now.
   await page.getByText('What if I can’t see pictures?').click();
   await expect(page.getByText(/That’s very common/)).toBeVisible();
 });

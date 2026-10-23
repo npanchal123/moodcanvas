@@ -359,8 +359,8 @@ export const fr: BreakerText = {
   library: {
     title: 'Mes visualisations',
     empty: 'Les visualisations que vous enregistrez apparaissent ici, prêtes à être réécoutées.',
-    save: 'Enregistrer dans ma bibliothèque',
-    saved: 'Enregistrée dans votre bibliothèque.',
+    save: 'Enregistrer dans Mes visualisations',
+    saved: 'Enregistrée dans Mes visualisations.',
     saveFailed: 'L’enregistrement a échoué. Veuillez réessayer.',
     favorite: 'Favori',
     recreate: 'Modifier et recréer',

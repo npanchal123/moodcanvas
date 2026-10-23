@@ -25,13 +25,12 @@ import { COMPOSED_LENGTHS, libraryPlayable, type PracticeId, type Playable } fro
 const History = lazy(() => import('./components/History'));
 const Settings = lazy(() => import('./components/Settings'));
 const Privacy = lazy(() => import('./components/Privacy'));
-const PracticeLibrary = lazy(() => import('./components/PracticeLibrary'));
 const PracticeSession = lazy(() => import('./components/PracticeSession'));
 const Breaker = lazy(() => import('./components/Breaker'));
 const Habits = lazy(() => import('./components/Habits'));
 
-type View = 'today' | 'breaker' | 'habits' | 'practice' | 'history' | 'settings' | 'privacy';
-const VIEW_IDS: View[] = ['today', 'habits', 'breaker', 'practice', 'history', 'settings'];
+type View = 'today' | 'breaker' | 'habits' | 'history' | 'settings' | 'privacy';
+const VIEW_IDS: View[] = ['today', 'habits', 'breaker', 'history', 'settings'];
 // The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
 const PRIVACY_HASH = '#privacy';
 const HOME_URL = import.meta.env.BASE_URL;
@@ -110,7 +109,7 @@ export default function App() {
   }
 
   function openLibraryPractice(id: PracticeId, before?: PracticeBefore) {
-    goTo('practice');
+    goTo('today');
     setPractice({ playable: libraryPlayable(id, locale), before });
     window.scrollTo(0, 0);
   }
@@ -359,24 +358,12 @@ export default function App() {
                 onCreate={handleCreate}
                 aiEnabled={aiEnabled}
                 onFirstPractice={() => openLibraryPractice('first-visualization')}
-                onLearn={() => goTo('practice')}
-                onOpenPractice={(id) => {
-                  // Played right here on the front page, without switching tabs.
-                  setPractice({ playable: libraryPlayable(id, locale) });
-                  window.scrollTo(0, 0);
-                }}
-                onPlaySaved={playSaved}
-              />
-            ))}
-          {view === 'practice' &&
-            (session ?? (
-              <PracticeLibrary
                 entries={entries}
                 logs={logs}
-                onOpen={openLibraryPractice}
+                onOpenPractice={openLibraryPractice}
                 onPlaySaved={playSaved}
-                onCreateAgain={createAgain}
                 onUseAction={(action) => openUnstuck({ ...EMPTY_BREAKER_DRAFT, step: 3, task: action, action })}
+                onCreateAgain={createAgain}
               />
             ))}
           {view === 'breaker' && (
