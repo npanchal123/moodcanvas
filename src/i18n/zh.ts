@@ -119,6 +119,7 @@ export const zh: Messages = {
     pause: '暂停',
     resume: '继续',
     end: '结束',
+    restart: '重新开始',
     paused: '已暂停',
     voiceDevice: '语音：设备自带的声音',
     voiceRecorded: '语音：真人录音',

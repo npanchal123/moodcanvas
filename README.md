@@ -39,38 +39,64 @@ The composer is in `src/lib/compose/`. It runs instantly and offline on the devi
   that work alongside any other scene or goal, and use only the `{place}`, `{topic}` and `{carrier}` tokens.
 - **Journal tags:** the check-in is saved with a tag for its topic, so Journal insights keep working.
 
-## Procrastination Breaker (the "Unstuck" tab)
+## Unstuck: from feeling stuck to one small step
 
-Helps someone go from putting a task off to taking one small, real step. The principle: don't wait for
-motivation; make starting easier.
+Helps someone move from feeling stuck to a visualization made for it, then one manageable real-world step. The
+principle: imagine a better experience, then take one small step toward it. The journey is
+**understand → visualize → act → reflect**, kept to four short screens.
 
-- **The flow:** two screens before the timer, kept short on purpose. Going back keeps every answer.
-  1. **Task:** the task, in the person's own words, with optional quick choices for what makes it hard, such as
-     "the task feels too big" or "I'm distracted by my phone".
-  2. **First step:** a tiny step that fits the kind of task and what makes it hard, with a short tip. It can be
-     edited, swapped or made smaller. Then a focus length (2 minutes by default, 10 or 25) and Start.
-- **Suggestions (`src/lib/breaker/`):** rule-based, on the device. Keywords in any of the nine languages sort
-  the task into one of nine kinds: code, job, exercise, business, writing, study, cleaning, admin, or general.
-  Each kind has concrete steps, a two-minute starter, a "just get set up" step and a rough-draft version. What
-  makes it hard decides which comes first: a too-big task (or no answer) gets the two-minute starter,
-  perfectionism or fear of failing gets the rough draft, and "don't know where to start" gets the first step.
-- **Timer:** worked out from saved timestamps, so it keeps counting when someone switches tabs, and survives a
-  reload. When time runs out unattended, only the planned minutes count as focus.
-- **Reflection:** "I did it" saves in one tap. Stopping early asks what happened, also in one tap: done, some
-  progress, still too hard, interrupted, or rescheduled (which asks for a date). Each answer leads to a fitting
-  next step, such as the next step in the list, a smaller step, another session, or "pick up where you left
-  off". Finishing the starter step never marks the whole task done.
-- **My progress:** saved sessions with filters, details, "pick this up again" and delete. Four counts come
-  straight from saved, finished sessions: sessions, actions completed, focus time, and tasks picked up after
-  rescheduling. There are no streaks or badges.
-- **Storage:** sessions live in the `breakerSessions` table of the device's IndexedDB, like the practice log.
-  They aren't synced to accounts, and "Delete all my data" removes them. Syncing them would need a Supabase
-  table with row-level security, like `0001_entries.sql`.
-- **AI:** none. The optional Claude analysis needs the `/api/analyze` server, which the GitHub Pages site doesn't
-  have, so this feature uses rules only. Adding AI suggestions later would need a similar server endpoint.
-- **Tests:** `src/lib/breaker/breaker.test.ts` and `e2e/breaker.spec.ts`. The browser tests cover the full flow,
-  pause and resume, reloading mid-session, rescheduling and picking a task up again, Hindi, and accessibility in
-  light and dark themes.
+1. **Welcome:** "What's keeping you stuck?" with ten situation cards (procrastinating, overwhelmed, overthinking,
+   lost motivation, afraid of failing, unsure what to focus on, repeating habits, stuck in life, a difficult
+   decision, something else) and an optional text box. A card or a few words is enough. Someone who has used it
+   before also sees a small "Welcome back" card built only from their saved sessions (calm my mind, get focused,
+   continue where I left off, start fresh, and so on), which can be dismissed.
+2. **Understand and choose a feeling:** a short reflection for the situation, a possible obstacle when their
+   words hint at one ("Part of it might be this: …", never stated as fact), optional follow-up chips that fit the
+   situation, how they'd like to feel afterwards (the first choice leads), and the same place tiles as the front
+   page. Strong sadness or fear adds a gentle pointer to support.
+3. **The visualization:** the front page's composer and player (`composeUnstuck` in `src/lib/breaker/`). It adds
+   a line for people who don't picture things ("If you don't see a picture in your mind, simply follow the
+   words…") and, before the closing, a realistic rehearsal chosen by the situation: beginning despite uncertainty,
+   splitting a big pile into parts, responding to a challenge, coming back to the present, a small beginning, or
+   weighing options calmly. The player has pause, restart, a text-only mode (voice off) and an exit; leaving
+   early is recorded as early, never as finished.
+4. **One small step:** "What's one small thing you can do now?" The step fits the kind of task when the words name
+   one (coding, job search, exercise, projects, writing, study, tidying, admin), otherwise the situation (for
+   overthinking: "Write down the decision you need to make and the next piece of information you need"). It can
+   be edited, swapped, made smaller, started now (2, 5, 10 minutes or a custom length), scheduled for later, or
+   skipped.
+
+- **Focus timer:** worked out from saved timestamps, so it keeps counting when someone leaves the page, and
+  survives a reload. Pause, resume, restart, finish early, or "I did it". When time runs out unattended, only the
+  planned minutes count as focus.
+- **How it went:** one tap: completed, some progress, stuck again, decided on something different, or stopped for
+  now. Each gets a supportive reply and a fitting next step. Then two optional questions, "What did you notice?"
+  and "What's one thing you'd like to do next?", saved with **Save session**, which says it saved only after it
+  has. The visualization's words are kept only if they tick the box.
+- **Journal:** an "Unstuck sessions" section with counts, filters (outcome, situation, feeling), details, reading
+  or replaying the visualization, editing the reflection, picking a task up again, starting a new session from
+  an old one, and deleting (removed from IndexedDB, not just hidden).
+- **Library:** "Save to my Library" after any composed visualization (front page or Unstuck). "My visualizations"
+  filters by feeling, place, length and date, marks favourites, plays them again, and reuses a saved step.
+- **Daily commitments:** up to three small things a day, each with an optional description, length, status (not
+  started, in progress, completed, partially completed, skipped), optional reflection and "make it smaller".
+  An optional energy check (low, medium, high) only changes the suggested length. The last seven days are
+  counted from what was recorded: commitments made, completed, partly completed, days with action, and the most
+  common kinds. No streaks.
+- **Safety:** the same on-device crisis check as the front page runs on what they write; if it fires, support
+  lines are shown instead of the journey, and their words are kept.
+- **Storage and privacy:** everything stays on the device. Sessions live in IndexedDB `breakerSessions`, saved
+  visualizations in `savedPractices`, commitments in `commitments` and energy answers in `meta`. Answers in
+  progress are kept in this tab's session storage so a reload loses nothing. None of it is synced, logged or put
+  in URLs, and "Delete all my data" clears all of it, including answers still on screen.
+- **AI:** none; all of this is rule-based and free. AI-written reflections or steps would need a server endpoint
+  (the Claude `/api/analyze` server isn't deployed on GitHub Pages) and a clear notice before sending anything.
+- **Languages:** all nine. The non-English text is AI-drafted, avoids wording that changes with the speaker's
+  gender, and needs review by native speakers.
+- **Tests:** `src/lib/breaker/breaker.test.ts` (suggestions, follow-ups, composing, weekly counts, every
+  language complete) and `e2e/breaker.spec.ts` (the whole journey into the Journal and Library, minimal input,
+  the crisis check, reloads, scheduling and the returning welcome, commitments, Hindi, and accessibility in
+  light and dark).
 
 ## Guided visualization library
 

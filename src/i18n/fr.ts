@@ -126,6 +126,7 @@ export const fr: Messages = {
     pause: 'Pause',
     resume: 'Reprendre',
     end: 'Terminer',
+    restart: 'Recommencer',
     paused: 'En pause',
     voiceDevice: 'Voix : la voix intégrée de votre appareil',
     voiceRecorded: 'Voix : enregistrement naturel',

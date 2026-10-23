@@ -126,6 +126,7 @@ export const hi: Messages = {
     pause: 'रोकें',
     resume: 'जारी रखें',
     end: 'खत्म करें',
+    restart: 'फिर से शुरू करें',
     paused: 'रुका हुआ',
     voiceDevice: 'आवाज़: आपके डिवाइस की अपनी आवाज़',
     voiceRecorded: 'आवाज़: असली जैसी रिकॉर्डिंग',

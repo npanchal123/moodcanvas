@@ -29,8 +29,11 @@ test('composes a personal visualization from the person’s words, with a before
   await expect(page.getByRole('heading', { name: 'Well done' })).toBeFocused();
   await expect(page.getByText(/Before, your anxiety was \d+ out of 100/)).toBeVisible();
   await page.getByRole('slider').press('Home');
-  await page.getByRole('button', { name: 'Save' }).click();
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
   await expect(page.getByRole('status').filter({ hasText: 'Fear / Anxiety:' })).toContainText('→ 0');
+  // A composed visualization can be kept in the Library.
+  await page.getByRole('button', { name: 'Save to my Library' }).click();
+  await expect(page.getByText('Saved to your Library.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Journal' }).click();
   await expect(page.getByRole('region', { name: 'Practice log' })).toContainText('Your grandma’s garden in Shimla · 3 min');

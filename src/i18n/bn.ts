@@ -120,6 +120,7 @@ export const bn: Messages = {
     pause: 'থামান',
     resume: 'আবার চালান',
     end: 'শেষ করুন',
+    restart: 'আবার শুরু করুন',
     paused: 'থামানো আছে',
     voiceDevice: 'কণ্ঠ: আপনার ডিভাইসের নিজস্ব কণ্ঠ',
     voiceRecorded: 'কণ্ঠ: স্বাভাবিক কণ্ঠের রেকর্ডিং',

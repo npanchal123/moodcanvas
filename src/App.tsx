@@ -3,18 +3,20 @@ import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { CrisisBanner } from './components/CrisisBanner';
 import { Onboarding } from './components/Onboarding';
 import { ReminderBanner } from './components/ReminderBanner';
+import type { LibraryDetails } from './components/SaveToLibrary';
 import { CreatedIntro, EMPTY_DRAFT, FEELING_INPUT_ID, Visualize, type Draft } from './components/Visualize';
 import { useI18n } from './i18n';
 import { useAuth, useSync } from './lib/account';
 import { analyzeWithAI } from './lib/aiAnalyzer';
 import { analyze, type AnalysisResult } from './lib/analyzer';
 import { EMPTY_BREAKER_DRAFT, type BreakerDraft } from './lib/breaker/types';
-import { compose, TOPIC_TAGS } from './lib/compose';
+import { DATA_CLEARED, useSessionDraft } from './lib/draftStorage';
+import { compose, TOPIC_TAGS, type GoalId } from './lib/compose';
 import { db } from './lib/db';
 import { addEntry } from './lib/entries';
 import { usePersistentFlag, usePersistentState, usePrefersReducedMotion } from './lib/hooks';
 import { DEFAULT_REMINDER, isReminderSettings, useReminder } from './lib/reminders';
-import type { EmotionEntry, PracticeBefore, PracticeLog } from './lib/types';
+import type { BreakerSession, EmotionEntry, PracticeBefore, PracticeLog, SavedPractice } from './lib/types';
 import { LENGTHS, libraryPlayable, type PracticeId, type Playable } from './practices';
 
 // The library, journal, settings and the player load on first use, keeping the first paint small.
@@ -38,6 +40,8 @@ interface ActivePractice {
   playable: Playable;
   before?: PracticeBefore;
   intro?: ReactNode;
+  /** Set for a composed practice that hasn't been saved to the Library yet. */
+  library?: LibraryDetails;
 }
 
 export default function App() {
@@ -46,7 +50,7 @@ export default function App() {
   const [crisis, setCrisis] = useState<'detected' | 'asked' | null>(null);
   const [practice, setPractice] = useState<ActivePractice | null>(null);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
-  const [breakerDraft, setBreakerDraft] = useState<BreakerDraft>(EMPTY_BREAKER_DRAFT);
+  const [breakerDraft, setBreakerDraft] = useSessionDraft();
   const [calm, setCalm] = usePersistentFlag('moodcanvas.calmMode', false);
   const [onboarded, setOnboarded] = usePersistentFlag('moodcanvas.onboarded', false);
   const [aiEnabled, setAiEnabled] = usePersistentFlag('moodcanvas.aiAnalysis', false);
@@ -64,6 +68,16 @@ export default function App() {
   useEffect(() => {
     document.documentElement.classList.toggle('calm', calm);
   }, [calm]);
+
+  // "Delete all my data" also clears answers still on screen.
+  useEffect(() => {
+    function cleared() {
+      setDraft(EMPTY_DRAFT);
+      setBreakerDraft(EMPTY_BREAKER_DRAFT);
+    }
+    window.addEventListener(DATA_CLEARED, cleared);
+    return () => window.removeEventListener(DATA_CLEARED, cleared);
+  }, [setBreakerDraft]);
 
   useEffect(() => {
     function onHashChange() {
@@ -88,6 +102,54 @@ export default function App() {
     goTo('practice');
     setPractice({ playable: libraryPlayable(id, locale), before });
     window.scrollTo(0, 0);
+  }
+
+  /** Plays a visualization from its saved words: one kept in the Library or with an Unstuck session. */
+  function playSaved(saved: Pick<SavedPractice, 'script'>) {
+    const { script } = saved;
+    setPractice({
+      playable: {
+        id: 'custom',
+        icon: script.icon,
+        hues: script.hues,
+        lengths: LENGTHS,
+        script: {
+          title: script.title,
+          summary: script.summary,
+          segments: script.segments.map((segment, i) => ({ ...segment, id: `s${String(i + 1).padStart(2, '0')}` })),
+        },
+      },
+    });
+    window.scrollTo(0, 0);
+  }
+
+  async function playUnstuck(session: BreakerSession) {
+    if (session.visualization) return playSaved({ script: session.visualization });
+    // Not kept: the same answers compose the same words again.
+    const { BREAKER_TEXT, composeUnstuck, toSavedScript } = await import('./lib/breaker');
+    const task = session.task.trim();
+    const feeling = task ? (analyze(task, { language: locale }).emotions[0]?.label ?? null) : null;
+    const composed = composeUnstuck(
+      BREAKER_TEXT[locale],
+      t,
+      locale,
+      { task, situations: session.situations ?? [], feelings: session.feelings ?? [], scene: session.scene ?? null },
+      feeling,
+    );
+    playSaved({ script: toSavedScript(composed) });
+  }
+
+  function openUnstuck(next?: BreakerDraft) {
+    if (next) setBreakerDraft(next);
+    goTo('breaker');
+    window.scrollTo(0, 0);
+  }
+
+  function visualizeWith(goal: GoalId) {
+    goTo('today');
+    setDraft({ ...EMPTY_DRAFT, goal });
+    window.scrollTo(0, 0);
+    requestAnimationFrame(() => document.getElementById(FEELING_INPUT_ID)?.focus());
   }
 
   function showSupport() {
@@ -152,6 +214,7 @@ export default function App() {
     setPractice({
       playable: { id: 'custom', icon: composed.icon, hues: composed.hues, lengths: LENGTHS, script: composed.script },
       before,
+      library: { scene: composed.scene, goal: composed.goal },
       intro: (
         <>
           <CreatedIntro text={text} result={result} composed={composed} />
@@ -180,6 +243,7 @@ export default function App() {
       practice={practice.playable}
       before={practice.before}
       intro={practice.intro}
+      library={practice.library}
       animate={animate}
       onBack={() => setPractice(null)}
       onCheckIn={newVisualization}
@@ -277,9 +341,40 @@ export default function App() {
               />
             ))}
           {view === 'practice' &&
-            (session ?? <PracticeLibrary entries={entries} logs={logs} onOpen={openLibraryPractice} />)}
-          {view === 'breaker' && <Breaker draft={breakerDraft} onDraftChange={setBreakerDraft} animate={animate} />}
-          {view === 'history' && <History entries={entries} logs={logs} animate={animate} />}
+            (session ?? (
+              <PracticeLibrary
+                entries={entries}
+                logs={logs}
+                onOpen={openLibraryPractice}
+                onPlaySaved={playSaved}
+                onUseAction={(action) => openUnstuck({ ...EMPTY_BREAKER_DRAFT, step: 3, task: action, action })}
+              />
+            ))}
+          {view === 'breaker' && (
+            <Breaker
+              draft={breakerDraft}
+              onDraftChange={setBreakerDraft}
+              animate={animate}
+              onCrisis={() => {
+                setCrisis('detected');
+                window.scrollTo(0, 0);
+                requestAnimationFrame(() => document.getElementById('crisis-heading')?.focus());
+              }}
+              onSupport={showSupport}
+              onVisualize={visualizeWith}
+            />
+          )}
+          {view === 'history' &&
+            (session ?? (
+              <History
+                entries={entries}
+                logs={logs}
+                animate={animate}
+                onContinueUnstuck={openUnstuck}
+                onOpenUnstuck={() => openUnstuck()}
+                onPlayUnstuck={(s) => void playUnstuck(s)}
+              />
+            ))}
           {view === 'settings' && (
             <Settings
               entries={entries}

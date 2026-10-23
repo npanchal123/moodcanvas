@@ -101,36 +101,7 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
 
         <fieldset>
           <legend className="mb-3 font-semibold">{t.create.sceneLegend}</legend>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
-            {SCENE_IDS.map((id) => {
-              const pressed = draft.scene === id;
-              const [light, deep] = SCENE_LOOK[id].hues;
-              return (
-                <button
-                  key={id}
-                  type="button"
-                  aria-pressed={pressed}
-                  onClick={() => set({ scene: pressed ? null : id })}
-                  style={{ background: `radial-gradient(circle at 30% 20%, ${light}, ${deep})` }}
-                  className={`group relative flex aspect-[4/3] min-h-20 flex-col items-center justify-end overflow-hidden rounded-2xl p-1.5 shadow-sm transition-transform hover:-translate-y-0.5 ${
-                    pressed ? 'ring-4 ring-(--accent) ring-offset-2 ring-offset-(--bg)' : ''
-                  }`}
-                >
-                  <span aria-hidden="true" className="absolute inset-x-0 top-[18%] text-center text-3xl drop-shadow transition-transform group-hover:scale-110">
-                    {SCENE_LOOK[id].icon}
-                  </span>
-                  <span className="relative w-full truncate rounded-xl bg-(--surface-strong) px-1.5 py-0.5 text-center text-xs font-semibold text-(--text) sm:text-sm">
-                    {content.scenes[id].name}
-                  </span>
-                  {pressed && (
-                    <span aria-hidden="true" className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-(--surface-strong) text-sm font-bold text-(--accent)">
-                      ✓
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <SceneTiles value={draft.scene} onChange={(scene) => set({ scene })} />
         </fieldset>
 
         <fieldset>
@@ -178,6 +149,44 @@ export function Visualize({ draft, onDraftChange, onCreate, aiEnabled, onFirstPr
           </button>
         </div>
       </section>
+    </div>
+  );
+}
+
+/** The places to imagine, as picture tiles. Choosing the chosen one again clears it. */
+export function SceneTiles({ value, onChange }: { value: SceneId | null; onChange: (scene: SceneId | null) => void }) {
+  const { locale } = useI18n();
+  const content = COMPOSE_CONTENT[locale];
+  return (
+    <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
+      {SCENE_IDS.map((id) => {
+        const pressed = value === id;
+        const [light, deep] = SCENE_LOOK[id].hues;
+        return (
+          <button
+            key={id}
+            type="button"
+            aria-pressed={pressed}
+            onClick={() => onChange(pressed ? null : id)}
+            style={{ background: `radial-gradient(circle at 30% 20%, ${light}, ${deep})` }}
+            className={`group relative flex aspect-[4/3] min-h-20 flex-col items-center justify-end overflow-hidden rounded-2xl p-1.5 shadow-sm transition-transform hover:-translate-y-0.5 ${
+              pressed ? 'ring-4 ring-(--accent) ring-offset-2 ring-offset-(--bg)' : ''
+            }`}
+          >
+            <span aria-hidden="true" className="absolute inset-x-0 top-[18%] text-center text-3xl drop-shadow transition-transform group-hover:scale-110">
+              {SCENE_LOOK[id].icon}
+            </span>
+            <span className="relative w-full truncate rounded-xl bg-(--surface-strong) px-1.5 py-0.5 text-center text-xs font-semibold text-(--text) sm:text-sm">
+              {content.scenes[id].name}
+            </span>
+            {pressed && (
+              <span aria-hidden="true" className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-(--surface-strong) text-sm font-bold text-(--accent)">
+                ✓
+              </span>
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }

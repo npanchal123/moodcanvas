@@ -134,6 +134,7 @@ export const ru: Messages = {
     pause: 'Пауза',
     resume: 'Продолжить',
     end: 'Завершить',
+    restart: 'Начать заново',
     paused: 'На паузе',
     voiceDevice: 'Голос: встроенный голос устройства',
     voiceRecorded: 'Голос: живая запись',

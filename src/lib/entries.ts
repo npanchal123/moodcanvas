@@ -1,3 +1,4 @@
+import { clearSessionDraft, DATA_CLEARED } from './draftStorage';
 import { db, getMeta } from './db';
 import type { EmotionEntry } from './types';
 
@@ -57,16 +58,22 @@ export async function deleteEntry(id: string): Promise<void> {
 
 export async function deleteAllEntries(): Promise<void> {
   const track = await tracksDeletions();
-  await db.transaction('rw', [db.entries, db.deletions, db.practices, db.breakerSessions], async () => {
+  await db.transaction('rw', [db.entries, db.deletions, db.practices, db.breakerSessions, db.savedPractices, db.commitments, db.meta], async () => {
     const ids = await db.entries.toCollection().primaryKeys();
     await db.entries.clear();
     await db.practices.clear();
     await db.breakerSessions.clear();
+    await db.savedPractices.clear();
+    await db.commitments.clear();
+    // The energy answers for each day.
+    await db.meta.where('key').startsWith('energy:').delete();
     if (track) {
       const deletedAt = new Date().toISOString();
       await db.deletions.bulkPut(ids.map((id) => ({ id, deletedAt })));
     }
   });
+  clearSessionDraft();
+  window.dispatchEvent(new Event(DATA_CLEARED));
   notify();
 }
 

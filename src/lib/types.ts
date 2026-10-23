@@ -1,4 +1,5 @@
-import type { BreakerOutcome, ObstacleId } from './breaker/types';
+import type { BreakerOutcome, CommitmentStatus, FeelingId, ObstacleId, SituationId } from './breaker/types';
+import type { GoalId, SceneId } from './compose/types';
 import type { EmotionLabel } from './emotions';
 
 export interface EmotionScore {
@@ -60,13 +61,22 @@ export interface PracticeLog {
 }
 
 /**
- * One Procrastination Breaker session: a task someone was putting off, what made it hard, the small step they
- * chose and how the focus time went. Kept on this device only, like the practice log.
+ * One Unstuck session: what had someone stuck, how they wanted to feel, the visualization, the small step they
+ * chose, how the focus time went and what they noticed. Kept on this device only, like the practice log. Sessions
+ * from the earlier Procrastination Breaker have `why`, `vision`, `setAside` and `plan` instead of the newer fields.
  */
 export interface BreakerSession {
   id: string;
-  /** The task in their own words. */
+  /** What had them stuck, in their own words (or the situations chosen, when they wrote nothing). */
   task: string;
+  situations?: SituationId[];
+  /** How they wanted to feel; the first one led the visualization. */
+  feelings?: FeelingId[];
+  scene?: SceneId | null;
+  /** Whether the visualization was played to the end. Unset when there was none. */
+  practiceCompleted?: boolean;
+  /** The visualization's words, only when they chose to keep them. */
+  visualization?: SavedScript;
   obstacles: ObstacleId[];
   /** Their own words when they chose "Something else". */
   otherObstacle?: string;
@@ -78,7 +88,7 @@ export interface BreakerSession {
   setAside?: string;
   /** The advice shown, as it read in their language at the time. */
   intervention: string;
-  /** The tiny next step they chose. */
+  /** The tiny next step they chose. Empty when they skipped taking action. */
   action: string;
   /** If–then plan. */
   plan?: string;
@@ -90,7 +100,10 @@ export interface BreakerSession {
   /** 'active' while the timer screen is open or paused; 'finished' once the outcome is recorded. */
   status: 'active' | 'finished';
   outcome?: BreakerOutcome;
+  /** "What did you notice?" */
   reflection?: string;
+  /** "What's one thing you'd like to do next?" */
+  nextIntent?: string;
   /** ISO timestamp chosen when rescheduling. */
   rescheduledFor?: string;
   /** The earlier session this one picks up. */
@@ -98,6 +111,46 @@ export interface BreakerSession {
   /** ISO timestamps */
   startedAt: string;
   endedAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** A visualization's words and look, enough to play it again. */
+export interface SavedScript {
+  title: string;
+  summary: string;
+  icon: string;
+  hues: [string, string];
+  /** Each step's text and the shortest length it belongs in (3, 5 or 10 minutes). */
+  segments: { text: string; tier: 3 | 5 | 10; pause: number; breath?: boolean }[];
+}
+
+/** A visualization saved to the Library. Kept on this device only. */
+export interface SavedPractice {
+  id: string;
+  script: SavedScript;
+  scene: SceneId | null;
+  goal: GoalId;
+  /** The feeling chosen in Unstuck, when it was made there. */
+  feeling?: FeelingId;
+  /** Minutes it was last played for. */
+  minutes: number;
+  favorite: 0 | 1;
+  /** The small step chosen alongside it, if any. */
+  action?: string;
+  createdAt: string;
+}
+
+/** A daily commitment: one small thing planned for a day. Kept on this device only. */
+export interface Commitment {
+  id: string;
+  /** Local date, YYYY-MM-DD. */
+  date: string;
+  title: string;
+  description?: string;
+  minutes: number;
+  status: CommitmentStatus;
+  reflection?: string;
   createdAt: string;
   updatedAt: string;
 }

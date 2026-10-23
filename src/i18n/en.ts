@@ -136,6 +136,7 @@ export const en = {
     pause: 'Pause',
     resume: 'Resume',
     end: 'End',
+    restart: 'Restart',
     paused: 'Paused',
     voiceDevice: 'Voice: your device’s built-in voice',
     voiceRecorded: 'Voice: natural voice recording',

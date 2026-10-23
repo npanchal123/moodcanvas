@@ -4,12 +4,14 @@ import { deleteEntry } from '../lib/entries';
 import { weeklyReflection } from '../lib/reflection';
 import { entriesWithin, frequency, streak } from '../lib/stats';
 import { displayEmotions, effectiveIntensity } from '../lib/summary';
-import type { EmotionEntry, PracticeLog } from '../lib/types';
+import type { BreakerDraft } from '../lib/breaker/types';
+import type { BreakerSession, EmotionEntry, PracticeLog } from '../lib/types';
 import { PRACTICE_CONTENT, PRACTICE_IDS, PRACTICE_META, type PracticeId } from '../practices';
 import { EmotionBloom } from './EmotionBloom';
 import { FrequencyChart } from './FrequencyChart';
 import { Insights } from './Insights';
 import { MoodCalendar } from './MoodCalendar';
+import { BreakerProgress } from './BreakerProgress';
 import { btnGhost, card, toggle } from './ui';
 
 const RANGES = [7, 30] as const;
@@ -18,6 +20,10 @@ interface Props {
   entries: EmotionEntry[];
   logs: PracticeLog[];
   animate: boolean;
+  /** Unstuck sessions: open Unstuck at a draft, open a running session, or play a session's visualization. */
+  onContinueUnstuck: (draft: BreakerDraft) => void;
+  onOpenUnstuck: () => void;
+  onPlayUnstuck: (session: BreakerSession) => void;
 }
 
 const LOG_LIMIT = 20;
@@ -28,7 +34,7 @@ function isPracticeId(id: string): id is PracticeId {
 }
 
 /** Default export so App can load it lazily. */
-export default function History({ entries, logs, animate }: Props) {
+export default function History({ entries, logs, animate, onContinueUnstuck, onOpenUnstuck, onPlayUnstuck }: Props) {
   const { t, locale } = useI18n();
   const [days, setDays] = useState<(typeof RANGES)[number]>(7);
   const [tag, setTag] = useState('');
@@ -138,6 +144,8 @@ export default function History({ entries, logs, animate }: Props) {
         </dl>
         <FrequencyChart rows={rows} days={days} animate={animate} />
       </section>
+
+      <BreakerProgress onContinue={onContinueUnstuck} onOpenActive={onOpenUnstuck} onPlay={onPlayUnstuck} />
 
       <section aria-labelledby="practice-log-heading" className={card}>
         <h2 id="practice-log-heading" className="mb-3 text-xl font-semibold">

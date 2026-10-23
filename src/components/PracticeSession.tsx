@@ -7,6 +7,7 @@ import { usePersistentFlag, usePersistentState } from '../lib/hooks';
 import { formatClock, planPauses, segmentsFor } from '../lib/session';
 import type { PracticeBefore, PracticeLog } from '../lib/types';
 import { LENGTHS, type Minutes, type Playable } from '../practices';
+import { SaveToLibrary, type LibraryDetails } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 
 interface Props {
@@ -18,6 +19,10 @@ interface Props {
   animate: boolean;
   onBack: () => void;
   onCheckIn: () => void;
+  /** Lets a composed practice be saved to the Library afterwards. */
+  library?: LibraryDetails;
+  /** Called instead of showing the usual "after" screen, e.g. to go on to Unstuck's small step. */
+  onComplete?: (completed: boolean) => void;
 }
 
 type Stage = 'ready' | 'playing' | 'after';
@@ -25,7 +30,7 @@ type Stage = 'ready' | 'playing' | 'after';
 const isMinutes = (value: unknown): value is Minutes => LENGTHS.includes(value as Minutes);
 
 /** Default export so App can load it lazily. */
-export default function PracticeSession({ practice, before, intro, animate, onBack, onCheckIn }: Props) {
+export default function PracticeSession({ practice, before, intro, animate, onBack, onCheckIn, library, onComplete }: Props) {
   const { t } = useI18n();
   const { script, lengths } = practice;
   const [preferred, setPreferred] = usePersistentState<Minutes>('moodcanvas.practiceMinutes', 3, isMinutes);
@@ -34,6 +39,8 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
   const [sound, setSound] = usePersistentFlag('moodcanvas.practiceSound', true);
   const [stage, setStage] = useState<Stage>('ready');
   const [log, setLog] = useState<PracticeLog | null>(null);
+  // Changing this starts the player again from the beginning.
+  const [run, setRun] = useState(0);
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   // Each stage starts with its heading focused, so keyboard and screen reader users know where they are.
@@ -59,7 +66,8 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
     };
     setLog(entry);
     void logPractice(entry);
-    setStage('after');
+    if (onComplete) onComplete(completed);
+    else setStage('after');
   }
 
   const title = (
@@ -72,6 +80,7 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
   if (stage === 'playing') {
     return (
       <Player
+        key={run}
         practice={practice}
         minutes={minutes}
         voice={voice}
@@ -80,12 +89,22 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
         title={title}
         headingRef={headingRef}
         onFinish={finish}
+        onRestart={() => setRun((r) => r + 1)}
       />
     );
   }
 
   if (stage === 'after' && log) {
-    return <After log={log} title={title} headingRef={headingRef} onBack={onBack} onCheckIn={onCheckIn} />;
+    return (
+      <After
+        log={log}
+        title={title}
+        headingRef={headingRef}
+        onBack={onBack}
+        onCheckIn={onCheckIn}
+        save={library && <SaveToLibrary practice={practice} minutes={minutes} details={library} />}
+      />
+    );
   }
 
   return (
@@ -218,9 +237,10 @@ interface PlayerProps {
   title: React.ReactNode;
   headingRef: React.RefObject<HTMLHeadingElement>;
   onFinish: (completed: boolean, startedAt: string) => void;
+  onRestart: () => void;
 }
 
-function Player({ practice, minutes, voice, sound, animate, title, headingRef, onFinish }: PlayerProps) {
+function Player({ practice, minutes, voice, sound, animate, title, headingRef, onFinish, onRestart }: PlayerProps) {
   const { t, locale } = useI18n();
   const { script, hues } = practice;
   const segments = useMemo(() => segmentsFor(script, minutes), [script, minutes]);
@@ -383,6 +403,10 @@ function Player({ practice, minutes, voice, sound, animate, title, headingRef, o
         <button type="button" onClick={togglePause} disabled={!narrator} className={btnSecondary}>
           {paused ? t.practice.resume : t.practice.pause}
         </button>
+        <button type="button" onClick={onRestart} className={btnSecondary}>
+          <span aria-hidden="true">↺</span>
+          {t.practice.restart}
+        </button>
         <button type="button" onClick={() => onFinish(false, startedAt.current)} className={btnGhost}>
           {t.practice.end}
         </button>
@@ -398,9 +422,10 @@ interface AfterProps {
   headingRef: React.RefObject<HTMLHeadingElement>;
   onBack: () => void;
   onCheckIn: () => void;
+  save?: React.ReactNode;
 }
 
-function After({ log, title, headingRef, onBack, onCheckIn }: AfterProps) {
+function After({ log, title, headingRef, onBack, onCheckIn, save }: AfterProps) {
   const { t } = useI18n();
   const before = log.before;
   const [rating, setRating] = useState(before ? Math.round(before.intensity / 10) : 5);
@@ -479,6 +504,8 @@ function After({ log, title, headingRef, onBack, onCheckIn }: AfterProps) {
       <p role="status" className="text-lg">
         {message}
       </p>
+
+      {save}
 
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={onBack} className={btnSecondary}>

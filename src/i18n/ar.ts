@@ -134,6 +134,7 @@ export const ar: Messages = {
     pause: 'إيقاف مؤقت',
     resume: 'متابعة',
     end: 'إنهاء',
+    restart: 'البدء من جديد',
     paused: 'متوقف مؤقتًا',
     voiceDevice: 'الصوت: الصوت المدمج في جهازك',
     voiceRecorded: 'الصوت: تسجيل بصوت طبيعي',
