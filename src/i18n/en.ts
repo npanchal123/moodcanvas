@@ -54,6 +54,11 @@ export const en = {
     notificationBody: 'How are you feeling? Tap to open Viz it.',
     icsSummary: 'Check in with Viz it',
     icsDescription: (url: string) => `How are you feeling? Open Viz it: ${url}`,
+    commitmentTitle: 'Reminder: your commitment',
+    commitmentBody: (title: string) => `Time for: ${title}`,
+    commitmentIcs: (url: string) => `Your daily commitment in Viz it: ${url}`,
+    markDone: 'Mark done',
+    snooze: 'Snooze 10 min',
   },
   result: {
     mostly: (adjective: string) => `Mostly ${adjective}`,

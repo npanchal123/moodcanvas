@@ -29,6 +29,7 @@ async function playVisualization(page: Page, finish: 'end' | 'early' = 'end') {
 }
 
 test('the whole journey: understand, visualize, act, reflect, and find it in the Journal and Library', async ({ page }) => {
+  test.setTimeout(90_000); // The longest journey in the suite.
   await page.clock.install();
   await skipOnboarding(page);
   await openUnstuck(page);
@@ -314,6 +315,48 @@ test('daily commitments: a quick checklist, up to three, sized by energy, with a
   await page.getByRole('button', { name: 'More options: Drink a glass of water' }).click();
   await page.getByRole('button', { name: 'Remove: Drink a glass of water' }).click();
   await expect(page.getByLabel('Add a commitment')).toBeVisible();
+});
+
+test('a commitment reminder pops up at the chosen time, on any page, and can be snoozed or done', async ({ page, context }) => {
+  await context.grantPermissions(['notifications']);
+  await page.clock.install({ time: new Date(2026, 9, 23, 18, 0) });
+  await skipOnboarding(page);
+  await openUnstuck(page);
+  await page.getByRole('button', { name: 'Daily commitments' }).click();
+  await page.getByLabel('Add a commitment').fill('Reply to the bank email');
+  await page.getByLabel('Add a commitment').press('Enter');
+
+  await page.getByRole('button', { name: 'Remind me at: Reply to the bank email' }).click();
+  await page.getByRole('button', { name: 'Set reminder' }).click();
+  await expect(page.getByText('Choose a time first.')).toBeVisible();
+  await page.getByLabel('Remind me at', { exact: true }).fill('18:02');
+  await page.getByRole('button', { name: 'Set reminder' }).click();
+  await expect(page.getByText('Reminder set.')).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Remind me at: Reply to the bank email 6:02/ })).toBeVisible();
+
+  // A calendar event, for when Viz it is closed.
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Add to calendar' }).click();
+  expect((await download).suggestedFilename()).toBe('vizit-commitment.ics');
+
+  // It pops up on whatever page is open.
+  await page.getByRole('button', { name: 'Library' }).click();
+  const pop = page.getByRole('region', { name: 'Reminder: your commitment' });
+  await expect(pop).toBeHidden();
+  await page.clock.runFor('02:30');
+  await expect(pop).toContainText('Time for: Reply to the bank email');
+  await expectNoA11yViolations(page, 'reminder pop-up');
+  await page.screenshot({ path: 'test-results/reminder-pop.png' });
+  await pop.getByRole('button', { name: 'Snooze 10 min' }).click();
+  await expect(pop).toBeHidden();
+  await page.clock.runFor('10:30');
+  await expect(pop).toBeVisible();
+  await pop.getByRole('button', { name: 'Mark done' }).click();
+  await expect(pop).toBeHidden();
+
+  await page.getByRole('button', { name: 'Unstuck' }).click();
+  await page.getByRole('button', { name: 'Daily commitments' }).click();
+  await expect(page.getByRole('checkbox', { name: 'Reply to the bank email' })).toHaveAttribute('aria-checked', 'true');
 });
 
 for (const scheme of ['light', 'dark'] as const) {

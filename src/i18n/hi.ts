@@ -47,6 +47,11 @@ export const hi: Messages = {
     notificationBody: 'आप कैसा महसूस कर रहे हैं? Viz it खोलने के लिए टैप करें।',
     icsSummary: 'Viz it पर चेक-इन',
     icsDescription: (url: string) => `आप कैसा महसूस कर रहे हैं? Viz it खोलें: ${url}`,
+    commitmentTitle: 'याद दिलाना: आपका वादा',
+    commitmentBody: (title) => `अब समय है: ${title}`,
+    commitmentIcs: (url) => `Viz it में आपका आज का वादा: ${url}`,
+    markDone: 'पूरा हुआ',
+    snooze: '10 मिनट बाद',
   },
   result: {
     mostly: (adjective: string) => `ज़्यादातर ${adjective}`,

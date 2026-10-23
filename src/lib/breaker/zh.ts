@@ -425,6 +425,16 @@ export const zh: BreakerText = {
     progress: (done, total) => `已完成 ${done}/${total}`,
     vibe: { none: '选一件吧，小事也算数。', some: '在前进了，保持轻松。', all: '全部完成，这就是说到做到 ✨' },
     more: '更多选项',
+    reminder: {
+      label: '提醒时间',
+      set: '设置提醒',
+      clear: '取消提醒',
+      calendar: '添加到日历',
+      note: '只要 Viz it 开着就会弹出，即使在其他标签页。想在应用关闭时也收到提醒，请添加到日历。',
+      blocked: '此浏览器已屏蔽通知，所以提醒只会在 Viz it 内弹出。',
+      saved: '提醒已设置。',
+      need: '请先选择时间。',
+    },
   },
 
   categoryNames: {

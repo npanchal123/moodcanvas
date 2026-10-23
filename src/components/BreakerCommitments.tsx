@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useEffect, useState } from 'react';
+import { useI18n } from '../i18n';
 import {
   commitmentWeek,
   ENERGY_LEVELS,
@@ -12,7 +13,9 @@ import {
   type Energy,
 } from '../lib/breaker';
 import { addCommitment, deleteCommitment, getEnergy, setEnergy, updateCommitment } from '../lib/breaker/store';
+import { buildCommitmentIcs, isTime, setCommitmentReminder } from '../lib/commitmentReminders';
 import { db } from '../lib/db';
+import { downloadBlob } from '../lib/export';
 import type { Commitment } from '../lib/types';
 import { btnGhost, btnSecondary, card, toggle } from './ui';
 
@@ -301,6 +304,8 @@ function QuickAdd({
 function CommitmentItem({ item, text, animate }: { item: Commitment; text: BreakerText; animate: boolean }) {
   const c = text.commitments;
   const [open, setOpen] = useState(false);
+  const [bell, setBell] = useState(false);
+  const { t } = useI18n();
   const [reflection, setReflection] = useState(item.reflection ?? '');
   const [saved, setSaved] = useState(false);
   const done = item.status === 'done';
@@ -353,6 +358,19 @@ function CommitmentItem({ item, text, animate }: { item: Commitment; text: Break
             >
               ⏱ {text.mins(item.minutes)}
             </button>
+            <button
+              type="button"
+              aria-expanded={bell}
+              aria-controls={`commitment-bell-${item.id}`}
+              aria-label={`${c.reminder.label}: ${item.title}${item.remindAt ? ` ${formatTime(item.remindAt, t.htmlLang)}` : ''}`}
+              onClick={() => setBell((b) => !b)}
+              className={`inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 font-semibold ${
+                item.remindAt ? 'bg-(--accent-soft) text-(--accent)' : 'bg-(--surface-alt) text-(--muted) hover:text-(--text)'
+              }`}
+            >
+              <span aria-hidden="true">🔔</span>
+              {item.remindAt && formatTime(item.remindAt, t.htmlLang)}
+            </button>
             {item.status !== 'todo' && !done && (
               <span className="rounded-full border border-(--border) px-2.5 py-1 font-semibold">{c.statuses[item.status]}</span>
             )}
@@ -369,6 +387,8 @@ function CommitmentItem({ item, text, animate }: { item: Commitment; text: Break
           <span aria-hidden="true">⋯</span>
         </button>
       </div>
+
+      {bell && <ReminderEditor item={item} text={text} id={`commitment-bell-${item.id}`} />}
 
       {open && (
         <div id={panelId} className="flex flex-col gap-3 border-t border-(--border) p-3">
@@ -430,5 +450,92 @@ function CommitmentItem({ item, text, animate }: { item: Commitment; text: Break
         </div>
       )}
     </li>
+  );
+}
+
+/** "18:30" in the person's own clock style, e.g. "6:30 PM". */
+function formatTime(time: string, lang: string): string {
+  const [h, m] = time.split(':').map(Number);
+  return new Intl.DateTimeFormat(lang, { timeStyle: 'short' }).format(new Date(2000, 0, 1, h, m));
+}
+
+function permission(): NotificationPermission | 'unsupported' {
+  return 'Notification' in window ? Notification.permission : 'unsupported';
+}
+
+/** Sets a time for a commitment's reminder, and offers it as a calendar event for when Viz it is closed. */
+function ReminderEditor({ item, text, id }: { item: Commitment; text: BreakerText; id: string }) {
+  const { t } = useI18n();
+  const r = text.commitments.reminder;
+  const [time, setTime] = useState(item.remindAt ?? '');
+  const [state, setState] = useState<'idle' | 'saved' | 'need'>('idle');
+  const [allowed, setAllowed] = useState(permission);
+  const inputId = `${id}-time`;
+
+  async function save() {
+    if (!isTime(time)) {
+      setState('need');
+      document.getElementById(inputId)?.focus();
+      return;
+    }
+    // Asked for here, right after the tap, which is when browsers allow it.
+    if (allowed === 'default') setAllowed(await Notification.requestPermission());
+    await setCommitmentReminder(item.id, time);
+    setState('saved');
+  }
+
+  function calendar() {
+    const ics = buildCommitmentIcs({ ...item, remindAt: time }, window.location.origin + import.meta.env.BASE_URL, t);
+    downloadBlob(new Blob([ics], { type: 'text/calendar' }), 'vizit-commitment.ics');
+  }
+
+  return (
+    <div id={id} className="flex flex-col gap-3 border-t border-(--border) p-3">
+      <div className="flex flex-wrap items-end gap-2">
+        <div className="flex flex-col gap-1">
+          <label htmlFor={inputId} className="text-sm font-semibold">
+            {r.label}
+          </label>
+          <input
+            id={inputId}
+            type="time"
+            value={time}
+            onChange={(e) => {
+              setTime(e.target.value);
+              setState('idle');
+            }}
+            aria-invalid={state === 'need' ? true : undefined}
+            className="field min-h-11 rounded-full border border-(--border) bg-(--surface-strong) px-3"
+          />
+        </div>
+        <button type="button" onClick={() => void save()} className={btnSecondary}>
+          <span aria-hidden="true">🔔</span>
+          {r.set}
+        </button>
+        {item.remindAt && (
+          <button
+            type="button"
+            onClick={() => {
+              setTime('');
+              setState('idle');
+              void setCommitmentReminder(item.id, null);
+            }}
+            className={btnGhost}
+          >
+            {r.clear}
+          </button>
+        )}
+      </div>
+      <p role="status" className={state === 'need' ? 'text-sm font-medium text-(--danger)' : 'text-sm font-medium'}>
+        {state === 'saved' ? `✓ ${r.saved}` : state === 'need' ? r.need : ''}
+      </p>
+      <p className="text-sm text-(--muted)">{allowed === 'denied' || allowed === 'unsupported' ? r.blocked : r.note}</p>
+      {isTime(time) && (
+        <button type="button" onClick={calendar} className={`${btnGhost} self-start text-sm`}>
+          <span aria-hidden="true">📅</span>
+          {r.calendar}
+        </button>
+      )}
+    </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
+import { CommitmentReminderPop } from './components/CommitmentReminderPop';
 import { CrisisBanner } from './components/CrisisBanner';
 import { Onboarding } from './components/Onboarding';
 import { ReminderBanner } from './components/ReminderBanner';
@@ -12,6 +13,7 @@ import { analyze, type AnalysisResult } from './lib/analyzer';
 import { EMPTY_BREAKER_DRAFT, type BreakerDraft } from './lib/breaker/types';
 import { DATA_CLEARED, useSessionDraft } from './lib/draftStorage';
 import { compose, TOPIC_TAGS, type GoalId } from './lib/compose';
+import { useCommitmentReminders } from './lib/commitmentReminders';
 import { db } from './lib/db';
 import { addEntry } from './lib/entries';
 import { usePersistentFlag, usePersistentState, usePrefersReducedMotion } from './lib/hooks';
@@ -64,6 +66,7 @@ export default function App() {
   const entries = useLiveQuery(() => db.entries.orderBy('createdAt').reverse().toArray(), []) ?? NO_ENTRIES;
   const logs = useLiveQuery(() => db.practices.orderBy('startedAt').reverse().toArray(), []) ?? NO_LOGS;
   const reminderState = useReminder(reminder, entries, t);
+  const commitmentReminder = useCommitmentReminders(t);
 
   useEffect(() => {
     document.documentElement.classList.toggle('calm', calm);
@@ -413,6 +416,13 @@ export default function App() {
           </ul>
         </nav>
       </footer>
+
+      <CommitmentReminderPop
+        due={commitmentReminder.due}
+        onDone={() => void commitmentReminder.done()}
+        onSnooze={() => void commitmentReminder.snooze()}
+        onDismiss={commitmentReminder.dismiss}
+      />
 
       <Onboarding open={!onboarded && view !== 'privacy'} onDone={() => setOnboarded(true)} />
     </>

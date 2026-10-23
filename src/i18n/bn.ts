@@ -41,6 +41,11 @@ export const bn: Messages = {
     notificationBody: 'আপনি কেমন অনুভব করছেন? Viz it খুলতে ট্যাপ করুন।',
     icsSummary: 'Viz it-এ মনের খবর লিখুন',
     icsDescription: (url: string) => `আপনি কেমন অনুভব করছেন? Viz it খুলুন: ${url}`,
+    commitmentTitle: 'মনে করিয়ে দেওয়া: আপনার প্রতিশ্রুতি',
+    commitmentBody: (title) => `এখন সময়: ${title}`,
+    commitmentIcs: (url) => `Viz it-এ আপনার আজকের প্রতিশ্রুতি: ${url}`,
+    markDone: 'শেষ হয়েছে',
+    snooze: '১০ মিনিট পরে',
   },
   result: {
     mostly: (adjective: string) => `মূলত ${adjective}`,

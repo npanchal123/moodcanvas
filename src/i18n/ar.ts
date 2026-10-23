@@ -55,6 +55,11 @@ export const ar: Messages = {
     notificationBody: 'ما شعورك الآن؟ المس لفتح Viz it.',
     icsSummary: 'تسجيل المشاعر في Viz it',
     icsDescription: (url: string) => `ما شعورك الآن؟ افتح Viz it: ${url}`,
+    commitmentTitle: 'تذكير: التزامك',
+    commitmentBody: (title) => `حان وقت: ${title}`,
+    commitmentIcs: (url) => `التزامك اليومي في Viz it: ${url}`,
+    markDone: 'تمّ',
+    snooze: 'تأجيل 10 دقائق',
   },
   result: {
     mostly: (adjective: string) => `غالبًا: ${adjective}`,

@@ -44,6 +44,11 @@ export const es: Messages = {
     notificationBody: '¿Cómo te sientes? Toca para abrir Viz it.',
     icsSummary: 'Registro en Viz it',
     icsDescription: (url: string) => `¿Cómo te sientes? Abre Viz it: ${url}`,
+    commitmentTitle: 'Recordatorio: tu compromiso',
+    commitmentBody: (title) => `Es la hora de: ${title}`,
+    commitmentIcs: (url) => `Tu compromiso del día en Viz it: ${url}`,
+    markDone: 'Marcar como hecho',
+    snooze: 'Posponer 10 min',
   },
   result: {
     mostly: (adjective: string) => `Sobre todo ${adjective}`,

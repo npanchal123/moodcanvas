@@ -429,6 +429,16 @@ export const es: BreakerText = {
     progress: (done, total) => `${done} de ${total} hechas`,
     vibe: { none: 'Elige una. Lo pequeño cuenta.', some: 'Vas avanzando. Mantenlo ligero.', all: 'Todo hecho. Eso es cumplir de verdad ✨' },
     more: 'Más opciones',
+    reminder: {
+      label: 'Recuérdamelo a las',
+      set: 'Poner recordatorio',
+      clear: 'Quitar recordatorio',
+      calendar: 'Añadir al calendario',
+      note: 'Aparece mientras Viz it está abierto, incluso en otra pestaña. Para recibirlo con la app cerrada, añádelo a tu calendario.',
+      blocked: 'Las notificaciones están bloqueadas en este navegador, así que el recordatorio solo aparece dentro de Viz it.',
+      saved: 'Recordatorio puesto.',
+      need: 'Elige primero una hora.',
+    },
   },
 
   categoryNames: {

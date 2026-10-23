@@ -80,6 +80,9 @@ principle: imagine a better experience, then take one small step toward it. The 
   filters by feeling, place, length and date, marks favourites, plays them again, and reuses a saved step.
 - **Daily commitments:** a quick checklist: type a line and press Enter, or tap an idea, then tap the circle to tick it off (a ring and a friendly line show the day's progress). Up to three a day, each with a length (tap to change) and, under "More options", other statuses (not
   started, in progress, completed, partially completed, skipped), optional reflection and "make it smaller".
+  Each can have a reminder time (the bell): it pops up inside Viz it on any page, or as a system notification when
+  the app is in a background tab, with "Mark done" and "Snooze 10 min". A web page can't notify when it's fully
+  closed without a push server, so the same reminder can be added to the phone's calendar as an event.
   An optional energy check (low, medium, high) only changes the suggested length. The last seven days are
   counted from what was recorded: commitments made, completed, partly completed, days with action, and the most
   common kinds. No streaks.

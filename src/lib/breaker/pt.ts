@@ -430,6 +430,16 @@ export const pt: BreakerText = {
     progress: (done, total) => `${done} de ${total} feitas`,
     vibe: { none: 'Escolha uma. Pequeno conta, sim.', some: 'Está andando. Mantenha leve.', all: 'Tudo feito. Isso é compromisso de verdade ✨' },
     more: 'Mais opções',
+    reminder: {
+      label: 'Me lembrar às',
+      set: 'Definir lembrete',
+      clear: 'Remover lembrete',
+      calendar: 'Adicionar à agenda',
+      note: 'Aparece enquanto o Viz it estiver aberto, mesmo em outra aba. Para receber o lembrete com o app fechado, adicione à sua agenda.',
+      blocked: 'As notificações estão bloqueadas neste navegador, então o lembrete só aparece dentro do Viz it.',
+      saved: 'Lembrete definido.',
+      need: 'Escolha um horário primeiro.',
+    },
   },
 
   categoryNames: {

@@ -41,6 +41,11 @@ export const zh: Messages = {
     notificationBody: '你感觉怎么样？点按打开 Viz it。',
     icsSummary: '在 Viz it 记录心情',
     icsDescription: (url: string) => `你感觉怎么样？打开 Viz it：${url}`,
+    commitmentTitle: '提醒：你的小约定',
+    commitmentBody: (title) => `该做这件事了：${title}`,
+    commitmentIcs: (url) => `你在 Viz it 的每日约定：${url}`,
+    markDone: '标记完成',
+    snooze: '10 分钟后提醒',
   },
   result: {
     mostly: (adjective: string) => `主要是${adjective}`,

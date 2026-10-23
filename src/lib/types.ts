@@ -151,6 +151,10 @@ export interface Commitment {
   minutes: number;
   status: CommitmentStatus;
   reflection?: string;
+  /** "HH:MM", local time on `date`, when a reminder should pop up. */
+  remindAt?: string;
+  /** ISO timestamp of when the reminder was shown, so it only shows once. */
+  remindedAt?: string;
   createdAt: string;
   updatedAt: string;
 }

@@ -446,6 +446,16 @@ export const en = {
     progress: (done: number, total: number) => `${done} of ${total} done`,
     vibe: { none: 'Pick one. Tiny totally counts.', some: 'You’re moving. Keep it light.', all: 'All done. That’s real follow-through ✨' },
     more: 'More options',
+    reminder: {
+      label: 'Remind me at',
+      set: 'Set reminder',
+      clear: 'Remove reminder',
+      calendar: 'Add to calendar',
+      note: 'It pops up while Viz it is open, even in another tab. To be reminded when it’s closed, add it to your calendar.',
+      blocked: 'Notifications are blocked in this browser, so the reminder only pops up inside Viz it.',
+      saved: 'Reminder set.',
+      need: 'Choose a time first.',
+    },
   },
 
   categoryNames: {

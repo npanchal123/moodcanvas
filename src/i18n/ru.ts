@@ -55,6 +55,11 @@ export const ru: Messages = {
     notificationBody: 'Как вы себя чувствуете? Нажмите, чтобы открыть Viz it.',
     icsSummary: 'Отметить настроение в Viz it',
     icsDescription: (url: string) => `Как вы себя чувствуете? Откройте Viz it: ${url}`,
+    commitmentTitle: 'Напоминание о деле',
+    commitmentBody: (title) => `Пора: ${title}`,
+    commitmentIcs: (url) => `Ваше дело на сегодня в Viz it: ${url}`,
+    markDone: 'Готово',
+    snooze: 'Отложить на 10 мин',
   },
   result: {
     mostly: (adjective: string) => `В основном: ${adjective}`,

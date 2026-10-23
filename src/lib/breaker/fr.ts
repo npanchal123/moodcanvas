@@ -429,6 +429,16 @@ export const fr: BreakerText = {
     progress: (done, total) => `${done} sur ${total} faites`,
     vibe: { none: 'Choisissez-en une. Le petit compte aussi.', some: 'Ça avance. Gardez ça léger.', all: 'Tout est fait. Voilà du vrai suivi ✨' },
     more: 'Plus d’options',
+    reminder: {
+      label: 'Me le rappeler à',
+      set: 'Programmer le rappel',
+      clear: 'Supprimer le rappel',
+      calendar: 'Ajouter au calendrier',
+      note: 'Il s’affiche tant que Viz it est ouvert, même dans un autre onglet. Pour un rappel quand l’app est fermée, ajoutez-le à votre calendrier.',
+      blocked: 'Les notifications sont bloquées dans ce navigateur : le rappel s’affichera seulement dans Viz it.',
+      saved: 'Rappel programmé.',
+      need: 'Choisissez d’abord une heure.',
+    },
   },
 
   categoryNames: {

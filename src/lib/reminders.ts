@@ -35,12 +35,12 @@ export function isReminderDue(
   return !entries.some((e) => dayKey(new Date(e.createdAt)) === today);
 }
 
-function icsEscape(text: string): string {
+export function icsEscape(text: string): string {
   return text.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 }
 
 /** iCalendar lines must stay under 75 octets; longer ones continue on lines starting with a space. */
-function foldLine(line: string): string {
+export function foldLine(line: string): string {
   const parts: string[] = [];
   let rest = line;
   // 60 characters leaves room for multi-byte letters such as "ñ".
@@ -52,7 +52,7 @@ function foldLine(line: string): string {
   return parts.join('\r\n ');
 }
 
-function icsStamp(d: Date): string {
+export function icsStamp(d: Date): string {
   return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 }
 
