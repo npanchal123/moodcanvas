@@ -25,13 +25,14 @@ test('record a whole visualization in your own voice, keep it, play it, delete i
   await own.getByLabel('Name it').fill('My morning calm');
   await own.getByRole('button', { name: 'Save' }).click();
   await expect(own.getByText('Saved to My recordings.')).toBeVisible();
-  await expect(own.getByRole('heading', { name: 'My recordings' })).toBeVisible();
+  await own.getByText('My recordings (1)').click();
   await expect(own.getByText('My morning calm')).toBeVisible();
   await expect(own.locator('audio[aria-label="My morning calm"]')).toHaveCount(1);
   await expectNoA11yViolations(page, 'own recordings');
 
   // Still there after a reload, then deleted for good.
   await page.reload();
+  await own.getByText('My recordings (1)').click();
   await expect(own.getByText('My morning calm')).toBeVisible();
   page.once('dialog', (d) => void d.accept());
   await own.getByRole('button', { name: 'Delete: My morning calm' }).click();

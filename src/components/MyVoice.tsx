@@ -70,13 +70,16 @@ export function OwnRecordings() {
   }
 
   return (
-    <section aria-labelledby="own-recordings-heading" className={`${card} flex flex-col gap-4`}>
-      <div className="flex items-start gap-3">
+    <section
+      aria-labelledby="own-recordings-heading"
+      className={`${card} fade-up flex flex-col gap-4 border-(--accent)! bg-(--accent-soft)!`}
+    >
+      <div className="flex flex-wrap items-center gap-3">
         <span aria-hidden="true" className="btn-glow flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl">
           🎙️
         </span>
-        <div>
-          <h2 id="own-recordings-heading" className="text-xl font-semibold">
+        <div className="min-w-0 flex-1">
+          <h2 id="own-recordings-heading" className="text-xl font-bold">
             {v.ownTitle}
           </h2>
           <p className="text-(--muted)">{v.ownBody}</p>
@@ -135,14 +138,18 @@ export function OwnRecordings() {
       </p>
 
       {recordings.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <h3 className="font-semibold">{v.myRecordings}</h3>
-          <ul className="flex flex-col gap-2">
+        <details className="rounded-2xl border border-(--border) px-4">
+          <summary className="cursor-pointer py-3 font-semibold">
+            <h3 className="inline">
+              {v.myRecordings} ({recordings.length})
+            </h3>
+          </summary>
+          <ul className="flex flex-col gap-2 pb-4">
             {recordings.map((r) => (
               <RecordingItem key={r.id} recording={r} />
             ))}
           </ul>
-        </div>
+        </details>
       )}
     </section>
   );

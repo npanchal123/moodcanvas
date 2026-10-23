@@ -244,6 +244,8 @@ export function Visualize(props: Props) {
         </button>
       </form>
 
+      <OwnRecordings />
+
       <LearnPath
         progress={learn}
         onOpen={(id) => (id === 'first-visualization' ? onFirstPractice() : onOpenPractice(id))}
@@ -257,8 +259,6 @@ export function Visualize(props: Props) {
       <ReadyMade entries={entries} onOpen={onOpenPractice} />
 
       <SavedPractices onPlay={onPlaySaved} onUseAction={onUseAction} onCreateAgain={onCreateAgain} />
-
-      <OwnRecordings />
 
     </div>
   );
