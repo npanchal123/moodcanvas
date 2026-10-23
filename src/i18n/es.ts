@@ -25,7 +25,7 @@ export const es: Messages = {
     tagline: 'Visualiza · Imagina · Crea',
     skipLink: 'Saltar al contenido principal',
     navLabel: 'Principal',
-    views: { today: 'Visualizar', breaker: 'Arrancar', practice: 'Biblioteca', history: 'Diario', settings: 'Ajustes', privacy: 'Privacidad' },
+    views: { today: 'Visualizar', breaker: 'Arrancar', habits: 'Hábitos', practice: 'Biblioteca', history: 'Diario', settings: 'Ajustes', privacy: 'Privacidad' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'El análisis inteligente no está disponible ahora, así que se usó la lista de palabras integrada.',
     loading: 'Cargando…',

@@ -163,6 +163,11 @@ export interface Commitment {
 export interface Tracker {
   id: string;
   title: string;
+  description?: string;
+  /** One of the habit colours; older trackers have none and use the first. */
+  color?: string;
+  /** An emoji shown on the habit's tile. */
+  icon?: string;
   createdAt: string;
 }
 

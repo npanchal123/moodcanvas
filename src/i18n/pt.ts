@@ -29,7 +29,7 @@ export const pt: Messages = {
     tagline: 'Visualize · Imagine · Crie',
     skipLink: 'Pular para o conteúdo principal',
     navLabel: 'Principal',
-    views: { today: 'Visualizar', breaker: 'Começar', practice: 'Biblioteca', history: 'Diário', settings: 'Ajustes', privacy: 'Privacidade' },
+    views: { today: 'Visualizar', breaker: 'Começar', habits: 'Hábitos', practice: 'Biblioteca', history: 'Diário', settings: 'Ajustes', privacy: 'Privacidade' },
     pageHeading: (view: string) => `Viz it: ${view}`,
     aiFallback: 'A análise inteligente não está disponível agora, então foi usada a lista de palavras integrada.',
     loading: 'Carregando…',

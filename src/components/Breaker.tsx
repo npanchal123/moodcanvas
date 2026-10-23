@@ -43,7 +43,6 @@ import type { EmotionLabel } from '../lib/emotions';
 import { formatClock } from '../lib/session';
 import type { BreakerSession } from '../lib/types';
 import { LENGTHS, type Playable } from '../practices';
-import { BreakerCommitments } from './BreakerCommitments';
 import { SaveToLibrary } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 import { SceneTiles } from './Visualize';
@@ -71,17 +70,18 @@ interface Props {
   onSupport: () => void;
   /** "Calm my mind" and "Get focused" go to the front page with that goal chosen. */
   onVisualize: (goal: GoalId) => void;
+  /** "Reconnect with my goals" opens Habits. */
+  onHabits: () => void;
 }
 
 /**
  * Unstuck: from what has someone stuck, through a visualization made for it, to one small step, a focus timer and
  * an honest record of how it went. Everything runs and is saved on the device.
  */
-export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSupport, onVisualize }: Props) {
+export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSupport, onVisualize, onHabits }: Props) {
   const { locale, t } = useI18n();
   const text = BREAKER_TEXT[locale];
   const sessions = useLiveQuery(() => db.breakerSessions.orderBy('createdAt').reverse().toArray(), []) ?? NO_SESSIONS;
-  const [tab, setTab] = useState<'start' | 'commitments'>('start');
   const [screen, setScreen] = useState<Screen>({ kind: 'flow' });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
@@ -93,7 +93,6 @@ export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSup
   );
 
   function show(next: Screen) {
-    setTab('start');
     setScreen(next);
     setError('');
     window.scrollTo(0, 0);
@@ -139,9 +138,7 @@ export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSup
   }
 
   let body: ReactNode;
-  if (tab === 'commitments') {
-    body = <BreakerCommitments text={text} animate={animate} />;
-  } else if (screen.kind === 'timer') {
+  if (screen.kind === 'timer') {
     body = (
       <Timer
         id={screen.id}
@@ -194,7 +191,7 @@ export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSup
         onCrisis={onCrisis}
         onSupport={onSupport}
         onVisualize={onVisualize}
-        onGoals={() => setTab('commitments')}
+        onGoals={onHabits}
       />
     );
   }
@@ -203,21 +200,6 @@ export default function Breaker({ draft, onDraftChange, animate, onCrisis, onSup
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="display tagline text-sm font-extrabold text-(--muted) uppercase">{text.title}</p>
-        <div role="group" aria-label={text.title} className="flex gap-1 rounded-full border border-(--border) bg-(--surface-strong) p-1">
-          {(['start', 'commitments'] as const).map((id) => (
-            <button
-              key={id}
-              type="button"
-              aria-pressed={tab === id}
-              onClick={() => setTab(id)}
-              className={`inline-flex min-h-10 items-center rounded-full px-4 text-sm font-semibold ${
-                tab === id ? 'btn-glow text-(--on-accent)' : 'text-(--muted) hover:bg-(--surface-alt) hover:text-(--text)'
-              }`}
-            >
-              {text.tabs[id]}
-            </button>
-          ))}
-        </div>
       </div>
       {error && (
         <p role="alert" className={`${card} font-medium text-(--danger)`}>

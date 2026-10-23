@@ -22,7 +22,7 @@ export const zh: Messages = {
     tagline: '视觉化 · 想象 · 创造',
     skipLink: '跳到主要内容',
     navLabel: '主菜单',
-    views: { today: '视觉化', breaker: '开始行动', practice: '练习库', history: '日记', settings: '设置', privacy: '隐私' },
+    views: { today: '视觉化', breaker: '开始行动', habits: '习惯', practice: '练习库', history: '日记', settings: '设置', privacy: '隐私' },
     pageHeading: (view: string) => `Viz it：${view}`,
     aiFallback: '智能分析暂时不可用，已改用内置词表。',
     loading: '加载中…',

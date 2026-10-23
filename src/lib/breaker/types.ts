@@ -119,5 +119,10 @@ export const ENERGY_LEVELS = ['low', 'medium', 'high'] as const;
 export type Energy = (typeof ENERGY_LEVELS)[number];
 /** At most this many commitments a day: enough to matter, few enough to finish. */
 export const MAX_COMMITMENTS = 3;
-/** At most this many monthly trackers, so the page stays light. */
-export const MAX_TRACKERS = 5;
+/** At most this many habits, so the page stays light. */
+export const MAX_TRACKERS = 10;
+
+/** Habit colours, each readable on light and dark backgrounds. */
+export const HABIT_COLORS = ['green', 'blue', 'purple', 'pink', 'orange', 'teal'] as const;
+export type HabitColor = (typeof HABIT_COLORS)[number];
+export const HABIT_ICONS = ['✨', '📈', '📚', '💧', '🏃', '🧘', '✍️', '🌙', '🎯', '🎨', '🎸', '🥗'] as const;

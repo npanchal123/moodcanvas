@@ -19,7 +19,6 @@ import { buildCommitmentIcs, isTime, setCommitmentReminder } from '../lib/commit
 import { db } from '../lib/db';
 import { downloadBlob } from '../lib/export';
 import type { Commitment } from '../lib/types';
-import { BreakerTrackers } from './BreakerTrackers';
 import { btnGhost, btnSecondary, card, toggle } from './ui';
 
 const NONE: Commitment[] = [];
@@ -191,8 +190,6 @@ export function BreakerCommitments({ text, animate }: { text: BreakerText; anima
           </div>
         )}
       </section>
-
-      <BreakerTrackers text={text} month={month} animate={animate} />
 
       <section aria-labelledby="week-heading" className="flex flex-col gap-3">
         <div>

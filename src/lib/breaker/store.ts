@@ -216,14 +216,32 @@ export async function setEnergy(date: string, energy: Energy): Promise<void> {
 // ---------------------------------------------------------------------------------------------------------------
 // Monthly trackers: something to do often, ticked off day by day.
 
-export async function addTracker(title: string, now = Date.now()): Promise<Tracker> {
+export async function addTracker(
+  fields: { title: string; description?: string; color?: string; icon?: string },
+  now = Date.now(),
+): Promise<Tracker> {
   const tracker: Tracker = {
     id: crypto.randomUUID(),
-    title: clip(title, LIMITS.short) ?? '',
+    title: clip(fields.title, LIMITS.short) ?? '',
+    description: clip(fields.description, LIMITS.short),
+    color: fields.color,
+    icon: fields.icon,
     createdAt: new Date(now).toISOString(),
   };
   await db.trackers.add(tracker);
   return tracker;
+}
+
+export async function updateTracker(
+  id: string,
+  fields: { title: string; description?: string; color?: string; icon?: string },
+): Promise<void> {
+  await db.trackers.update(id, {
+    title: clip(fields.title, LIMITS.short) ?? '',
+    description: clip(fields.description, LIMITS.short),
+    color: fields.color,
+    icon: fields.icon,
+  });
 }
 
 /** Ticks a day, or unticks it if it was ticked. */

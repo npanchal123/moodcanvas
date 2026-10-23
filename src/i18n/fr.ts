@@ -28,7 +28,7 @@ export const fr: Messages = {
     tagline: 'Visualiser · Imaginer · Créer',
     skipLink: 'Aller au contenu principal',
     navLabel: 'Principal',
-    views: { today: 'Visualiser', breaker: 'Se lancer', practice: 'Bibliothèque', history: 'Journal', settings: 'Réglages', privacy: 'Confidentialité' },
+    views: { today: 'Visualiser', breaker: 'Se lancer', habits: 'Habitudes', practice: 'Bibliothèque', history: 'Journal', settings: 'Réglages', privacy: 'Confidentialité' },
     pageHeading: (view: string) => `Viz it : ${view}`,
     aiFallback: 'L’analyse avancée n’est pas disponible pour le moment, la liste de mots intégrée a donc été utilisée.',
     loading: 'Chargement…',
