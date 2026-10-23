@@ -31,7 +31,7 @@ const Breaker = lazy(() => import('./components/Breaker'));
 const Habits = lazy(() => import('./components/Habits'));
 
 type View = 'today' | 'breaker' | 'habits' | 'practice' | 'history' | 'settings' | 'privacy';
-const VIEW_IDS: View[] = ['today', 'breaker', 'habits', 'practice', 'history', 'settings'];
+const VIEW_IDS: View[] = ['today', 'habits', 'breaker', 'practice', 'history', 'settings'];
 // The privacy page has its own URL (…/#privacy) so it can be linked to from anywhere.
 const PRIVACY_HASH = '#privacy';
 const HOME_URL = import.meta.env.BASE_URL;
