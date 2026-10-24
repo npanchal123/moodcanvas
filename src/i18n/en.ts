@@ -530,6 +530,10 @@ export const en = {
       'The built-in word list understands all of these languages, including Hinglish. Smarter analysis understands most others too.',
     calmTitle: 'Calm mode',
     calmHint: 'Turns off animation. It’s also on automatically if your device asks for reduced motion.',
+    skyTitle: 'Move the sun, moon and friends',
+    skyHint: 'Drag them around the empty background.',
+    skyReset: 'Reset the sky',
+    skyResetDone: 'The sky is back to how it started.',
     aiHeading: 'Smarter analysis',
     aiTitle: 'Use AI to read my check-ins',
     aiHint:

@@ -508,6 +508,10 @@ export const es: Messages = {
       'La lista de palabras integrada entiende todos estos idiomas, incluido el hinglish. El análisis inteligente entiende también la mayoría de los demás.',
     calmTitle: 'Modo calma',
     calmHint: 'Desactiva las animaciones. También se activa solo si tu dispositivo pide reducir el movimiento.',
+    skyTitle: 'Mueve el sol, la luna y sus amigos',
+    skyHint: 'Arrástralos por el fondo vacío.',
+    skyReset: 'Restablecer el cielo',
+    skyResetDone: 'El cielo volvió a como empezó.',
     aiHeading: 'Análisis inteligente',
     aiTitle: 'Usar IA para leer mis registros',
     aiHint:

@@ -11,6 +11,7 @@ import { THEMES, useTheme } from '../lib/theme';
 import type { EmotionEntry } from '../lib/types';
 import { AccountPanel } from './AccountPanel';
 import { AiConsentDialog } from './AiConsentDialog';
+import { SKY_RESET } from './Sky';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox } from './ui';
 
 interface Props {
@@ -41,6 +42,7 @@ export default function Settings(props: Props) {
   const [includeText, setIncludeText] = useState(false);
   const [permission, setPermission] = useState(notificationPermission);
   const [rescoreStatus, setRescoreStatus] = useState('');
+  const [skyReset, setSkyReset] = useState(false);
   const staleCount = useMemo(() => entries.filter(needsRescore).length, [entries]);
 
   function exportFile(kind: 'csv' | 'json') {
@@ -133,6 +135,24 @@ export default function Settings(props: Props) {
             </span>
           </span>
         </label>
+
+        <div className="flex flex-col items-start gap-1">
+          <p className="font-medium">{t.settings.skyTitle}</p>
+          <p className="text-sm text-(--muted)">{t.settings.skyHint}</p>
+          <button
+            type="button"
+            onClick={() => {
+              window.dispatchEvent(new Event(SKY_RESET));
+              setSkyReset(true);
+            }}
+            className={`${btnSecondary} mt-1`}
+          >
+            {t.settings.skyReset}
+          </button>
+          <p role="status" className="text-sm text-(--muted)">
+            {skyReset ? t.settings.skyResetDone : ''}
+          </p>
+        </div>
       </section>
 
       <section aria-labelledby="ai-heading" className={`${card} flex flex-col gap-3`}>

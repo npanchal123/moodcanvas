@@ -5,6 +5,7 @@ import { CrisisBanner } from './components/CrisisBanner';
 import { Onboarding } from './components/Onboarding';
 import { ReminderBanner } from './components/ReminderBanner';
 import type { LibraryDetails } from './components/SaveToLibrary';
+import { Sky } from './components/Sky';
 import { CreatedIntro, EMPTY_DRAFT, FEELING_INPUT_ID, Visualize, type Draft } from './components/Visualize';
 import { useI18n } from './i18n';
 import { useAuth, useSync } from './lib/account';
@@ -280,22 +281,7 @@ export default function App() {
         {t.app.skipLink}
       </a>
 
-      <div className="sky" aria-hidden="true">
-        <span className="stars" />
-        <span className="stars stars-2" />
-        <span className="shooting" />
-        <span className="shooting shooting-2" />
-        <span className="moon" />
-        <span className="sun" />
-        <span className="cloud cloud-1" />
-        <span className="cloud cloud-2" />
-        <span className="cloud cloud-3" />
-        <span className="sparkles" />
-        <span className="c1" />
-        <span className="c2" />
-        <span className="c3" />
-        <span className="c4" />
-      </div>
+      <Sky />
 
       <header className="glass z-30 border-x-0 border-t-0 sm:sticky sm:top-0">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">

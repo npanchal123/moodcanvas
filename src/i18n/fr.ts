@@ -509,6 +509,10 @@ export const fr: Messages = {
       'La liste de mots intégrée comprend toutes ces langues, y compris le hinglish. L’analyse avancée comprend aussi la plupart des autres.',
     calmTitle: 'Mode calme',
     calmHint: 'Désactive les animations. Il s’active aussi automatiquement si votre appareil demande moins de mouvement.',
+    skyTitle: 'Déplacer le soleil, la lune et leurs amis',
+    skyHint: 'Faites-les glisser sur le fond vide.',
+    skyReset: 'Réinitialiser le ciel',
+    skyResetDone: 'Le ciel est revenu comme au début.',
     aiHeading: 'Analyse avancée',
     aiTitle: 'Utiliser l’IA pour lire mes points',
     aiHint:
