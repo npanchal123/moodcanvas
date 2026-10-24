@@ -43,6 +43,7 @@ import type { EmotionLabel } from '../lib/emotions';
 import { formatClock } from '../lib/session';
 import type { BreakerSession } from '../lib/types';
 import { COMPOSED_LENGTHS, type Playable } from '../practices';
+import { BorderBeam } from './BorderBeam';
 import { SaveToLibrary } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
 import { SceneTiles } from './Visualize';
@@ -453,7 +454,8 @@ function Welcome({
             {error}
           </p>
         )}
-        <button type="submit" className={`${btnPrimary} min-h-14 w-full px-8 text-lg sm:w-auto sm:self-start`}>
+        <button type="submit" className={`${btnPrimary} relative min-h-14 w-full px-8 text-lg sm:w-auto sm:self-start`}>
+          <BorderBeam />
           {text.next}
         </button>
         <p className="text-sm text-(--muted) italic">{text.principle}</p>
@@ -581,7 +583,8 @@ function Understand({ draft, set, text, onSupport, heading, reading, go }: StepP
         </p>
       )}
       <div className="flex flex-wrap items-center gap-2">
-        <button type="button" onClick={create} className={`${btnPrimary} min-h-14 px-8 text-lg`}>
+        <button type="button" onClick={create} className={`${btnPrimary} relative min-h-14 px-8 text-lg`}>
+          <BorderBeam />
           <span aria-hidden="true">✨</span>
           {error ? text.understand.retry : t.create.create}
         </button>
@@ -784,8 +787,9 @@ function Action({ draft, set, text, busy, onStart, onSchedule, onSkip, heading, 
           <button
             type="button"
             onClick={() => !needStep() && setChoosing(true)}
-            className={`${btnPrimary} min-h-14 px-8 text-lg`}
+            className={`${btnPrimary} relative min-h-14 px-8 text-lg`}
           >
+            <BorderBeam />
             <span aria-hidden="true">▶</span>
             {text.action.startNow}
           </button>

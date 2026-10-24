@@ -9,6 +9,7 @@ import { usePersistentFlag, usePersistentState } from '../lib/hooks';
 import { estimateSpeechSeconds, formatClock, planPauses, segmentsFor } from '../lib/session';
 import type { PracticeBefore, PracticeLog, VisualizeRequest } from '../lib/types';
 import { COMPOSED_LENGTHS, LENGTHS, type Minutes, type Playable } from '../practices';
+import { BorderBeam } from './BorderBeam';
 import { LineRecorder } from './MyVoice';
 import { SaveToLibrary, type LibraryDetails } from './SaveToLibrary';
 import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
@@ -261,7 +262,8 @@ export default function PracticeSession({ practice, before, intro, animate, onBa
       <p className="rounded-xl bg-(--surface-alt) p-4 text-sm">{t.practice.tip}</p>
 
       <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={begin} className={`${btnPrimary} min-h-13 px-10 text-lg`}>
+        <button type="button" onClick={begin} className={`${btnPrimary} relative min-h-13 px-10 text-lg`}>
+          <BorderBeam />
           {t.practice.begin}
         </button>
         <button type="button" onClick={onBack} className={btnGhost}>

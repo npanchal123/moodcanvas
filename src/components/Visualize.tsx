@@ -18,6 +18,7 @@ import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
 import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from '../lib/types';
 import type { PracticeId } from '../practices';
+import { BorderBeam } from './BorderBeam';
 import { EmotionBloom } from './EmotionBloom';
 import { LEARN_ID, LearnPath, useLearnProgress } from './LearnPath';
 import { ReadyMade } from './ReadyMade';
@@ -122,6 +123,7 @@ export function Visualize(props: Props) {
             }}
             className="relative mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--accent) bg-(--accent-soft) px-4 font-semibold no-underline hover:bg-(--surface-alt)"
           >
+            <BorderBeam color="var(--accent)" />
             <span aria-hidden="true">🌱</span>
             {t.learn.heroChip}
             <span aria-hidden="true">↓</span>
@@ -240,7 +242,7 @@ export function Visualize(props: Props) {
 
         <button type="submit" disabled={busy} className={`${btnPrimary} relative min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
           {/* A light travelling around the border draws the eye to the page's main action. */}
-          {!busy && <span aria-hidden="true" className="border-beam" />}
+          {!busy && <BorderBeam />}
           <span aria-hidden="true">✨</span>
           {busy ? t.create.creating : t.create.create}
         </button>

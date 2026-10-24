@@ -3,6 +3,7 @@ import { useI18n } from '../i18n';
 import { usePersistentState } from '../lib/hooks';
 import type { PracticeLog } from '../lib/types';
 import { PRACTICE_CONTENT, type PracticeId } from '../practices';
+import { BorderBeam } from './BorderBeam';
 import { btnGhost, btnPrimary, btnSecondary } from './ui';
 
 export const LEARN_ID = 'learn-to-visualize';
@@ -162,8 +163,9 @@ export function LearnPath({
                   <button
                     type="button"
                     onClick={actions[step]}
-                    className={`${isCurrent ? btnPrimary : btnSecondary} self-start`}
+                    className={`${isCurrent ? btnPrimary : btnSecondary} relative self-start`}
                   >
+                    {isCurrent && <BorderBeam />}
                     {step !== 'read' && step !== 'senses' && step !== 'own' && <span aria-hidden="true">▶</span>}
                     {s.action}
                   </button>

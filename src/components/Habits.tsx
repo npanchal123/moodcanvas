@@ -18,6 +18,7 @@ import { addTracker, deleteTracker, toggleTick, updateTracker } from '../lib/bre
 import { db } from '../lib/db';
 import { usePersistentState } from '../lib/hooks';
 import type { Tracker, TrackerTick } from '../lib/types';
+import { BorderBeam } from './BorderBeam';
 import { BreakerCommitments } from './BreakerCommitments';
 import { btnGhost, btnPrimary, btnSecondary, dialogContent, dialogOverlay } from './ui';
 
@@ -86,8 +87,9 @@ export default function Habits({ animate }: { animate: boolean }) {
             onClick={() => setEditing('new')}
             aria-label={h.add}
             title={full ? h.full : h.add}
-            className="btn-glow flex h-12 w-12 items-center justify-center rounded-full text-3xl leading-none text-(--on-accent) disabled:opacity-50"
+            className="btn-glow relative flex h-12 w-12 items-center justify-center rounded-full text-3xl leading-none text-(--on-accent) disabled:opacity-50"
           >
+            {!full && <BorderBeam />}
             <span aria-hidden="true">+</span>
           </button>
         )}
