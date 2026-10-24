@@ -282,6 +282,15 @@ export default function App() {
 
       <div className="sky" aria-hidden="true">
         <span className="stars" />
+        <span className="stars stars-2" />
+        <span className="shooting" />
+        <span className="shooting shooting-2" />
+        <span className="moon" />
+        <span className="sun" />
+        <span className="cloud cloud-1" />
+        <span className="cloud cloud-2" />
+        <span className="cloud cloud-3" />
+        <span className="sparkles" />
         <span className="c1" />
         <span className="c2" />
         <span className="c3" />

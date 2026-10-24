@@ -26,6 +26,7 @@
   --sky-3: rgb(153 230 214 / 0.5);
   --sky-4: rgb(147 197 253 / 0.45);
   --stars: 0;
+  --day: 1;
   /* The logo's wordmark: navy "viz", teal-to-blue "it". */
   --brand: #0f766e;
   --brand-ink: #1b2a4a;
@@ -60,6 +61,7 @@
     --sky-3: rgb(59 130 246 / 0.18);
     --sky-4: rgb(236 72 153 / 0.1);
     --stars: 1;
+    --day: 0;
     --brand: #5eead4;
     --brand-ink: #eef0fa;
     --brand-from: #5eead4;
@@ -93,6 +95,7 @@
   --sky-3: rgb(59 130 246 / 0.18);
   --sky-4: rgb(236 72 153 / 0.1);
   --stars: 1;
+  --day: 0;
   --brand: #5eead4;
   --brand-ink: #eef0fa;
   --brand-from: #5eead4;
@@ -125,6 +128,7 @@
   --sky-3: transparent;
   --sky-4: transparent;
   --stars: 0;
+  --day: 0;
   --brand: #004d40;
   --brand-ink: #000000;
   --brand-from: #004d40;
@@ -233,6 +237,173 @@ h3,
 @keyframes twinkle {
   from {
     opacity: calc(var(--stars) * 0.45);
+  }
+}
+
+/*
+ * Night: a crescent moon, a second layer of stars twinkling out of step, and now and then a shooting star.
+ * Day: a warm sun with slowly turning rays, soft clouds drifting across, and a few golden sparkles.
+ * Each fades with its theme (--stars at night, --day by day); none of it moves with reduced motion or in calm
+ * mode, and shooting stars only appear while moving.
+ */
+.sky .moon,
+.sky .sun {
+  top: clamp(7rem, 16vh, 10rem);
+  right: 6%;
+  left: auto;
+}
+.sky .moon {
+  width: clamp(3rem, 7vmin, 4.75rem);
+  height: clamp(3rem, 7vmin, 4.75rem);
+  box-shadow: inset 0.9rem -0.45rem 0 0 #fdf3c4;
+  filter: drop-shadow(0 0 1.1rem rgb(253 243 196 / 0.55));
+  opacity: var(--stars);
+  transform: rotate(-18deg);
+  animation: float 9s ease-in-out infinite alternate;
+}
+.sky .sun {
+  width: clamp(4rem, 9vmin, 6rem);
+  height: clamp(4rem, 9vmin, 6rem);
+  background: radial-gradient(circle at 40% 38%, #fffbea, #fcd34d 52%, #fb923c);
+  box-shadow: 0 0 3.5rem 1.2rem rgb(251 191 36 / 0.35);
+  opacity: calc(var(--day) * 0.9);
+  animation: float 11s ease-in-out infinite alternate;
+}
+.sky .sun::before {
+  content: "";
+  position: absolute;
+  inset: -70%;
+  border-radius: 50%;
+  background: repeating-conic-gradient(from 0deg, rgb(251 191 36 / 0.32) 0 5deg, transparent 5deg 30deg);
+  mask: radial-gradient(circle, transparent 34%, #000 36%, transparent 70%);
+  animation: spin 80s linear infinite;
+}
+.sky .stars-2 {
+  background-image:
+    radial-gradient(1.5px 1.5px at 15% 35%, #fff, transparent),
+    radial-gradient(1px 1px at 40% 10%, #fff, transparent),
+    radial-gradient(2px 2px at 62% 58%, #e0e7ff, transparent),
+    radial-gradient(1px 1px at 82% 25%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 33% 82%, #fef3c7, transparent),
+    radial-gradient(1px 1px at 92% 66%, #fff, transparent);
+  background-size: 610px 610px;
+  animation-duration: 9s;
+  animation-delay: -4s;
+}
+.sky .shooting {
+  top: 14%;
+  left: 62%;
+  width: 7rem;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to left, #fff, rgb(255 255 255 / 0));
+  opacity: 0;
+  transform: rotate(-28deg);
+  animation: shoot 11s ease-in infinite;
+}
+.sky .shooting-2 {
+  top: 34%;
+  left: 22%;
+  width: 5rem;
+  animation-duration: 17s;
+  animation-delay: 6s;
+}
+@keyframes shoot {
+  0% {
+    opacity: 0;
+    transform: rotate(-28deg) translateX(0);
+  }
+  1% {
+    opacity: calc(var(--stars) * 0.9);
+  }
+  7% {
+    opacity: 0;
+    transform: rotate(-28deg) translateX(-26vmax);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(-28deg) translateX(-26vmax);
+  }
+}
+.sky .cloud {
+  width: 13rem;
+  height: 3.6rem;
+  border-radius: 999px;
+  background: #fff;
+  opacity: calc(var(--day) * 0.7);
+  filter: blur(1px);
+  animation: cloud 110s linear infinite;
+}
+.sky .cloud::before,
+.sky .cloud::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: inherit;
+}
+.sky .cloud::before {
+  width: 5.5rem;
+  height: 5.5rem;
+  top: -2.6rem;
+  left: 2.2rem;
+}
+.sky .cloud::after {
+  width: 4rem;
+  height: 4rem;
+  top: -1.7rem;
+  left: 6.6rem;
+}
+.sky .cloud-1 {
+  top: 24%;
+  left: 8%;
+  animation-delay: -30s;
+}
+.sky .cloud-2 {
+  top: 58%;
+  left: 55%;
+  scale: 0.7;
+  opacity: calc(var(--day) * 0.55);
+  animation-duration: 150s;
+  animation-delay: -95s;
+}
+.sky .cloud-3 {
+  top: 82%;
+  left: 20%;
+  scale: 0.85;
+  animation-duration: 130s;
+  animation-delay: -60s;
+}
+@keyframes cloud {
+  from {
+    translate: -60vw 0;
+  }
+  to {
+    translate: 110vw 0;
+  }
+}
+.sky .sparkles {
+  inset: 0;
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  opacity: calc(var(--day) * 0.7);
+  background-image:
+    radial-gradient(2px 2px at 18% 30%, #fbbf24, transparent),
+    radial-gradient(1.5px 1.5px at 72% 18%, #f9a8d4, transparent),
+    radial-gradient(2px 2px at 48% 72%, #fbbf24, transparent),
+    radial-gradient(1.5px 1.5px at 86% 52%, #a5b4fc, transparent),
+    radial-gradient(1.5px 1.5px at 30% 88%, #fde68a, transparent);
+  background-size: 520px 520px;
+  animation: twinkle-day 7s ease-in-out infinite alternate;
+}
+@keyframes twinkle-day {
+  from {
+    opacity: calc(var(--day) * 0.25);
+  }
+}
+@keyframes float {
+  to {
+    translate: 0 0.8rem;
   }
 }
 
