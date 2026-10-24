@@ -238,7 +238,9 @@ export function Visualize(props: Props) {
           </p>
         )}
 
-        <button type="submit" disabled={busy} className={`${btnPrimary} min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
+        <button type="submit" disabled={busy} className={`${btnPrimary} relative min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
+          {/* A light travelling around the border draws the eye to the page's main action. */}
+          {!busy && <span aria-hidden="true" className="border-beam" />}
           <span aria-hidden="true">✨</span>
           {busy ? t.create.creating : t.create.create}
         </button>

@@ -269,6 +269,53 @@ h3,
   }
 }
 
+/*
+ * A soft light that travels around a button's border, for the page's main action. Only the border ring shows it
+ * (the mask hides the inside). Off with reduced motion, in calm mode, in forced colours, and where the browser
+ * can't move along the button's outline.
+ */
+.border-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 2px solid transparent;
+  pointer-events: none;
+  mask:
+    linear-gradient(#000 0 0) padding-box,
+    linear-gradient(#000 0 0) border-box;
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+}
+.border-beam::after {
+  content: "";
+  position: absolute;
+  width: 3rem;
+  aspect-ratio: 1;
+  background: linear-gradient(to right, transparent, var(--beam, #fff) 70%, var(--beam, #fff));
+  border-radius: 999px;
+  offset-path: rect(0 auto auto 0 round 999px);
+  offset-anchor: 100% 50%;
+  animation: border-beam 5s linear infinite;
+}
+@keyframes border-beam {
+  to {
+    offset-distance: 100%;
+  }
+}
+@supports not (offset-path: rect(0 auto auto 0)) {
+  .border-beam {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .border-beam {
+    display: none;
+  }
+}
+.calm .border-beam {
+  display: none;
+}
+
 /* Gradient words in headings. */
 .text-gradient {
   background: var(--grad-primary);
