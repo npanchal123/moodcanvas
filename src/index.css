@@ -247,7 +247,7 @@ h3,
  * mode, and shooting stars only appear while moving.
  */
 /*
- * Sky friends (the moon, the sun and the emoji ones) sit centred on their left/top, so the spot someone drags them
+ * The moon and the sun sit centred on their left/top, so the spot someone drags them
  * to is where they stay. Sky.tsx does the dragging; these are only the looks.
  */
 .sky .sky-friend {
@@ -263,47 +263,6 @@ h3,
 .sky .sky-friend.is-dragging {
   scale: 1.18;
   animation-play-state: paused;
-}
-.sky .friend {
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  font-size: clamp(1.9rem, 4.5vmin, 2.75rem);
-  line-height: 1;
-  user-select: none;
-  filter: drop-shadow(0 0.4rem 0.6rem rgb(0 0 0 / 0.18));
-  animation:
-    float 8s ease-in-out infinite alternate,
-    sway 5s ease-in-out infinite alternate;
-}
-.sky .friend.night {
-  filter: drop-shadow(0 0 0.8rem rgb(224 231 255 / 0.35));
-}
-.sky .friend-slow {
-  animation-duration: 12s, 7s;
-}
-.sky .friend-fast {
-  animation-duration: 4s, 2.2s;
-}
-/* Phones: smaller and softer, so they stay in the background behind the text. */
-@media (max-width: 640px) {
-  .sky .friend {
-    font-size: 1.6rem;
-  }
-  .sky .friend.night {
-    opacity: calc(var(--stars) * 0.75);
-  }
-  .sky .friend.day {
-    opacity: calc(var(--day) * 0.75);
-  }
-}
-@keyframes sway {
-  from {
-    rotate: -7deg;
-  }
-  to {
-    rotate: 7deg;
-  }
 }
 html.sky-grab {
   cursor: grab;

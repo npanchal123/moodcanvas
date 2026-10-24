@@ -508,7 +508,7 @@ export const es: Messages = {
       'La lista de palabras integrada entiende todos estos idiomas, incluido el hinglish. El análisis inteligente entiende también la mayoría de los demás.',
     calmTitle: 'Modo calma',
     calmHint: 'Desactiva las animaciones. También se activa solo si tu dispositivo pide reducir el movimiento.',
-    skyTitle: 'Mueve el sol, la luna y sus amigos',
+    skyTitle: 'Mueve el sol y la luna',
     skyHint: 'Arrástralos por el fondo vacío.',
     skyReset: 'Restablecer el cielo',
     skyResetDone: 'El cielo volvió a como empezó.',

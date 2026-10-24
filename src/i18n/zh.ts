@@ -491,7 +491,7 @@ export const zh: Messages = {
     languageHint: '内置词表能理解以上所有语言，包括 Hinglish。智能分析还能理解大多数其他语言。',
     calmTitle: '平静模式',
     calmHint: '关闭动画。如果你的设备要求减少动态效果，也会自动开启。',
-    skyTitle: '移动太阳、月亮和小伙伴',
+    skyTitle: '移动太阳和月亮',
     skyHint: '在空白背景上拖动它们。',
     skyReset: '重置天空',
     skyResetDone: '天空已恢复原样。',

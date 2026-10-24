@@ -3,9 +3,9 @@ import { DATA_CLEARED } from '../lib/draftStorage';
 
 /**
  * The sky behind everything: colour clouds, stars and shooting stars at night, drifting clouds and sparkles by day,
- * and a few friends to play with: the moon, a planet, a comet and a UFO at night; the sun, a balloon, a butterfly,
- * a kite and a rainbow by day. Those can be dragged anywhere on the background (not over buttons, fields or cards,
- * which keep working as usual), and stay where they're put. Purely decorative: hidden from screen readers.
+ * with the moon at night and the sun by day. Those two can be dragged anywhere on the background (not over buttons,
+ * fields or cards, which keep working as usual), and stay where they're put. Purely decorative: hidden from screen
+ * readers.
  */
 
 interface Friend {
@@ -13,7 +13,6 @@ interface Friend {
   /** Shown at night (dark theme) or by day (light theme). */
   when: 'night' | 'day';
   className: string;
-  emoji?: string;
   /** Where it starts, in % of the window. */
   x: number;
   y: number;
@@ -21,19 +20,12 @@ interface Friend {
 
 const FRIENDS: Friend[] = [
   { id: 'moon', when: 'night', className: 'moon', x: 90, y: 22 },
-  { id: 'planet', when: 'night', className: 'friend', emoji: '🪐', x: 7, y: 34 },
-  { id: 'comet', when: 'night', className: 'friend friend-slow', emoji: '☄️', x: 86, y: 64 },
-  { id: 'ufo', when: 'night', className: 'friend friend-fast', emoji: '🛸', x: 10, y: 80 },
   { id: 'sun', when: 'day', className: 'sun', x: 89, y: 22 },
-  { id: 'balloon', when: 'day', className: 'friend friend-slow', emoji: '🎈', x: 7, y: 36 },
-  { id: 'butterfly', when: 'day', className: 'friend friend-fast', emoji: '🦋', x: 88, y: 58 },
-  { id: 'kite', when: 'day', className: 'friend', emoji: '🪁', x: 12, y: 76 },
-  { id: 'rainbow', when: 'day', className: 'friend friend-slow', emoji: '🌈', x: 91, y: 86 },
 ];
 
 type Positions = Record<string, { x: number; y: number }>;
 export const SKY_KEY = 'moodcanvas.skyPositions';
-/** Fired on `window` to put every sky friend back where it started. */
+/** Fired on `window` to put the sun and moon back where they started. */
 export const SKY_RESET = 'vizit:sky-reset';
 
 function load(): Positions {
@@ -162,9 +154,7 @@ export function Sky() {
             data-friend={f.id}
             className={`sky-friend ${f.when} ${f.className} ${dragging === f.id ? 'is-dragging' : ''}`}
             style={{ left: `${at.x}%`, top: `${at.y}%` }}
-          >
-            {f.emoji}
-          </span>
+          />
         );
       })}
     </div>
