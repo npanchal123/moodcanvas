@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+import { keepAppFresh } from './lib/appUpdate';
 import { I18nProvider } from './i18n';
 import '@fontsource/nunito/latin-600.css';
 import '@fontsource/nunito/latin-800.css';
@@ -8,6 +9,8 @@ import './index.css';
 // Imported eagerly: the browser's install prompt can fire before Settings is ever opened.
 import './lib/install';
 import { ThemeProvider } from './lib/theme';
+
+keepAppFresh();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
