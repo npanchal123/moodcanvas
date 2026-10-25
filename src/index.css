@@ -700,3 +700,26 @@ textarea::placeholder {
   letter-spacing: normal;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
+
+/*
+ * Phones get an app-style tab bar along the bottom (App.tsx). --tabbar is its height, including the iPhone's
+ * home-bar area, so the page and anything else pinned to the bottom can sit clear of it. Zero on wider screens.
+ */
+:root {
+  --tabbar: 0px;
+}
+@media (max-width: 639.98px) {
+  :root {
+    --tabbar: calc(3.6rem + env(safe-area-inset-bottom));
+  }
+  body {
+    padding-bottom: var(--tabbar);
+  }
+}
+.tab-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+  background: var(--surface-strong);
+}
+.app-header {
+  padding-top: env(safe-area-inset-top);
+}

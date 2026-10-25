@@ -111,7 +111,7 @@ export default function Habits({ animate }: { animate: boolean }) {
           )}
           {full && <p className="text-sm text-(--muted)">{h.full}</p>}
 
-          <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center">
+          <div className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--tabbar)+1.25rem)] z-30 flex justify-center">
             <div
               role="group"
               aria-label={h.viewsLabel}

@@ -24,7 +24,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-  }, [theme]);
+    // The phone's status bar (and the browser's top bar) takes the page's background, so the app feels whole.
+    const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim();
+    if (bg) document.querySelectorAll('meta[name="theme-color"]').forEach((meta) => meta.setAttribute('content', bg));
+  }, [theme, systemDark]);
 
   const value = useMemo(
     () => ({ theme, setTheme, scheme, highContrast: theme === 'contrast' }),

@@ -16,7 +16,7 @@ interface Props {
 export function CommitmentReminderPop({ due, onDone, onSnooze, onDismiss }: Props) {
   const { t } = useI18n();
   return (
-    <div aria-live="assertive" className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
+    <div aria-live="assertive" className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--tabbar)+1rem)] z-50 flex justify-center px-4">
       {due && (
         <section
           aria-label={t.reminder.commitmentTitle}

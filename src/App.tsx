@@ -6,6 +6,7 @@ import { Onboarding } from './components/Onboarding';
 import { ReminderBanner } from './components/ReminderBanner';
 import type { LibraryDetails } from './components/SaveToLibrary';
 import { Sky } from './components/Sky';
+import { TabIcon } from './components/TabIcons';
 import { CreatedIntro, EMPTY_DRAFT, FEELING_INPUT_ID, Visualize, type Draft } from './components/Visualize';
 import { useI18n } from './i18n';
 import { useAuth, useSync } from './lib/account';
@@ -283,8 +284,8 @@ export default function App() {
 
       <Sky />
 
-      <header className="glass z-30 border-x-0 border-t-0 sm:sticky sm:top-0">
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2.5">
+      <header className="app-header glass sticky top-0 z-30 border-x-0 border-t-0">
+        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:py-2.5">
           <p className="text-lg font-semibold">
             {/* A real link, so it also works opened in a new tab; a normal click stays in the app. */}
             <a
@@ -295,40 +296,31 @@ export default function App() {
                 goTo('today');
                 window.scrollTo(0, 0);
               }}
-              className="wordmark inline-flex items-center gap-2.5 rounded no-underline"
+              className="wordmark inline-flex items-center gap-2 rounded no-underline sm:gap-2.5"
             >
-              <img src={`${HOME_URL}logo-mark.png`} alt="" width={56} height={50} className="h-12.5 w-auto" />
+              <img src={`${HOME_URL}logo-mark.png`} alt="" width={56} height={50} className="h-9 w-auto sm:h-12.5" />
               <span className="flex flex-col">
-                <span className="text-[1.75rem] leading-none font-extrabold">
+                <span className="text-[1.4rem] leading-none font-extrabold sm:text-[1.75rem]">
                   viz <span className="wordmark-it">it</span>
                 </span>
-                <span className="tagline mt-1 text-xs font-semibold text-(--muted)">{t.app.tagline}</span>
+                <span className="tagline mt-1 hidden text-xs font-semibold text-(--muted) sm:block">{t.app.tagline}</span>
               </span>
             </a>
           </p>
-          <nav aria-label={t.app.navLabel}>
-            <ul className="flex flex-wrap gap-0.5 rounded-[1.75rem] border border-(--border) bg-(--surface-strong) p-1 sm:gap-1">
+          {/* Tablets and computers: the menu sits in the header. */}
+          <nav aria-label={t.app.navLabel} className="hidden sm:block">
+            <ul className="flex gap-1 rounded-[1.75rem] border border-(--border) bg-(--surface-strong) p-1">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
                   <button
                     type="button"
                     aria-current={view === id ? 'page' : undefined}
                     onClick={() => goTo(id)}
-                    className={`inline-flex min-h-10 min-w-10 items-center justify-center whitespace-nowrap rounded-full px-2.5 text-sm font-semibold transition-colors sm:px-4 ${
+                    className={`inline-flex min-h-10 items-center justify-center whitespace-nowrap rounded-full px-4 text-sm font-semibold transition-colors ${
                       view === id ? 'btn-glow text-(--on-accent)' : 'text-(--muted) hover:bg-(--surface-alt) hover:text-(--text)'
                     }`}
                   >
-                    {id === 'settings' ? (
-                      // A gear on phones, so five tabs fit on one line; the name is still read out.
-                      <>
-                        <span aria-hidden="true" className="text-base sm:hidden">
-                          ⚙
-                        </span>
-                        <span className="sr-only sm:not-sr-only">{t.app.views[id]}</span>
-                      </>
-                    ) : (
-                      t.app.views[id]
-                    )}
+                    {t.app.views[id]}
                   </button>
                 </li>
               ))}
@@ -336,6 +328,33 @@ export default function App() {
           </nav>
         </div>
       </header>
+
+      {/* Phones: a tab bar along the bottom, like an app, clear of the iPhone's home bar. */}
+      <nav aria-label={t.app.navLabel} className="tab-bar glass fixed inset-x-0 bottom-0 z-40 border-x-0 border-b-0 sm:hidden">
+        <ul className="grid grid-cols-5">
+          {VIEW_IDS.map((id) => (
+            <li key={id}>
+              <button
+                type="button"
+                aria-current={view === id ? 'page' : undefined}
+                onClick={() => goTo(id)}
+                className={`flex min-h-14 w-full flex-col items-center justify-center gap-0.5 px-0.5 pt-1.5 pb-1 text-[0.6875rem] leading-tight ${
+                  view === id ? 'font-bold text-(--text)' : 'font-semibold text-(--muted)'
+                }`}
+              >
+                <span
+                  className={`inline-flex h-8 w-14 items-center justify-center rounded-full transition-colors ${
+                    view === id ? 'btn-glow text-(--on-accent)' : ''
+                  }`}
+                >
+                  <TabIcon id={id} />
+                </span>
+                <span className="max-w-full truncate">{t.app.views[id]}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <main id="main" className="mx-auto max-w-5xl px-4 py-8 sm:py-10">
         <h1 className="sr-only">{t.app.pageHeading(t.app.views[view])}</h1>
