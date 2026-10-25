@@ -115,7 +115,7 @@ export function LearnPath({
               <li
                 key={step}
                 aria-current={isCurrent ? 'step' : undefined}
-                className={`flex flex-col gap-3 rounded-2xl border p-4 ${isCurrent ? 'border-(--accent) bg-(--accent-soft)' : 'border-(--border)'}`}
+                className={`flex flex-col gap-3 rounded-2xl border ${isCurrent ? 'border-(--accent) bg-(--accent-soft) p-4' : 'border-(--border) px-4 py-3'}`}
               >
                 <div className="flex items-start gap-3">
                   <span
@@ -131,7 +131,8 @@ export function LearnPath({
                       {s.title}
                       {isDone && <span className="sr-only"> ({l.done})</span>}
                     </h3>
-                    <p className="text-sm text-(--muted)">{s.body}</p>
+                    {/* Only the step in hand explains itself, so the path stays short. */}
+                    {(isCurrent || shown === step) && <p className="text-sm text-(--muted)">{s.body}</p>}
                   </div>
                   {isDone && (
                     <span aria-hidden="true" className="rounded-full border border-(--border) px-2.5 py-0.5 text-xs font-semibold text-(--muted)">
@@ -163,7 +164,7 @@ export function LearnPath({
                   <button
                     type="button"
                     onClick={actions[step]}
-                    className={`${isCurrent ? btnPrimary : btnSecondary} relative self-start`}
+                    className={`${isCurrent ? btnPrimary : `${btnSecondary} min-h-10 text-sm`} relative self-start`}
                   >
                     {isCurrent && <BorderBeam />}
                     {step !== 'read' && step !== 'senses' && step !== 'own' && <span aria-hidden="true">▶</span>}
@@ -175,37 +176,50 @@ export function LearnPath({
           })}
         </ol>
 
-        <div className="flex flex-col gap-3">
-          <h3 className="text-lg font-bold">{l.tipsTitle}</h3>
-          <ul className="grid gap-2 sm:grid-cols-2">
-            {l.tips.map((tip, i) => (
-              <li key={tip} className="flex gap-3 rounded-2xl bg-(--surface-alt) p-3 text-sm">
-                <span aria-hidden="true" className="text-xl">
-                  {TIP_ICONS[i % TIP_ICONS.length]}
-                </span>
-                {tip}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <details className="group rounded-2xl border border-(--border)">
+          <summary className="flex min-h-12 cursor-pointer items-center gap-3 px-4 font-bold">
+            <span aria-hidden="true" className="text-xl">
+              💡
+            </span>
+            <span className="grow">{l.moreTitle}</span>
+            <span aria-hidden="true" className="transition-transform group-open:rotate-180">
+              ⌄
+            </span>
+          </summary>
+          <div className="flex flex-col gap-5 px-4 pb-4">
+            <div className="flex flex-col gap-3">
+              <h3 className="text-lg font-bold">{l.tipsTitle}</h3>
+              <ul className="grid gap-2 sm:grid-cols-2">
+                {l.tips.map((tip, i) => (
+                  <li key={tip} className={`tint tint-${i % 6} flex gap-3 rounded-2xl border p-3 text-sm`}>
+                    <span aria-hidden="true" className="text-xl">
+                      {TIP_ICONS[i % TIP_ICONS.length]}
+                    </span>
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-        <div className="flex flex-col gap-2">
-          <h3 className="text-lg font-bold">{l.faqTitle}</h3>
-          <ul className="flex flex-col divide-y divide-(--border) rounded-2xl border border-(--border)">
-            {lessons.map((lesson) => (
-              <li key={lesson.title}>
-                <details className="px-4">
-                  <summary className="cursor-pointer py-3 font-medium">{lesson.title}</summary>
-                  {lesson.body.map((p) => (
-                    <p key={p} className="pb-3">
-                      {p}
-                    </p>
-                  ))}
-                </details>
-              </li>
-            ))}
-          </ul>
-        </div>
+            <div className="flex flex-col gap-2">
+              <h3 className="text-lg font-bold">{l.faqTitle}</h3>
+              <ul className="flex flex-col divide-y divide-(--border) rounded-2xl border border-(--border)">
+                {lessons.map((lesson) => (
+                  <li key={lesson.title}>
+                    <details className="px-4">
+                      <summary className="cursor-pointer py-3 font-medium">{lesson.title}</summary>
+                      {lesson.body.map((p) => (
+                        <p key={p} className="pb-3">
+                          {p}
+                        </p>
+                      ))}
+                    </details>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </details>
 
         {complete && (
           <button type="button" onClick={() => setExpanded(false)} className={`${btnGhost} self-center`}>

@@ -1,4 +1,4 @@
-export const card = 'glass rounded-3xl p-5 sm:p-7';
+export const card = 'glass card-edge rounded-[1.75rem] p-5 sm:p-7';
 
 const btn =
   'inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50';
@@ -15,3 +15,7 @@ export const checkbox = 'h-5 w-5 shrink-0 accent-(--accent)';
 
 export const toggle = (pressed: boolean) =>
   `${btn} border ${pressed ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)' : 'border-(--border) bg-(--surface-strong) hover:bg-(--surface-alt)'}`;
+
+/** A chip with its own pastel colour (by position, so neighbours differ); chosen ones fill with the main gradient. */
+export const tintChip = (pressed: boolean, i: number) =>
+  `${btn} border ${pressed ? 'btn-glow border-transparent text-(--on-accent)' : `tint tint-${i % 6}`}`;

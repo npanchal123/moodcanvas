@@ -129,19 +129,24 @@ export default function History({ entries, logs, animate, onContinueUnstuck, onO
             ))}
           </div>
         </div>
-        <dl className="grid grid-cols-3 gap-3">
-          <div className="rounded-xl bg-(--surface-alt) p-3">
-            <dt className="text-sm text-(--muted)">{t.history.checkInsStat}</dt>
-            <dd className="text-2xl font-semibold tabular-nums">{inRange}</dd>
-          </div>
-          <div className="rounded-xl bg-(--surface-alt) p-3">
-            <dt className="text-sm text-(--muted)">{t.history.practicesStat}</dt>
-            <dd className="text-2xl font-semibold tabular-nums">{practicesInRange}</dd>
-          </div>
-          <div className="rounded-xl bg-(--surface-alt) p-3">
-            <dt className="text-sm text-(--muted)">{t.history.streakStat}</dt>
-            <dd className="text-2xl font-semibold tabular-nums">{streakDays}</dd>
-          </div>
+        <dl className="grid grid-cols-3 gap-2.5 sm:gap-3">
+          {(
+            [
+              ['📝', t.history.checkInsStat, inRange, 3],
+              ['✨', t.history.practicesStat, practicesInRange, 4],
+              ['🔥', t.history.streakStat, streakDays, 1],
+            ] as const
+          ).map(([icon, name, value, tint]) => (
+            <div key={name} className={`tint tint-${tint} flex flex-col gap-1 rounded-2xl border p-3`}>
+              <dt className="text-sm font-semibold">
+                <span aria-hidden="true" className="block text-xl">
+                  {icon}
+                </span>
+                {name}
+              </dt>
+              <dd className="display text-3xl font-extrabold tabular-nums">{value}</dd>
+            </div>
+          ))}
         </dl>
         <FrequencyChart rows={rows} days={days} animate={animate} />
       </section>

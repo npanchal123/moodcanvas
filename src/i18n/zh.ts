@@ -63,6 +63,9 @@ export const zh: Messages = {
   },
 
   create: {
+    greeting: { morning: '早上好', afternoon: '下午好', evening: '晚上好', night: '夜深了，你好' },
+    streakChip: (n: number) => `连续 ${n} 天`,
+    sessionsChip: (n: number) => `${n} 次练习`,
     heroTitle: '想象你想要的感受',
     heroBody:
       '告诉我你在想什么，以及你想怎样去想象它。Viz it 会立刻为你写一段专属的引导式视觉化，并由一个平静的声音带你完成。',
@@ -115,6 +118,7 @@ export const zh: Messages = {
 
   learn: {
     heroChip: '第一次来？从新手路径开始',
+    moreTitle: '小贴士和常见问题',
     eyebrow: '从这里开始',
     title: '5 个小步骤学会视觉化',
     body: '给新手的一条短路径，总共大约 15 分钟。按自己的节奏来，随时可以停下。',

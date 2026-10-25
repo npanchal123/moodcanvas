@@ -723,3 +723,67 @@ textarea::placeholder {
 .app-header {
   padding-top: env(safe-area-inset-top);
 }
+
+/*
+ * The phone glow-up: a little bigger and bolder everywhere (easier to read at any age), cards with a soft gradient
+ * edge, and pastel tints for chips and tiles. Text always stays in the main text colour, so tints never cost
+ * contrast; high contrast mode drops the tints and edges.
+ */
+@media (max-width: 639.98px) {
+  html {
+    font-size: 106.25%;
+  }
+}
+h2 {
+  font-weight: 800;
+}
+h3 {
+  font-weight: 750;
+}
+@layer components {
+  .card-edge {
+    position: relative;
+  }
+  .card-edge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1.5px;
+    border-radius: inherit;
+    background: var(--grad-primary);
+    opacity: 0.4;
+    pointer-events: none;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+  }
+  .tint {
+    --tint: #8b5cf6;
+    background: color-mix(in srgb, var(--tint) 13%, var(--surface-strong));
+    border-color: color-mix(in srgb, var(--tint) 40%, transparent);
+    color: var(--text);
+  }
+  .tint:hover {
+    background: color-mix(in srgb, var(--tint) 22%, var(--surface-strong));
+  }
+}
+.tint-0 { --tint: #ec4899; }
+.tint-1 { --tint: #f59e0b; }
+.tint-2 { --tint: #10b981; }
+.tint-3 { --tint: #3b82f6; }
+.tint-4 { --tint: #8b5cf6; }
+.tint-5 { --tint: #14b8a6; }
+:root[data-theme="contrast"] .card-edge::before {
+  display: none;
+}
+:root[data-theme="contrast"] .tint {
+  background: var(--surface-strong);
+  border-color: var(--border);
+}
+@media (forced-colors: active) {
+  .card-edge::before {
+    display: none;
+  }
+}

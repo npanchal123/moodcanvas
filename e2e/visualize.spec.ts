@@ -129,6 +129,7 @@ test('ready-made visualizations, saved ones and the basics, all on the front pag
   await expect(page.getByRole('region', { name: 'My visualizations' })).toBeHidden();
   // No Library tab any more: everything is here.
   await expect(page.getByRole('navigation').getByRole('button', { name: 'Library' })).toBeHidden();
+  await page.getByText('Tips and common questions').click();
   await expect(page.locator('summary', { hasText: 'What if I can’t see pictures?' })).toBeVisible();
   await expectNoA11yViolations(page, 'front page with ready-made visualizations');
 
@@ -200,6 +201,9 @@ test('the beginner’s path: five steps, ticked off as they’re done, then fold
   await expect(done).toBeVisible();
   await expect(page.getByRole('link', { name: /New here\?/ })).toBeHidden();
   await done.getByRole('button', { name: 'Revisit the path' }).click();
+  // Tips and questions are folded into one row until opened.
+  await expect(page.getByRole('heading', { name: 'Tips for a good session' })).toBeHidden();
+  await page.getByText('Tips and common questions').click();
   await expect(page.getByRole('heading', { name: 'Tips for a good session' })).toBeVisible();
   await page.getByText('Is it okay to fall asleep?').click();
   await expect(page.getByText(/A calm session can lead to sleep/)).toBeVisible();

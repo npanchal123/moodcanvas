@@ -16,6 +16,7 @@ import {
 } from '../lib/compose';
 import type { AnalysisResult } from '../lib/analyzer';
 import { EMOTION_META } from '../lib/emotions';
+import { streak } from '../lib/stats';
 import type { EmotionEntry, PracticeBefore, PracticeLog, SavedPractice, VisualizeRequest } from '../lib/types';
 import type { PracticeId } from '../practices';
 import { BorderBeam } from './BorderBeam';
@@ -24,7 +25,7 @@ import { LEARN_ID, LearnPath, useLearnProgress } from './LearnPath';
 import { ReadyMade } from './ReadyMade';
 import { OwnRecordings } from './MyVoice';
 import { SavedPractices } from './SavedPractices';
-import { btnPrimary, card, toggle } from './ui';
+import { btnPrimary, card, tintChip } from './ui';
 
 export const FEELING_INPUT_ID = 'feeling-input';
 const MAX_LENGTH = 500;
@@ -105,15 +106,38 @@ export function Visualize(props: Props) {
     }
   }
 
+  const partOfDay = dayPart(new Date().getHours());
+  const streakDays = streak(entries);
+
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-8">
-      <div className="fade-up relative flex flex-col items-center px-2 pt-4 text-center">
+      <div className="fade-up relative flex flex-col items-center px-2 pt-2 text-center sm:pt-4">
         <div className="aura -top-6 h-44 w-44 sm:h-56 sm:w-56" aria-hidden="true" />
-        <img src={`${import.meta.env.BASE_URL}logo-mark.png`} alt="" width={96} height={86} className="relative h-20 w-auto drop-shadow-lg sm:h-24" />
-        <h2 className="display relative mt-4 text-3xl leading-tight font-extrabold sm:text-5xl">
+        <p className="relative mb-3 inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface-strong) px-4 py-1.5 font-bold shadow-sm">
+          <span aria-hidden="true">{GREETING_ICONS[partOfDay]}</span>
+          {t.create.greeting[partOfDay]}
+        </p>
+        <img src={`${import.meta.env.BASE_URL}logo-mark.png`} alt="" width={96} height={86} className="relative h-16 w-auto drop-shadow-lg sm:h-24" />
+        <h2 className="display relative mt-3 text-[2rem] leading-[1.1] font-extrabold sm:mt-4 sm:text-5xl">
           <span className="text-gradient">{t.create.heroTitle}</span>
         </h2>
-        <p className="relative mt-3 max-w-xl text-lg text-(--muted)">{t.create.heroBody}</p>
+        <p className="relative mt-3 max-w-xl text-(--muted) sm:text-lg">{t.create.heroBody}</p>
+        {(streakDays > 0 || logs.length > 0) && (
+          <ul className="relative mt-4 flex flex-wrap justify-center gap-2">
+            {streakDays > 0 && (
+              <li className="tint tint-1 rounded-full border px-3.5 py-1 font-bold">
+                <span aria-hidden="true">🔥 </span>
+                {t.create.streakChip(streakDays)}
+              </li>
+            )}
+            {logs.length > 0 && (
+              <li className="tint tint-4 rounded-full border px-3.5 py-1 font-bold">
+                <span aria-hidden="true">🧘 </span>
+                {t.create.sessionsChip(logs.length)}
+              </li>
+            )}
+          </ul>
+        )}
         {!learn.complete && (
           <a
             href={`#${LEARN_ID}`}
@@ -121,7 +145,7 @@ export function Visualize(props: Props) {
               e.preventDefault();
               document.getElementById(LEARN_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            className="relative mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--accent) bg-(--accent-soft) px-4 font-semibold no-underline hover:bg-(--surface-alt)"
+            className="relative mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--accent) bg-(--accent-soft) px-4 text-[0.95rem] font-bold no-underline hover:bg-(--surface-alt) sm:text-base"
           >
             <BorderBeam color="var(--accent)" />
             <span aria-hidden="true">🌱</span>
@@ -159,7 +183,7 @@ export function Visualize(props: Props) {
                   <button
                     type="button"
                     onClick={() => applyIdea(i)}
-                    className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-dashed border-(--accent) bg-(--accent-soft) px-3.5 py-1 text-start text-sm font-semibold hover:bg-(--surface-alt)"
+                    className={`tint tint-${i % 6} inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-1 text-start text-sm font-semibold`}
                   >
                     <span aria-hidden="true">✨</span>
                     <span>{idea.label}</span>
@@ -176,7 +200,7 @@ export function Visualize(props: Props) {
             {t.create.modeHint}
           </p>
           <div className="grid gap-2 sm:grid-cols-3">
-            {MODE_IDS.map((id) => {
+            {MODE_IDS.map((id, i) => {
               const pressed = draft.mode === id;
               const mode = content.modes[id];
               return (
@@ -188,9 +212,7 @@ export function Visualize(props: Props) {
                   className={`relative flex flex-col items-start gap-1 rounded-2xl border p-3 text-start transition-colors ${
                     pressed
                       ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)'
-                      : suggested === id
-                        ? 'border-dashed border-(--accent) bg-(--surface-strong) hover:bg-(--surface-alt)'
-                        : 'border-(--border) bg-(--surface-strong) hover:bg-(--surface-alt)'
+                      : `tint ${MODE_TINTS[i % MODE_TINTS.length]} ${suggested === id ? 'border-dashed border-(--accent)' : ''}`
                   }`}
                 >
                   <span className="flex items-center gap-2 font-bold">
@@ -225,7 +247,7 @@ export function Visualize(props: Props) {
                 type="button"
                 aria-pressed={draft.goal === id}
                 onClick={() => set({ goal: draft.goal === id ? null : id })}
-                className={`${toggle(draft.goal === id)} text-sm`}
+                className={`${tintChip(draft.goal === id, GOAL_IDS.indexOf(id))} text-sm`}
               >
                 <span aria-hidden="true">{GOAL_ICONS[id]}</span>
                 {content.goals[id].name}
@@ -269,6 +291,17 @@ export function Visualize(props: Props) {
 }
 
 /** The places to imagine, as picture tiles. Choosing the chosen one again clears it. */
+const MODE_TINTS = ['tint-1', 'tint-3', 'tint-2'];
+
+const GREETING_ICONS = { morning: '☀️', afternoon: '🌤️', evening: '🌙', night: '✨' } as const;
+
+function dayPart(hour: number): keyof typeof GREETING_ICONS {
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  if (hour >= 17 && hour < 22) return 'evening';
+  return 'night';
+}
+
 export function SceneTiles({ value, onChange }: { value: SceneId | null; onChange: (scene: SceneId | null) => void }) {
   const { locale } = useI18n();
   const content = COMPOSE_CONTENT[locale];

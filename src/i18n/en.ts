@@ -76,6 +76,9 @@ export const en = {
   },
 
   create: {
+    greeting: { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening', night: 'Hello, night owl' },
+    streakChip: (n: number) => `${n}-day streak`,
+    sessionsChip: (n: number) => (n === 1 ? '1 session' : `${n} sessions`),
     heroTitle: 'Visualize how you want to feel',
     heroBody:
       'Tell me what’s on your mind and how you’d like to imagine it. Viz it writes a guided visualization just for you, instantly, and a calm voice walks you through it.',
@@ -130,6 +133,7 @@ export const en = {
 
   learn: {
     heroChip: 'New here? Start the beginner’s path',
+    moreTitle: 'Tips and common questions',
     eyebrow: 'Start here',
     title: 'Learn to visualize in 5 small steps',
     body: 'A short path for beginners, about 15 minutes in all. Take it at your own pace and stop whenever you like.',

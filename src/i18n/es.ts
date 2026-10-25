@@ -66,6 +66,9 @@ export const es: Messages = {
   },
 
   create: {
+    greeting: { morning: 'Buenos días', afternoon: 'Buenas tardes', evening: 'Buenas tardes', night: 'Buenas noches' },
+    streakChip: (n: number) => `${n} días seguidos`,
+    sessionsChip: (n: number) => (n === 1 ? '1 sesión' : `${n} sesiones`),
     heroTitle: 'Visualiza cómo quieres sentirte',
     heroBody:
       'Cuéntame qué tienes en mente y cómo te gustaría imaginarlo. Viz it escribe al instante una visualización guiada solo para ti, y una voz tranquila te acompaña.',
@@ -119,6 +122,7 @@ export const es: Messages = {
 
   learn: {
     heroChip: '¿Primera vez? Empieza el camino para principiantes',
+    moreTitle: 'Consejos y preguntas frecuentes',
     eyebrow: 'Empieza aquí',
     title: 'Aprende a visualizar en 5 pasos pequeños',
     body: 'Un camino corto para principiantes, unos 15 minutos en total. Ve a tu ritmo y para cuando quieras.',

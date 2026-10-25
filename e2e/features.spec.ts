@@ -193,7 +193,8 @@ test('beginners can learn the basics and try a first practice', async ({ page })
   // It has one length, so there's no length choice.
   await expect(page.getByText('How long?')).toBeHidden();
   await page.getByRole('button', { name: 'Back' }).click();
-  // The basics are on the front page now.
+  // The basics are on the front page now, folded under tips and questions.
+  await page.getByText('Tips and common questions').click();
   await page.locator('summary', { hasText: 'What if I can’t see pictures?' }).click();
   await expect(page.getByText(/That’s very common/).last()).toBeVisible();
 });

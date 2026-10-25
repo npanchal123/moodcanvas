@@ -45,7 +45,7 @@ import type { BreakerSession } from '../lib/types';
 import { COMPOSED_LENGTHS, type Playable } from '../practices';
 import { BorderBeam } from './BorderBeam';
 import { SaveToLibrary } from './SaveToLibrary';
-import { btnGhost, btnPrimary, btnSecondary, card, checkbox, toggle } from './ui';
+import { btnGhost, btnPrimary, btnSecondary, card, checkbox, tintChip, toggle } from './ui';
 import { SceneTiles } from './Visualize';
 
 const PracticeSession = lazy(() => import('./PracticeSession'));
@@ -60,7 +60,7 @@ const NO_SESSIONS: BreakerSession[] = [];
 const field =
   'field w-full rounded-2xl border border-(--border) bg-(--surface-strong) p-3 leading-relaxed transition-shadow';
 const label = 'font-semibold';
-const chip = (pressed: boolean) => `${toggle(pressed)} text-start text-sm`;
+const chip = (pressed: boolean, i: number) => `${tintChip(pressed, i)} text-start text-sm`;
 
 interface Props {
   draft: BreakerDraft;
@@ -407,7 +407,7 @@ function Welcome({
         <fieldset>
           <legend className={`${label} mb-2`}>{text.welcome.situationsLegend}</legend>
           <div className="flex flex-wrap gap-2">
-            {SITUATION_IDS.map((id) => {
+            {SITUATION_IDS.map((id, i) => {
               const pressed = draft.situations.includes(id);
               return (
                 <button
@@ -418,7 +418,7 @@ function Welcome({
                     setError('');
                     set({ ...draft, situations: toggleIn(draft.situations, id) });
                   }}
-                  className={chip(pressed)}
+                  className={chip(pressed, i)}
                 >
                   {pressed && <span aria-hidden="true">✓</span>}
                   {text.situations[id]}
@@ -527,7 +527,7 @@ function Understand({ draft, set, text, onSupport, heading, reading, go }: StepP
         <legend className={`${label} text-lg`}>{u.question}</legend>
         <p className="mb-2 text-sm text-(--muted)">{text.understand.followUpHint}</p>
         <div className="flex flex-wrap gap-2">
-          {u.options.map((id) => {
+          {u.options.map((id, i) => {
             const pressed = draft.obstacles.includes(id);
             return (
               <button
@@ -535,7 +535,7 @@ function Understand({ draft, set, text, onSupport, heading, reading, go }: StepP
                 type="button"
                 aria-pressed={pressed}
                 onClick={() => set({ ...draft, obstacles: toggleIn(draft.obstacles, id) })}
-                className={chip(pressed)}
+                className={chip(pressed, i)}
               >
                 {pressed && <span aria-hidden="true">✓</span>}
                 {text.obstacles[id].label}
@@ -549,7 +549,7 @@ function Understand({ draft, set, text, onSupport, heading, reading, go }: StepP
         <legend className={`${label} text-lg`}>{text.understand.feelLegend}</legend>
         <p className="mb-2 text-sm text-(--muted)">{text.understand.feelHint}</p>
         <div className="flex flex-wrap gap-2">
-          {FEELING_IDS.map((id) => {
+          {FEELING_IDS.map((id, i) => {
             const pressed = draft.feelings.includes(id);
             return (
               <button
@@ -557,7 +557,7 @@ function Understand({ draft, set, text, onSupport, heading, reading, go }: StepP
                 type="button"
                 aria-pressed={pressed}
                 onClick={() => set({ ...draft, feelings: toggleIn(draft.feelings, id) })}
-                className={chip(pressed)}
+                className={chip(pressed, i)}
               >
                 {pressed && <span aria-hidden="true">✓</span>}
                 {text.understand.feelings[id]}
