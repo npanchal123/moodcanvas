@@ -19,4 +19,5 @@ test('Sign in in the header opens the account card at the top of Settings', asyn
   await expect(account.getByRole('button', { name: 'Continue with Google' })).toBeDisabled();
   await expect(account.getByLabel('Email')).toBeDisabled();
   await expect(account.getByRole('button', { name: 'Email me a code' })).toBeDisabled();
+  await expect(account.getByRole('button', { name: 'Mobile' })).toBeDisabled();
 });

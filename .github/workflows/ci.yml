@@ -55,6 +55,7 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}/
           VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY }}
+          VITE_PHONE_SIGN_IN: ${{ vars.VITE_PHONE_SIGN_IN }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

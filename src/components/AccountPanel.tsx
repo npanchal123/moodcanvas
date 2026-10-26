@@ -4,10 +4,11 @@ import { useState, type FormEvent } from 'react';
 import { formatDateTime, useI18n } from '../i18n';
 import type { SyncState } from '../lib/account';
 import { getMeta } from '../lib/db';
-import { supabase } from '../lib/supabase';
+import { normalizePhone } from '../lib/phone';
+import { phoneSignIn, supabase } from '../lib/supabase';
 import { forgetLocalData, setSyncText } from '../lib/sync';
 import { DeleteAccountDialog } from './DeleteAccountDialog';
-import { btnGhost, btnPrimary, btnSecondary, checkbox } from './ui';
+import { btnGhost, btnPrimary, btnSecondary, checkbox, tintChip } from './ui';
 
 interface Props {
   user: User | null;
@@ -84,43 +85,56 @@ export function AccountPanel({ user, sync }: Props) {
 }
 
 type Busy = 'google' | 'send' | 'verify' | null;
+type Method = 'email' | 'phone';
 
 /**
- * Signing in and signing up are the same two steps: an email, then the 6-digit code sent to it (a code rather than a
- * link, because a link would open in the browser instead of the app added to the Home Screen). Or Google. Shown
- * switched off, with a note, while this copy of the app has no account server.
+ * Signing in and signing up are the same two steps: an email or mobile number, then the 6-digit code sent to it (a
+ * code rather than a link, because a link would open in the browser instead of the app added to the Home Screen).
+ * Or Google. Shown switched off, with a note, while this copy of the app has no account server. Mobile numbers
+ * also need an SMS service, which costs money per message, so they only appear once one is connected.
  */
 function SignIn() {
   const { t } = useI18n();
   const a = t.account;
+  const showPhone = supabase == null || phoneSignIn;
+  const [method, setMethod] = useState<Method>('email');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [code, setCode] = useState('');
-  const [sentTo, setSentTo] = useState('');
+  const [sentTo, setSentTo] = useState<{ method: Method; to: string } | null>(null);
   const [busy, setBusy] = useState<Busy>(null);
   const [message, setMessage] = useState('');
 
   async function sendCode(e?: FormEvent) {
     e?.preventDefault();
     if (!supabase) return;
-    const to = (sentTo || email).trim();
+    const by = sentTo?.method ?? method;
+    const to = sentTo?.to ?? (by === 'email' ? email.trim() : normalizePhone(phone));
+    if (!to) {
+      setMessage(a.phoneInvalid);
+      return;
+    }
     setBusy('send');
     setMessage('');
-    const { error } = await supabase.auth.signInWithOtp({ email: to });
+    const { error } = await supabase.auth.signInWithOtp(by === 'email' ? { email: to } : { phone: to });
     setBusy(null);
     if (error) setMessage(a.sendFailed(error.message));
     else {
-      setSentTo(to);
+      setSentTo({ method: by, to });
       setCode('');
-      setMessage(a.codeSent(to));
+      setMessage(by === 'email' ? a.codeSent(to) : a.smsSent(to));
     }
   }
 
   async function verify(e: FormEvent) {
     e.preventDefault();
-    if (!supabase) return;
+    if (!supabase || !sentTo) return;
     setBusy('verify');
     setMessage('');
-    const { error } = await supabase.auth.verifyOtp({ email: sentTo, token: code.trim(), type: 'email' });
+    const token = code.trim();
+    const { error } = await supabase.auth.verifyOtp(
+      sentTo.method === 'email' ? { email: sentTo.to, token, type: 'email' } : { phone: sentTo.to, token, type: 'sms' },
+    );
     setBusy(null);
     // On success the account hook sees the new session and this form goes away.
     if (error) setMessage(a.codeFailed(error.message));
@@ -189,31 +203,74 @@ function SignIn() {
               <button
                 type="button"
                 onClick={() => {
-                  setSentTo('');
+                  setSentTo(null);
                   setMessage('');
                 }}
                 className={`${btnGhost} text-sm`}
               >
-                {a.changeEmail}
+                {sentTo.method === 'email' ? a.changeEmail : a.changePhone}
               </button>
             </div>
           </form>
         ) : (
           <form onSubmit={sendCode} className="flex flex-col gap-3">
-            <label htmlFor="sign-in-email" className="font-medium">
-              {a.emailLabel}
-            </label>
-            <input
-              id="sign-in-email"
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={field}
-            />
+            {showPhone && (
+              <div role="group" aria-label={a.methodLabel} className="grid grid-cols-2 gap-2">
+                {(['email', 'phone'] as const).map((m, i) => (
+                  <button
+                    key={m}
+                    type="button"
+                    aria-pressed={method === m}
+                    onClick={() => {
+                      setMethod(m);
+                      setMessage('');
+                    }}
+                    className={tintChip(method === m, i + 1)}
+                  >
+                    <span aria-hidden="true">{m === 'email' ? '✉️' : '📱'}</span>
+                    {m === 'email' ? a.methodEmail : a.methodPhone}
+                  </button>
+                ))}
+              </div>
+            )}
+            {method === 'email' ? (
+              <>
+                <label htmlFor="sign-in-email" className="font-medium">
+                  {a.emailLabel}
+                </label>
+                <input
+                  id="sign-in-email"
+                  type="email"
+                  required
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={field}
+                />
+              </>
+            ) : (
+              <>
+                <label htmlFor="sign-in-phone" className="font-medium">
+                  {a.phoneLabel}
+                </label>
+                <input
+                  id="sign-in-phone"
+                  type="tel"
+                  required
+                  autoComplete="tel"
+                  placeholder="+91 98765 43210"
+                  aria-describedby="sign-in-phone-hint"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className={field}
+                />
+                <p id="sign-in-phone-hint" className="-mt-1 text-sm text-(--muted)">
+                  {a.phoneHint}
+                </p>
+              </>
+            )}
             <button type="submit" className={btnPrimary}>
-              {busy === 'send' ? a.sending : a.sendCode}
+              {busy === 'send' ? a.sending : method === 'email' ? a.sendCode : a.sendSms}
             </button>
             <p className="text-center text-sm text-(--muted)">{a.newHere}</p>
           </form>

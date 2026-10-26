@@ -321,7 +321,11 @@ How it works:
    Safari rather than the app added to the Home Screen.)
 5. **Google (optional):** create an OAuth client in Google Cloud, then turn on Google under
    **Authentication → Sign In / Providers** with its client ID and secret.
-6. People sign in or create an account from the **Sign in** button in the header (it opens the top card in
+6. **Mobile number (optional, costs money):** connect an SMS service (Twilio, Vonage, MessageBird or Textlocal)
+   under **Authentication → Sign In / Providers → Phone**, then set `VITE_PHONE_SIGN_IN=on` (and the same
+   repository variable). Each sign-in text is charged by the SMS service. Indian numbers also need DLT sender
+   registration. Until this is on, the mobile option stays hidden once accounts are connected.
+7. People sign in or create an account from the **Sign in** button in the header (it opens the top card in
    Settings). No password is needed. Without steps 1–2 the card shows "Accounts are coming soon" and the
    choices are switched off.
 
