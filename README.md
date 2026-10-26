@@ -312,10 +312,18 @@ How it works:
 ### Accounts and sync (Supabase)
 
 1. Create a Supabase project. Run `supabase/migrations/0001_entries.sql` in its SQL editor.
-2. Put the project URL and anon key in `.env` as `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
-3. In Supabase, go to **Authentication → URL configuration** and add your site URL (for example
-   `http://localhost:5173`) as a redirect URL.
-4. Users sign in from **Settings → Account and sync** with an emailed link. No password is needed.
+2. Put the project URL and anon key in `.env` as `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. For the live
+   site, add the same two as repository **variables** (Settings → Secrets and variables → Actions → Variables).
+3. In Supabase, go to **Authentication → URL configuration**. Set the site URL to the live address and add it,
+   plus `http://localhost:5173/`, as redirect URLs.
+4. **Email code:** in **Authentication → Emails → Magic Link**, put `{{ .Token }}` in the template so the email
+   shows the 6-digit code. (The app asks for the code instead of using a link, because on an iPhone a link opens
+   Safari rather than the app added to the Home Screen.)
+5. **Google (optional):** create an OAuth client in Google Cloud, then turn on Google under
+   **Authentication → Sign In / Providers** with its client ID and secret.
+6. People sign in or create an account from the **Sign in** button in the header (it opens the top card in
+   Settings). No password is needed. Without steps 1–2 the card shows "Accounts are coming soon" and the
+   choices are switched off.
 
 How sync works (`src/lib/sync.ts`; the merge rules are in `src/lib/syncMerge.ts` and are unit-tested):
 - **Order:** each sync pulls first, then pushes. It runs when someone signs in, about 1.5 s after any local

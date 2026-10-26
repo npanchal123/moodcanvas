@@ -74,6 +74,13 @@ export default function Settings(props: Props) {
 
   return (
     <div className="flex flex-col gap-6">
+      <section id="account" aria-labelledby="account-heading" className={`${card} flex flex-col gap-3`}>
+        <h2 id="account-heading" className="text-xl font-semibold">
+          {t.settings.accountHeading}
+        </h2>
+        <AccountPanel user={user} sync={sync} />
+      </section>
+
       <section aria-labelledby="display-heading" className={`${card} flex flex-col gap-4`}>
         <h2 id="display-heading" className="text-xl font-semibold">
           {t.settings.displayHeading}
@@ -238,13 +245,6 @@ export default function Settings(props: Props) {
             {install.state === 'unavailable' && <p className="text-sm">{t.settings.installUnavailable}</p>}
           </>
         )}
-      </section>
-
-      <section aria-labelledby="account-heading" className={`${card} flex flex-col gap-3`}>
-        <h2 id="account-heading" className="text-xl font-semibold">
-          {t.settings.accountHeading}
-        </h2>
-        <AccountPanel user={user} sync={sync} />
       </section>
 
       <section aria-labelledby="data-heading" className={`${card} flex flex-col gap-4`}>

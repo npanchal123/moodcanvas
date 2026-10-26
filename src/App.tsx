@@ -1,3 +1,4 @@
+import type { User } from '@supabase/supabase-js';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 import { CommitmentReminderPop } from './components/CommitmentReminderPop';
@@ -308,7 +309,7 @@ export default function App() {
             </a>
           </p>
           {/* Tablets and computers: the menu sits in the header. */}
-          <nav aria-label={t.app.navLabel} className="hidden sm:block">
+          <nav aria-label={t.app.navLabel} className="hidden sm:ml-auto sm:block">
             <ul className="flex gap-1 rounded-[1.75rem] border border-(--border) bg-(--surface-strong) p-1">
               {VIEW_IDS.map((id) => (
                 <li key={id}>
@@ -326,6 +327,13 @@ export default function App() {
               ))}
             </ul>
           </nav>
+          <AccountButton
+            user={user}
+            onClick={() => {
+              goTo('settings');
+              window.scrollTo(0, 0);
+            }}
+          />
         </div>
       </header>
 
@@ -456,5 +464,34 @@ export default function App() {
 
       <Onboarding open={!onboarded && view !== 'privacy'} onDone={() => setOnboarded(true)} />
     </>
+  );
+}
+
+/** Sign in, or (once signed in) the person's initial; both open the account card at the top of Settings. */
+function AccountButton({ user, onClick }: { user: User | null; onClick: () => void }) {
+  const { t } = useI18n();
+  if (user) {
+    const initial = (user.email ?? '?').charAt(0).toUpperCase();
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        aria-label={t.account.headerAccount}
+        className="btn-glow inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-lg font-extrabold text-(--on-accent)"
+      >
+        {initial}
+      </button>
+    );
+  }
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-(--border) bg-(--surface-strong) py-1 ps-2 pe-4 text-sm font-semibold hover:bg-(--surface-alt) sm:max-lg:pe-2"
+    >
+      <TabIcon id="account" />
+      {/* Tablets have the whole menu in the header too, so there it's just the icon. */}
+      <span className="sm:max-lg:sr-only">{t.account.headerSignIn}</span>
+    </button>
   );
 }
