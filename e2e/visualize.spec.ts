@@ -37,6 +37,7 @@ test('modes can be chosen by hand; longer sessions have more to them; breathing 
   await skipOnboarding(page);
   await page.getByLabel(FEELING_LABEL).fill('I’m nervous about my presentation tomorrow');
   await expect(page.getByText(/^Suggested: Obstacle rehearsal\./)).toBeVisible();
+  await page.getByText('Make it yours (optional)').click();
   await page.getByRole('button', { name: /Future vision/ }).click();
   await expect(page.getByRole('button', { name: /Future vision/ })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.getByText(/^Suggested:/)).toBeHidden();
@@ -58,6 +59,7 @@ test('modes can be chosen by hand; longer sessions have more to them; breathing 
 test('saved to My visualizations before starting, then made again with changes', async ({ page }) => {
   await skipOnboarding(page);
   await page.getByLabel(FEELING_LABEL).fill(MATCH);
+  await page.getByText('Make it yours (optional)').click();
   await page.getByRole('button', { name: 'Forest', exact: true }).click();
   await page.getByRole('button', { name: 'Create my visualization' }).click();
   await page.getByRole('button', { name: 'Save to My visualizations' }).click();
@@ -107,6 +109,7 @@ test('skipping the reflection is fine; long text is capped; the form survives a 
   await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('x'.repeat(500));
 
   await page.getByLabel(FEELING_LABEL).fill('Imagine my life five years from now');
+  await page.getByText('Make it yours (optional)').click();
   await page.getByRole('button', { name: /Obstacle rehearsal/ }).click();
   await page.reload();
   await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('Imagine my life five years from now');

@@ -63,6 +63,10 @@ export const bn: Messages = {
   },
 
   create: {
+    cardTitle: 'আপনার ভিজ্যুয়ালাইজেশন তৈরি করুন',
+    customizeTitle: 'নিজের মতো করুন (ঐচ্ছিক)',
+    customizeHint: 'একটি ধরন, একটি জায়গা বা যা সাহায্য করবে তা বেছে নিন।',
+    moreWays: 'অনুশীলনের আরও উপায়',
     greeting: { morning: 'সুপ্রভাত', afternoon: 'শুভ দুপুর', evening: 'শুভ সন্ধ্যা', night: 'নমস্কার, রাতজাগা বন্ধু' },
     streakChip: (n: number) => `টানা ${n} দিন`,
     sessionsChip: (n: number) => `${n}টি সেশন`,

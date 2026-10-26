@@ -77,6 +77,10 @@ export const ru: Messages = {
   },
 
   create: {
+    cardTitle: 'Создайте свою визуализацию',
+    customizeTitle: 'Настроить под себя (по желанию)',
+    customizeHint: 'Выберите стиль, место или то, что поможет.',
+    moreWays: 'Другие способы практики',
     greeting: { morning: 'Доброе утро', afternoon: 'Добрый день', evening: 'Добрый вечер', night: 'Доброй ночи' },
     streakChip: (n: number) => `${n} дн. подряд`,
     sessionsChip: (n: number) => `Сессий: ${n}`,

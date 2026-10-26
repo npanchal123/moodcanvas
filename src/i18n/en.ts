@@ -76,6 +76,10 @@ export const en = {
   },
 
   create: {
+    cardTitle: 'Create your visualization',
+    customizeTitle: 'Make it yours (optional)',
+    customizeHint: 'Pick a style, a place or what would help.',
+    moreWays: 'More ways to practise',
     greeting: { morning: 'Good morning', afternoon: 'Good afternoon', evening: 'Good evening', night: 'Hello, night owl' },
     streakChip: (n: number) => `${n}-day streak`,
     sessionsChip: (n: number) => (n === 1 ? '1 session' : `${n} sessions`),

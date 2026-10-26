@@ -19,6 +19,8 @@ for (const theme of ['light', 'dark', 'contrast'] as const) {
 
     test('front page and a composed visualization', async ({ page }) => {
       await skipOnboarding(page);
+      // Checked with everything open: the optional choices and the ideas.
+      await page.getByText('Make it yours (optional)').click();
       await page.getByRole('button', { name: 'Mountains', exact: true }).click();
       await page.getByText('Need an idea? Try one:').click();
       await expectNoA11yViolations(page, 'front page');

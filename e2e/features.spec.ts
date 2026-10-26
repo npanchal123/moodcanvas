@@ -75,6 +75,9 @@ test('an idea fills the box, with a fitting feeling, and asks before replacing w
   page.once('dialog', (d) => void d.accept());
   await page.getByRole('button', { name: 'Prepare for restful sleep' }).click();
   await expect(page.getByLabel(FEELING_LABEL)).toHaveValue('Help me unwind and get ready for restful sleep.');
+  // The choices it made show on the folded "Make it yours" row, and inside it.
+  await expect(page.locator('summary', { hasText: 'Make it yours' })).toContainText('Sleep');
+  await page.getByText('Make it yours (optional)').click();
   await expect(page.getByRole('button', { name: /Sleep/ })).toHaveAttribute('aria-pressed', 'true');
   await page.getByRole('button', { name: 'Create my visualization' }).click();
   await expect(page.getByText('Focus: Sleep')).toBeVisible();

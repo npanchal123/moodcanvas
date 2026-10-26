@@ -69,6 +69,10 @@ export const fr: Messages = {
   },
 
   create: {
+    cardTitle: 'Créer votre visualisation',
+    customizeTitle: 'La personnaliser (facultatif)',
+    customizeHint: 'Choisissez un style, un lieu ou ce qui vous aiderait.',
+    moreWays: 'Autres façons de pratiquer',
     greeting: { morning: 'Bonjour', afternoon: 'Bon après-midi', evening: 'Bonsoir', night: 'Bonsoir, oiseau de nuit' },
     streakChip: (n: number) => `${n} jours d’affilée`,
     sessionsChip: (n: number) => (n === 1 ? '1 séance' : `${n} séances`),

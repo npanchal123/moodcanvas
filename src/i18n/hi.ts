@@ -69,6 +69,10 @@ export const hi: Messages = {
   },
 
   create: {
+    cardTitle: 'अपना विज़ुअलाइज़ेशन बनाएँ',
+    customizeTitle: 'अपने हिसाब से बदलें (वैकल्पिक)',
+    customizeHint: 'कोई तरीका, जगह या जिससे मदद मिले, वह चुनें।',
+    moreWays: 'अभ्यास के और तरीके',
     greeting: { morning: 'सुप्रभात', afternoon: 'नमस्ते', evening: 'शुभ संध्या', night: 'नमस्ते, रात के साथी' },
     streakChip: (n: number) => `${n} दिन लगातार`,
     sessionsChip: (n: number) => `${n} सेशन`,

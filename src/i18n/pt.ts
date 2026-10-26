@@ -70,6 +70,10 @@ export const pt: Messages = {
   },
 
   create: {
+    cardTitle: 'Crie a sua visualização',
+    customizeTitle: 'Deixe do seu jeito (opcional)',
+    customizeHint: 'Escolha um estilo, um lugar ou o que ajudaria.',
+    moreWays: 'Mais formas de praticar',
     greeting: { morning: 'Bom dia', afternoon: 'Boa tarde', evening: 'Boa noite', night: 'Olá, coruja da noite' },
     streakChip: (n: number) => `${n} dias seguidos`,
     sessionsChip: (n: number) => (n === 1 ? '1 sessão' : `${n} sessões`),

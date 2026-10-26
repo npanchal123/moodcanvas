@@ -79,8 +79,8 @@ export function LearnPath({
   }
 
   return (
-    <section id={LEARN_ID} aria-labelledby="learn-heading" className="fade-up rounded-[1.6rem] p-[2px]" style={{ background: 'var(--grad-primary)' }}>
-      <div className="flex flex-col gap-6 rounded-3xl bg-(--surface-strong) p-5 sm:p-7">
+    <section id={LEARN_ID} aria-labelledby="learn-heading" className="glass fade-up rounded-[1.75rem]">
+      <div className="flex flex-col gap-6 p-5 sm:p-7">
         <div className="flex flex-col items-center gap-2 text-center">
           <span aria-hidden="true" className="text-4xl">
             🌱
@@ -177,7 +177,7 @@ export function LearnPath({
         </ol>
 
         <details className="group rounded-2xl border border-(--border)">
-          <summary className="flex min-h-12 cursor-pointer items-center gap-3 px-4 font-bold">
+          <summary className="no-marker flex min-h-12 cursor-pointer items-center gap-3 px-4 font-bold">
             <span aria-hidden="true" className="text-xl">
               💡
             </span>

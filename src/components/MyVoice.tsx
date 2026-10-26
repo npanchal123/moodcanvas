@@ -14,7 +14,6 @@ import {
 } from '../lib/myVoice';
 import { formatClock } from '../lib/session';
 import type { OwnRecording } from '../lib/types';
-import { BorderBeam } from './BorderBeam';
 import { btnGhost, btnPrimary, btnSecondary, card } from './ui';
 
 const NONE: OwnRecording[] = [];
@@ -82,7 +81,7 @@ export function OwnRecordings() {
   return (
     <section
       aria-labelledby="own-recordings-heading"
-      className={`${card} fade-up flex flex-col gap-4 border-(--accent)! bg-(--accent-soft)!`}
+      className={`${card} fade-up flex flex-col gap-4`}
     >
       <div className="flex flex-wrap items-center gap-3">
         <span aria-hidden="true" className="btn-glow flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl">
@@ -103,9 +102,8 @@ export function OwnRecordings() {
             type="button"
             onClick={() => void toggle()}
             aria-pressed={recorder.state === 'recording'}
-            className={`${btnPrimary} relative min-h-12 px-7`}
+            className={`${recorder.state === 'recording' ? btnPrimary : btnSecondary} relative min-h-12 px-7`}
           >
-            {recorder.state !== 'recording' && <BorderBeam />}
             <span aria-hidden="true">{recorder.state === 'recording' ? '■' : '●'}</span>
             {recorder.state === 'recording' ? v.stop : v.start}
           </button>

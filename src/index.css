@@ -787,3 +787,28 @@ h3 {
     display: none;
   }
 }
+
+/* The Create card on the front page: a glowing gradient frame around a solid card, so it stands out from the rest. */
+.spotlight {
+  background: var(--grad-primary);
+  box-shadow: 0 22px 50px -20px var(--glow);
+}
+.spotlight-inner {
+  background:
+    linear-gradient(var(--surface-strong), var(--surface-strong)),
+    var(--bg);
+}
+:root[data-theme="contrast"] .spotlight {
+  box-shadow: none;
+}
+@media (forced-colors: active) {
+  .spotlight {
+    border: 2px solid CanvasText;
+  }
+}
+summary.no-marker {
+  list-style: none;
+}
+summary.no-marker::-webkit-details-marker {
+  display: none;
+}

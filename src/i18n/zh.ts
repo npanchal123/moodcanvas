@@ -63,6 +63,10 @@ export const zh: Messages = {
   },
 
   create: {
+    cardTitle: '创建你的观想',
+    customizeTitle: '个性化设置（可选）',
+    customizeHint: '选择一种方式、一个地方，或你需要的帮助。',
+    moreWays: '更多练习方式',
     greeting: { morning: '早上好', afternoon: '下午好', evening: '晚上好', night: '夜深了，你好' },
     streakChip: (n: number) => `连续 ${n} 天`,
     sessionsChip: (n: number) => `${n} 次练习`,

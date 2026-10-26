@@ -77,6 +77,10 @@ export const ar: Messages = {
   },
 
   create: {
+    cardTitle: 'أنشئ تصوّرك',
+    customizeTitle: 'اجعله خاصًا بك (اختياري)',
+    customizeHint: 'اختر أسلوبًا أو مكانًا أو ما قد يساعدك.',
+    moreWays: 'طرق أخرى للتمرّن',
     greeting: { morning: 'صباح الخير', afternoon: 'مساء الخير', evening: 'مساء الخير', night: 'ليلة هادئة' },
     streakChip: (n: number) => `${n} أيام متتالية`,
     sessionsChip: (n: number) => `${n} جلسات`,

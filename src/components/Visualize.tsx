@@ -25,7 +25,7 @@ import { LEARN_ID, LearnPath, useLearnProgress } from './LearnPath';
 import { ReadyMade } from './ReadyMade';
 import { OwnRecordings } from './MyVoice';
 import { SavedPractices } from './SavedPractices';
-import { btnPrimary, card, tintChip } from './ui';
+import { btnPrimary, tintChip } from './ui';
 
 export const FEELING_INPUT_ID = 'feeling-input';
 const MAX_LENGTH = 500;
@@ -78,6 +78,13 @@ export function Visualize(props: Props) {
   const set = (changes: Partial<Draft>) => onDraftChange({ ...draft, ...changes });
   const learn = useLearnProgress(logs);
   const suggested = draft.mode ? null : draft.goal === 'sleep' ? null : recommendMode(draft.text);
+  // The optional choices stay folded away, so the box and the Create button come first; open when something's chosen.
+  const [customOpen, setCustomOpen] = useState(() => Boolean(draft.mode || draft.scene || draft.goal));
+  const chosen = [
+    draft.mode && content.modes[draft.mode].name,
+    draft.scene && content.scenes[draft.scene].name,
+    draft.goal && content.goals[draft.goal].name,
+  ].filter(Boolean);
 
   /** Fills in an idea, with a mode and feeling that suit it; asks first if it would replace their own words. */
   function applyIdea(index: number) {
@@ -91,6 +98,7 @@ export function Visualize(props: Props) {
     e.preventDefault();
     if (!draft.text.trim() && !draft.scene && !draft.goal) {
       setError(t.create.needMore);
+      setCustomOpen(true);
       document.getElementById(FEELING_INPUT_ID)?.focus();
       return;
     }
@@ -117,11 +125,11 @@ export function Visualize(props: Props) {
           <span aria-hidden="true">{GREETING_ICONS[partOfDay]}</span>
           {t.create.greeting[partOfDay]}
         </p>
-        <img src={`${import.meta.env.BASE_URL}logo-mark.png`} alt="" width={96} height={86} className="relative h-16 w-auto drop-shadow-lg sm:h-24" />
-        <h2 className="display relative mt-3 text-[2rem] leading-[1.1] font-extrabold sm:mt-4 sm:text-5xl">
+        <img src={`${import.meta.env.BASE_URL}logo-mark.png`} alt="" width={96} height={86} className="relative hidden h-24 w-auto drop-shadow-lg sm:block" />
+        <h2 className="display relative text-[1.75rem] leading-[1.1] font-extrabold sm:mt-4 sm:text-5xl">
           <span className="text-gradient">{t.create.heroTitle}</span>
         </h2>
-        <p className="relative mt-3 max-w-xl text-(--muted) sm:text-lg">{t.create.heroBody}</p>
+        <p className="relative mt-3 hidden max-w-xl text-lg text-(--muted) sm:block">{t.create.heroBody}</p>
         {(streakDays > 0 || logs.length > 0) && (
           <ul className="relative mt-4 flex flex-wrap justify-center gap-2">
             {streakDays > 0 && (
@@ -145,9 +153,8 @@ export function Visualize(props: Props) {
               e.preventDefault();
               document.getElementById(LEARN_ID)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }}
-            className="relative mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-(--accent) bg-(--accent-soft) px-4 text-[0.95rem] font-bold no-underline hover:bg-(--surface-alt) sm:text-base"
+            className="relative mt-3 inline-flex min-h-10 items-center gap-2 rounded-full border border-(--border) bg-(--surface-strong) px-4 text-sm font-bold no-underline hover:bg-(--surface-alt)"
           >
-            <BorderBeam color="var(--accent)" />
             <span aria-hidden="true">🌱</span>
             {t.learn.heroChip}
             <span aria-hidden="true">↓</span>
@@ -155,120 +162,159 @@ export function Visualize(props: Props) {
         )}
       </div>
 
-      <form onSubmit={(e) => void submit(e)} className={`${card} fade-up flex flex-col gap-6`} noValidate>
+      {/* The main thing to do here, so it stands out: a glowing gradient frame around the form. */}
+      <div className="spotlight fade-up rounded-[2rem] p-[3px]">
+        <form
+          onSubmit={(e) => void submit(e)}
+          aria-labelledby="create-heading"
+          className="spotlight-inner flex flex-col gap-5 rounded-[calc(2rem-3px)] p-5 sm:p-7"
+          noValidate
+        >
+          <h2 id="create-heading" className="display flex items-center gap-2 text-2xl font-extrabold sm:text-3xl">
+            <span aria-hidden="true">✨</span>
+            <span className="text-gradient">{t.create.cardTitle}</span>
+          </h2>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor={FEELING_INPUT_ID} className="text-lg font-semibold">
-            {t.create.label}
-          </label>
-          <p id="feeling-hint" className="text-sm text-(--muted)">
-            {aiEnabled ? t.create.hintAi : t.create.hintLocal}
-          </p>
-          <textarea
-            id={FEELING_INPUT_ID}
-            value={draft.text}
-            maxLength={MAX_LENGTH}
-            rows={4}
-            placeholder={t.create.placeholder}
-            onChange={(e) => set({ text: e.target.value })}
-            aria-describedby={`feeling-hint${error ? ' create-error' : ''}`}
-            aria-invalid={error ? true : undefined}
-            className="field rounded-2xl border border-(--border) bg-(--surface-strong) p-4 text-lg leading-relaxed shadow-inner transition-shadow"
-          />
-          <details>
-            <summary className="cursor-pointer py-2 text-sm font-semibold text-(--accent)">{t.create.examplesLabel}</summary>
-            <ul className="flex flex-wrap gap-2 pt-1">
-              {t.create.ideas.map((idea, i) => (
-                <li key={idea.label}>
+          <div className="flex flex-col gap-2">
+            <label htmlFor={FEELING_INPUT_ID} className="text-lg font-semibold">
+              {t.create.label}
+            </label>
+            <p id="feeling-hint" className="text-sm text-(--muted)">
+              {aiEnabled ? t.create.hintAi : t.create.hintLocal}
+            </p>
+            <textarea
+              id={FEELING_INPUT_ID}
+              value={draft.text}
+              maxLength={MAX_LENGTH}
+              rows={3}
+              placeholder={t.create.placeholder}
+              onChange={(e) => set({ text: e.target.value })}
+              aria-describedby={`feeling-hint${error ? ' create-error' : ''}`}
+              aria-invalid={error ? true : undefined}
+              className="field rounded-2xl border border-(--border) bg-(--surface-strong) p-4 text-lg leading-relaxed shadow-inner transition-shadow"
+            />
+            <details>
+              <summary className="cursor-pointer py-2 text-sm font-semibold text-(--accent)">{t.create.examplesLabel}</summary>
+              <ul className="flex flex-wrap gap-2 pt-1">
+                {t.create.ideas.map((idea, i) => (
+                  <li key={idea.label}>
+                    <button
+                      type="button"
+                      onClick={() => applyIdea(i)}
+                      className={`tint tint-${i % 6} inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-1 text-start text-sm font-semibold`}
+                    >
+                      <span aria-hidden="true">✨</span>
+                      <span>{idea.label}</span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </div>
+
+          <details
+            open={customOpen}
+            onToggle={(e) => setCustomOpen(e.currentTarget.open)}
+            className="group rounded-2xl border border-(--border) bg-(--surface-alt)"
+          >
+            <summary className="no-marker flex min-h-14 cursor-pointer items-center gap-3 px-4 py-2">
+              <span aria-hidden="true" className="text-2xl">
+                🎨
+              </span>
+              <span className="min-w-0 grow">
+                <span className="block font-bold">{t.create.customizeTitle}</span>
+                <span className="block truncate text-sm text-(--muted)">{chosen.length ? chosen.join(' · ') : t.create.customizeHint}</span>
+              </span>
+              <span aria-hidden="true" className="text-xl transition-transform group-open:rotate-180">
+                ⌄
+              </span>
+            </summary>
+            <div className="flex flex-col gap-6 px-4 pt-2 pb-4">
+          <fieldset aria-describedby="mode-hint">
+            <legend className="mb-1 font-semibold">{t.create.modeLegend}</legend>
+            <p id="mode-hint" className="mb-3 text-sm text-(--muted)">
+              {t.create.modeHint}
+            </p>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {MODE_IDS.map((id, i) => {
+                const pressed = draft.mode === id;
+                const mode = content.modes[id];
+                return (
                   <button
+                    key={id}
                     type="button"
-                    onClick={() => applyIdea(i)}
-                    className={`tint tint-${i % 6} inline-flex min-h-10 items-center gap-1.5 rounded-full border px-3.5 py-1 text-start text-sm font-semibold`}
+                    aria-pressed={pressed}
+                    onClick={() => set({ mode: pressed ? null : id })}
+                    className={`relative flex flex-col items-start gap-1 rounded-2xl border p-3 text-start transition-colors ${
+                      pressed
+                        ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)'
+                        : `tint ${MODE_TINTS[i % MODE_TINTS.length]} ${suggested === id ? 'border-dashed border-(--accent)' : ''}`
+                    }`}
                   >
-                    <span aria-hidden="true">✨</span>
-                    <span>{idea.label}</span>
+                    <span className="flex items-center gap-2 font-bold">
+                      <span aria-hidden="true">{MODE_ICONS[id]}</span>
+                      {mode.name}
+                      {pressed && <span aria-hidden="true">✓</span>}
+                    </span>
+                    <span className="text-sm text-(--muted)">{mode.description}</span>
+                    {suggested === id && (
+                      <span className="rounded-full bg-(--accent) px-2 py-0.5 text-xs font-bold text-(--on-accent)">{t.create.suggested}</span>
+                    )}
                   </button>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </div>
+                );
+              })}
+            </div>
+          </fieldset>
 
-        <fieldset aria-describedby="mode-hint">
-          <legend className="mb-1 font-semibold">{t.create.modeLegend}</legend>
-          <p id="mode-hint" className="mb-3 text-sm text-(--muted)">
-            {t.create.modeHint}
-          </p>
-          <div className="grid gap-2 sm:grid-cols-3">
-            {MODE_IDS.map((id, i) => {
-              const pressed = draft.mode === id;
-              const mode = content.modes[id];
-              return (
+          <fieldset>
+            <legend className="mb-3 font-semibold">{t.create.sceneLegend}</legend>
+            <SceneTiles value={draft.scene} onChange={(scene) => set({ scene })} />
+          </fieldset>
+
+          <fieldset>
+            <legend className="mb-3 font-semibold">{t.create.goalLegend}</legend>
+            <div className="flex flex-wrap gap-2">
+              {GOAL_IDS.map((id) => (
                 <button
                   key={id}
                   type="button"
-                  aria-pressed={pressed}
-                  onClick={() => set({ mode: pressed ? null : id })}
-                  className={`relative flex flex-col items-start gap-1 rounded-2xl border p-3 text-start transition-colors ${
-                    pressed
-                      ? 'border-(--accent) bg-(--accent-soft) ring-2 ring-(--accent-soft)'
-                      : `tint ${MODE_TINTS[i % MODE_TINTS.length]} ${suggested === id ? 'border-dashed border-(--accent)' : ''}`
-                  }`}
+                  aria-pressed={draft.goal === id}
+                  onClick={() => set({ goal: draft.goal === id ? null : id })}
+                  className={`${tintChip(draft.goal === id, GOAL_IDS.indexOf(id))} text-sm`}
                 >
-                  <span className="flex items-center gap-2 font-bold">
-                    <span aria-hidden="true">{MODE_ICONS[id]}</span>
-                    {mode.name}
-                    {pressed && <span aria-hidden="true">✓</span>}
-                  </span>
-                  <span className="text-sm text-(--muted)">{mode.description}</span>
-                  {suggested === id && (
-                    <span className="rounded-full bg-(--accent) px-2 py-0.5 text-xs font-bold text-(--on-accent)">{t.create.suggested}</span>
-                  )}
+                  <span aria-hidden="true">{GOAL_ICONS[id]}</span>
+                  {content.goals[id].name}
                 </button>
-              );
-            })}
-          </div>
-          <p aria-live="polite" className="mt-2 min-h-5 text-sm text-(--muted)">
+              ))}
+            </div>
+          </fieldset>
+            </div>
+          </details>
+
+          <p aria-live="polite" className="-mt-2 text-sm text-(--muted) empty:hidden">
             {suggested ? t.create.suggestedWhy(content.modes[suggested].name, content.modes[suggested].why) : ''}
           </p>
-        </fieldset>
 
-        <fieldset>
-          <legend className="mb-3 font-semibold">{t.create.sceneLegend}</legend>
-          <SceneTiles value={draft.scene} onChange={(scene) => set({ scene })} />
-        </fieldset>
+          {error && (
+            <p id="create-error" role="alert" className="font-medium text-(--danger)">
+              {error}
+            </p>
+          )}
 
-        <fieldset>
-          <legend className="mb-3 font-semibold">{t.create.goalLegend}</legend>
-          <div className="flex flex-wrap gap-2">
-            {GOAL_IDS.map((id) => (
-              <button
-                key={id}
-                type="button"
-                aria-pressed={draft.goal === id}
-                onClick={() => set({ goal: draft.goal === id ? null : id })}
-                className={`${tintChip(draft.goal === id, GOAL_IDS.indexOf(id))} text-sm`}
-              >
-                <span aria-hidden="true">{GOAL_ICONS[id]}</span>
-                {content.goals[id].name}
-              </button>
-            ))}
-          </div>
-        </fieldset>
+          <button type="submit" disabled={busy} className={`${btnPrimary} relative min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
+            {/* A light travelling around the border draws the eye to the page's main action. */}
+            {!busy && <BorderBeam />}
+            <span aria-hidden="true">✨</span>
+            {busy ? t.create.creating : t.create.create}
+          </button>
+        </form>
+      </div>
 
-        {error && (
-          <p id="create-error" role="alert" className="font-medium text-(--danger)">
-            {error}
-          </p>
-        )}
-
-        <button type="submit" disabled={busy} className={`${btnPrimary} relative min-h-14 w-full px-8 text-lg sm:w-auto sm:self-center`}>
-          {/* A light travelling around the border draws the eye to the page's main action. */}
-          {!busy && <BorderBeam />}
-          <span aria-hidden="true">✨</span>
-          {busy ? t.create.creating : t.create.create}
-        </button>
-      </form>
+      <div className="flex items-center gap-3 pt-2">
+        <span aria-hidden="true" className="h-px grow bg-(--border)" />
+        <h2 className="text-sm font-extrabold tracking-wide text-(--muted) uppercase">{t.create.moreWays}</h2>
+        <span aria-hidden="true" className="h-px grow bg-(--border)" />
+      </div>
 
       <OwnRecordings />
 
